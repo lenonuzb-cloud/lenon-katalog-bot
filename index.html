@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>LENON Katalog</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+  --bg: var(--tg-theme-bg-color, #ffffff);
+  --bg2: var(--tg-theme-secondary-bg-color, #f3f1ec);
+  --text: var(--tg-theme-text-color, #1d1b16);
+  --hint: var(--tg-theme-hint-color, #8a8478);
+  --link: var(--tg-theme-link-color, #b88a12);
+  --btn: var(--tg-theme-button-color, #c9971c);
+  --btn-text: var(--tg-theme-button-text-color, #ffffff);
+  --gold: #c9971c;
+  --red: #d42b2b;
+  --green: #1f9d55;
+  --line: color-mix(in srgb, var(--text) 10%, transparent);
+  --card: var(--tg-theme-section-bg-color, var(--bg));
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg2);color:var(--text);font:15px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 14px 8px;border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:10px}
+.top img{height:26px}
+.top .admin{margin-left:auto;font-size:12px;color:var(--btn-text);background:var(--gold);padding:3px 8px;border-radius:20px;display:none}
+.search{margin-top:8px;display:flex;background:var(--bg2);border-radius:12px;padding:0 10px;align-items:center}
+.search input{flex:1;border:0;background:transparent;color:var(--text);font-size:15px;padding:10px 6px;outline:none}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-top:8px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;padding:7px 14px;border-radius:20px;background:var(--bg2);color:var(--text);font-weight:600;font-size:14px;border:0}
+.tab.on{background:var(--gold);color:#fff}
+main{padding:12px 12px 90px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.card{background:var(--card);border-radius:14px;overflow:hidden;position:relative;border:0;padding:0;text-align:left;color:var(--text)}
+.card .ph{aspect-ratio:1;background:var(--bg2) center/cover no-repeat;position:relative}
+.card .ph.empty{display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:800;font-size:20px}
+.card .t{padding:8px 10px 10px;font-weight:700;font-size:14px}
+.card .s{display:block;font-weight:400;color:var(--hint);font-size:12px}
+.card.out .ph{filter:grayscale(.7) opacity(.7)}
+.bdg{position:absolute;top:8px;font-size:11px;font-weight:800;padding:3px 7px;border-radius:6px;letter-spacing:.3px}
+.bdg.l{left:8px}.bdg.r{right:8px}
+.bdg.new{background:var(--red);color:#fff}
+.bdg.out{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.bdg.in{background:var(--green);color:#fff}
+.chip{display:inline-block;font-size:10px;font-weight:800;padding:2px 5px;border-radius:5px;margin-left:5px;vertical-align:1px}
+.chip.new{background:var(--red);color:#fff}
+.chip.out{color:var(--red);border:1px solid var(--red)}
+.chip.in{background:var(--green);color:#fff}
+.slides{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;border-radius:16px;background:var(--card);scrollbar-width:none;position:relative}
+.slides::-webkit-scrollbar{display:none}
+.slides img{flex:none;width:100%;aspect-ratio:1;object-fit:cover;scroll-snap-align:center}
+.slidewrap{position:relative}
+.dots{position:absolute;bottom:8px;left:0;right:0;text-align:center}
+.dots i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#fff;opacity:.5;margin:0 3px}
+.dots i.on{opacity:1}
+h1{font-size:20px;margin:14px 2px 4px}
+.note{color:var(--red);font-weight:700;margin:2px}
+.agents{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+.agents button,.btn{border:0;border-radius:10px;padding:9px 12px;font-weight:700;font-size:14px;background:var(--btn);color:var(--btn-text)}
+.btn.ghost{background:var(--bg2);color:var(--text)}
+.btn.danger{background:var(--red);color:#fff}
+.tbl{background:var(--card);border-radius:14px;overflow:hidden;margin-top:10px}
+.cat{background:color-mix(in srgb,var(--gold) 14%,var(--card));font-weight:800;text-align:center;padding:7px;font-size:13px;color:color-mix(in srgb,var(--gold) 70%,var(--text))}
+.row{display:grid;grid-template-columns:28px 1fr auto auto;gap:8px;align-items:center;padding:9px 10px;border-top:1px solid var(--line)}
+.row .n{color:var(--hint);font-size:12px;text-align:center}
+.row .nm{font-weight:600}
+.row .cd{color:var(--hint);font-size:12px;font-variant-numeric:tabular-nums}
+.row .pr{font-weight:800;font-variant-numeric:tabular-nums;min-width:44px;text-align:right}
+.row.out .nm{color:var(--red);text-decoration:line-through}
+.row.out .pr{color:var(--hint)}
+.row.adm{grid-template-columns:28px 1fr auto auto 46px}
+.sw{width:42px;height:24px;border-radius:12px;background:var(--red);position:relative;border:0;padding:0}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.15s}
+.sw.on{background:var(--green)}
+.sw.on::after{left:21px}
+.empty-msg{text-align:center;color:var(--hint);padding:40px 10px}
+.nabor-info{background:var(--card);border-radius:14px;padding:12px 14px;margin-top:10px}
+.nabor-info b{color:var(--gold)}
+.res{background:var(--card);border-radius:12px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;gap:10px;border:0;width:100%;text-align:left;color:var(--text)}
+.res small{color:var(--hint);display:block}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none;align-items:flex-end}
+.sheet{background:var(--bg);width:100%;border-radius:18px 18px 0 0;padding:16px 16px 28px;max-height:90vh;overflow:auto}
+.sheet h3{margin:0 0 12px}
+.sheet label{display:block;font-size:12px;color:var(--hint);margin:10px 2px 4px}
+.sheet input,.sheet select{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--text);font-size:16px}
+.sheet .acts{display:flex;gap:8px;margin-top:16px}
+.sheet .acts .btn{flex:1}
+.toast{position:fixed;left:12px;right:12px;bottom:20px;z-index:60;background:#222;color:#fff;padding:12px 14px;border-radius:12px;font-size:14px;display:none}
+.toast.warn{background:#8a5a00}
+.addbtn{width:100%;margin-top:10px}
+.loading{text-align:center;padding:60px;color:var(--hint)}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><img src="/static/logo.png" alt="LENON"><span class="admin" id="adm">ADMIN</span></div>
+  <div class="search"><span>🔍</span><input id="q" type="search" placeholder="Nomi yoki kodi bo'yicha qidirish"></div>
+  <div class="tabs" id="tabs"></div>
+</header>
+<main id="main"><div class="loading">Yuklanmoqda…</div></main>
+
+<div class="sheet-bg" id="sheetbg"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const tg = window.Telegram ? Telegram.WebApp : null;
+if (tg) { tg.ready(); tg.expand(); }
+const initData = tg ? tg.initData : "";
+let CAT = null, ADMIN = false, BOT = "";
+let view = {name: "section", key: "lenon"};
+const stack = [];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const img = (fid, w=600) => `/img/${encodeURIComponent(fid)}?w=${w}`;
+
+function toast(msg, warn=false){
+  const t=$("#toast"); t.textContent=msg; t.className="toast"+(warn?" warn":""); t.style.display="block";
+  clearTimeout(t._h); t._h=setTimeout(()=>t.style.display="none", warn?5000:2200);
+}
+function haptic(){ try{ tg && tg.HapticFeedback.impactOccurred("light"); }catch(e){} }
+
+async function load(){
+  const r = await fetch("/api/catalog"); CAT = await r.json(); BOT = CAT.bot || "";
+  if (initData){
+    try{ const m = await (await fetch("/api/me",{headers:{"X-Init-Data":initData}})).json(); ADMIN = !!m.admin; }catch(e){}
+  }
+  $("#adm").style.display = ADMIN ? "inline-block" : "none";
+  const sp = tg && tg.initDataUnsafe ? tg.initDataUnsafe.start_param : null;
+  if (sp && sp.startsWith("d_")){ const d = findDesign(sp.slice(2)); if (d){ view = {name:"section", key:d.sec.key}; go({name:"design", id:d.d.id}); renderTabs(); return; } }
+  renderTabs(); render();
+}
+
+function sections(){
+  const s = CAT.sections;
+  const nab = s.filter(x=>x.kind==="nabor");
+  const out = s.filter(x=>x.kind==="design");
+  if (nab.length) out.push({key:"naborlar", title:"Naborlar", kind:"nabors", list:nab});
+  const ras = s.find(x=>x.kind==="photos"); if (ras && ras.designs.length) out.push(ras);
+  return out;
+}
+function findDesign(id){
+  for (const sec of CAT.sections) for (const d of sec.designs) if (d.id===id) return {sec, d};
+  return null;
+}
+
+function renderTabs(){
+  $("#tabs").innerHTML = sections().map(s =>
+    `<button class="tab ${view.key===s.key || (view.key||"").startsWith("nabor")&&s.key==="naborlar" ? "on":""}" data-k="${s.key}">${esc(s.title)}</button>`).join("");
+  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { stack.length=0; view={name:"section", key:b.dataset.k}; $("#q").value=""; renderTabs(); render(); updateBack(); });
+}
+
+function go(v){ stack.push(view); view=v; render(); updateBack(); window.scrollTo(0,0); }
+function back(){ if (stack.length){ view = stack.pop(); render(); updateBack(); } }
+function updateBack(){ if (!tg) return; if (stack.length){ tg.BackButton.show(); } else tg.BackButton.hide(); }
+if (tg) tg.BackButton.onClick(back);
+
+function badges(o){
+  let l="", r="";
+  if (o.is_new) l = `<span class="bdg l new">NEW</span>`;
+  if (!o.in_stock) r = `<span class="bdg r out">QOLMADI</span>`;
+  else if (o.is_keldi) r = `<span class="bdg r in">KELDI</span>`;
+  return l+r;
+}
+function chips(o){
+  let s="";
+  if (o.is_new) s+=`<span class="chip new">NEW</span>`;
+  if (!o.in_stock) s+=`<span class="chip out">QOLMADI</span>`;
+  else if (o.is_keldi) s+=`<span class="chip in">KELDI</span>`;
+  return s;
+}
+function designBadgeState(d){
+  // dizayn kartasida: ichida yangi mahsulot bo'lsa NEW
+  const items = d.categories.flatMap(c=>c.items);
+  return {is_new: d.is_new || items.some(i=>i.is_new), in_stock: d.in_stock, is_keldi: d.is_keldi};
+}
+
+function render(){
+  const m = $("#main");
+  if (!CAT){ m.innerHTML='<div class="loading">Yuklanmoqda…</div>'; return; }
+  const q = $("#q").value.trim();
+  if (q && view.name!=="design"){ m.innerHTML = searchView(q); bindSearch(); return; }
+  if (view.name==="section"){ m.innerHTML = sectionView(view.key); bindCards(); }
+  else if (view.name==="design") renderDesign();
+}
+
+function sectionView(key){
+  if (key==="naborlar"){
+    const nab = CAT.sections.filter(x=>x.kind==="nabor");
+    return nab.map(s => `<h1>${esc(s.title)}</h1>` + (s.template ? `<div class="nabor-info">Jami: <b>${esc(s.template.pieces)} ta</b> · Narxi: <b>${esc(s.template.price)}</b></div><div style="height:10px"></div>` : "") +
+      `<div class="grid">${s.designs.map(cardHtml).join("")}</div>`).join("");
+  }
+  const sec = CAT.sections.find(s=>s.key===key);
+  if (!sec) return '<div class="empty-msg">Bo\'lim topilmadi</div>';
+  if (!sec.designs.length) return '<div class="empty-msg">Hozircha bo\'sh</div>';
+  return `<div class="grid">${sec.designs.map(cardHtml).join("")}</div>`;
+}
+function cardHtml(d){
+  const st = designBadgeState(d);
+  const n = d.categories.reduce((a,c)=>a+c.items.length,0);
+  const ph = d.photos.length ? `<div class="ph" style="background-image:url('${img(d.photos[0],400)}')">${badges(st)}</div>`
+                             : `<div class="ph empty">${esc(d.title.split(" ").pop())}${badges(st)}</div>`;
+  const sub = n ? `${n} ta mahsulot` : (d.note ? esc(d.note.split("\n")[0]).slice(0,40) : "");
+  return `<button class="card ${d.in_stock?"":"out"}" data-id="${d.id}">${ph}<div class="t">${esc(d.title)}<span class="s">${sub}</span></div></button>`;
+}
+function bindCards(){ document.querySelectorAll(".card").forEach(c => c.onclick = () => go({name:"design", id:c.dataset.id})); }
+
+function renderDesign(){
+  const f = findDesign(view.id); const m = $("#main");
+  if (!f){ m.innerHTML='<div class="empty-msg">Topilmadi</div>'; return; }
+  const {sec, d} = f;
+  let h = "";
+  if (d.photos.length){
+    h += `<div class="slidewrap"><div class="slides" id="slides">${d.photos.map(p=>`<img loading="lazy" src="${img(p,1000)}">`).join("")}</div>${badges(sec.kind==="design"?{is_new:d.is_new,in_stock:true}:d)}
+      ${d.photos.length>1?`<div class="dots">${d.photos.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`:""}</div>`;
+  }
+  h += `<h1>${esc(d.title)}</h1>`;
+  if (sec.kind==="nabor"){
+    const t = sec.template || {};
+    h += `<div>${chips(d)}</div><div class="nabor-info">Jami: <b>${esc(t.pieces)} ta</b> · Narxi: <b>${esc(t.price)}</b></div>`;
+    if (t.items) h += `<div class="tbl">${t.items.map((x,i)=>`<div class="row" style="grid-template-columns:28px 1fr auto"><span class="n">${i+1}</span><span class="nm">${esc(x[0])}</span><span class="pr">${esc(x[1])}</span></div>`).join("")}</div>`;
+    if (ADMIN) h += `<button class="btn addbtn ${d.in_stock?"danger":""}" id="nstock">${d.in_stock?"❌ Qolmadi deb belgilash":"✅ Keldi deb belgilash"}</button>`;
+  } else if (sec.kind==="photos"){
+    h += `<div class="nabor-info">${esc(d.note).replace(/\n/g,"<br>")}</div>`;
+  } else {
+    if (d.note) h += `<div class="note">${esc(d.note)}</div>`;
+    if (d.agents.length) h += `<div class="agents">${d.agents.filter(a=>a.username).map(a=>`<button data-u="${esc(a.username)}">💬 ${esc(a.name)}</button>`).join("")}</div>`;
+    const hasCode = d.categories.some(c=>c.items.some(i=>i.code));
+    let n=0, rows="";
+    for (const c of d.categories){
+      if (c.name && c.name!=="Asosiy") rows += `<div class="cat">${esc(c.name)}</div>`;
+      for (const it of c.items){
+        n++;
+        rows += `<div class="row ${it.in_stock?"":"out"} ${ADMIN?"adm":""}" data-item="${it.id}">
+          <span class="n">${n}</span><span class="nm">${esc(it.name)}${chips(it)}</span>
+          <span class="cd">${hasCode?esc(it.code):""}</span><span class="pr">${esc(it.price)}</span>
+          ${ADMIN?`<button class="sw ${it.in_stock?"on":""}" data-sw="${it.id}" aria-label="bor/qolmadi"></button>`:""}</div>`;
+      }
+    }
+    h += `<div class="tbl">${rows || '<div class="empty-msg">Jadval bo\'sh</div>'}</div>`;
+    if (ADMIN) h += `<button class="btn addbtn" id="additem">➕ Mahsulot qo'shish</button>
+                     <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="rename">🔤 Nomini o'zgartirish</button><button class="btn ghost" style="flex:1;color:var(--red)" id="deld">🗑 Dizaynni o'chirish</button></div>`;
+  }
+  if (d.link) h += `<button class="btn ghost addbtn" id="openpost">↗️ Guruhdagi postni ochish</button>`;
+  m.innerHTML = h;
+
+  const sl = $("#slides");
+  if (sl) sl.onscroll = () => { const i = Math.round(sl.scrollLeft / sl.clientWidth); document.querySelectorAll(".dots i").forEach((x,j)=>x.classList.toggle("on", i===j)); };
+  document.querySelectorAll(".agents button").forEach(b => b.onclick = () => openTg("https://t.me/"+b.dataset.u));
+  const op = $("#openpost"); if (op) op.onclick = () => openTg(d.link);
+  if (ADMIN){
+    document.querySelectorAll("[data-sw]").forEach(b => b.onclick = ev => {
+      ev.stopPropagation(); haptic();
+      const it = findItem(d, b.dataset.sw);
+      act({action:"stock", design:d.id, item:it.id, in_stock: !it.in_stock}, it.in_stock ? "Qolmadi deb belgilandi" : "Keldi deb belgilandi");
+    });
+    document.querySelectorAll("[data-item]").forEach(r => r.onclick = () => editSheet(d, findItem(d, r.dataset.item)));
+    const ns = $("#nstock"); if (ns) ns.onclick = () => act({action:"stock", design:d.id, in_stock: !d.in_stock}, d.in_stock?"Qolmadi deb belgilandi":"Keldi deb belgilandi");
+    const ai = $("#additem"); if (ai) ai.onclick = () => editSheet(d, null);
+    const rn = $("#rename"); if (rn) rn.onclick = () => renameSheet(d);
+    const dd = $("#deld"); if (dd) dd.onclick = () => confirmDo(`«${d.title}» katalogdan va guruhdan o'chirilsinmi?`, () => act({action:"delete_design", design:d.id}, "O'chirildi").then(back));
+  }
+}
+function findItem(d, id){ for (const c of d.categories) for (const i of c.items) if (i.id===id) return Object.assign({cat:c.name}, i); return null; }
+function openTg(url){ if (tg && url.startsWith("https://t.me/")) tg.openTelegramLink(url); else window.open(url, "_blank"); }
+
+async function act(body, okMsg){
+  try{
+    const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify(body)});
+    const j = await r.json();
+    if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return false; }
+    CAT.sections = j.catalog.sections;
+    render();
+    if (j.warnings && j.warnings.length) toast("⚠️ Nazoratchi: "+j.warnings.join("; "), true);
+    else if (okMsg) toast("✅ "+okMsg+". Guruhdagi jadval yangilanadi.");
+    return true;
+  }catch(e){ toast("⚠️ Internet bilan muammo", true); return false; }
+}
+
+function openSheet(html){ $("#sheet").innerHTML = html; $("#sheetbg").style.display="flex"; }
+function closeSheet(){ $("#sheetbg").style.display="none"; }
+$("#sheetbg").onclick = e => { if (e.target.id==="sheetbg") closeSheet(); };
+
+function editSheet(d, it){
+  const cats = d.categories.map(c=>c.name);
+  const isNew = !it;
+  openSheet(`<h3>${isNew?"➕ Yangi mahsulot":"✏️ "+esc(it.name)}</h3>
+    <label>Nomi</label><input id="f_name" value="${esc(it?it.name:"")}" placeholder="masalan: Aval kv 15">
+    <label>Kodi</label><input id="f_code" value="${esc(it?it.code:"")}" placeholder="masalan: YA5999" style="text-transform:uppercase">
+    <label>Narxi</label><input id="f_price" value="${esc(it?it.price:"")}" placeholder="masalan: 17$" inputmode="decimal">
+    <label>Guruhi</label><input id="f_cat" list="cats" value="${esc(it?it.cat:(cats[cats.length-1]||""))}"><datalist id="cats">${cats.map(c=>`<option value="${esc(c)}">`).join("")}</datalist>
+    <div class="acts"><button class="btn ghost" id="f_cancel">Bekor</button><button class="btn" id="f_save">Saqlash</button></div>
+    ${isNew?"":`<button class="btn ghost addbtn" id="f_del" style="color:var(--red)">🗑 Jadvaldan o'chirish</button>`}`);
+  $("#f_cancel").onclick = closeSheet;
+  $("#f_save").onclick = async () => {
+    const body = {design:d.id, name:$("#f_name").value, code:$("#f_code").value, price:$("#f_price").value, category:$("#f_cat").value};
+    if (!body.name.trim() || !body.price.trim()){ toast("Nomi va narxini yozing", true); return; }
+    if (isNew) body.action="add_item"; else { body.action="edit_item"; body.item=it.id; }
+    if (await act(body, isNew?"Qo'shildi (NEW belgisi bilan)":"Saqlandi")) closeSheet();
+  };
+  const del = $("#f_del");
+  if (del) del.onclick = () => confirmDo(`«${it.name}» jadvaldan o'chirilsinmi?`, async () => { if (await act({action:"delete_item", design:d.id, item:it.id}, "O'chirildi")) closeSheet(); });
+}
+function renameSheet(d){
+  openSheet(`<h3>🔤 Nomini o'zgartirish</h3><input id="r_t" value="${esc(d.title)}">
+    <div class="acts"><button class="btn ghost" id="r_c">Bekor</button><button class="btn" id="r_s">Saqlash</button></div>`);
+  $("#r_c").onclick = closeSheet;
+  $("#r_s").onclick = async () => { if (await act({action:"rename", design:d.id, title:$("#r_t").value}, "Saqlandi")) closeSheet(); };
+}
+function confirmDo(text, fn){
+  if (tg && tg.showConfirm) tg.showConfirm(text, ok => ok && fn());
+  else if (confirm(text)) fn();
+}
+
+function searchView(q){
+  const s = q.toLowerCase(); const out = [];
+  for (const sec of CAT.sections) for (const d of sec.designs){
+    if (d.title.toLowerCase().includes(s)) out.push({d, it:null});
+    for (const c of d.categories) for (const it of c.items)
+      if (it.name.toLowerCase().includes(s) || (it.code||"").toLowerCase().includes(s)) out.push({d, it});
+    if (out.length > 150) break;
+  }
+  if (!out.length) return '<div class="empty-msg">Hech narsa topilmadi</div>';
+  return out.map(({d,it}) => it
+    ? `<button class="res" data-id="${d.id}"><span><b>${esc(it.name)}</b>${chips(it)}<small>${esc(d.title)} · ${esc(it.code)}</small></span><b>${esc(it.price)}</b></button>`
+    : `<button class="res" data-id="${d.id}"><span><b>${esc(d.title)}</b>${chips(d)}<small>dizayn</small></span><span>›</span></button>`).join("");
+}
+function bindSearch(){ document.querySelectorAll(".res").forEach(b => b.onclick = () => { $("#q").value=""; go({name:"design", id:b.dataset.id}); }); }
+$("#q").oninput = () => render();
+
+load().catch(() => { $("#main").innerHTML = '<div class="empty-msg">Katalogni yuklab bo\'lmadi. Internetni tekshiring.</div>'; });
+setInterval(async () => { if (document.hidden || $("#sheetbg").style.display==="flex") return; try{ const r = await fetch("/api/catalog"); const j = await r.json(); if (j.updated !== CAT.updated){ CAT = j; render(); } }catch(e){} }, 30000);
+</script>
+</body>
+</html>
