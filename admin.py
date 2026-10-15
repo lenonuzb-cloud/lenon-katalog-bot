@@ -348,6 +348,8 @@ async def on_menu(uid, text):
         await do_check(uid)
     elif cmd in (BTN_SETTINGS, "/sozlamalar"):
         await settings_menu(uid)
+    elif cmd == "/pin":
+        await pin_catalog(uid)
     elif cmd == "/joyla":
         await settings_callback(uid, "se:pub", {"id": "x"})
     elif cmd == "/zaxira":
@@ -1318,6 +1320,7 @@ async def settings_menu(uid):
             [btn("👥 Agent username", "se:ag")],
             [btn("📤 Katalogni guruhga joylash", "se:pub")],
             [btn("🔁 Hamma postlarni qayta joylash", "se:rep")],
+            [btn("📌 Katalog havolasini tepaga qo'yish", "se:pin")],
             [btn("💾 Zaxira faylini olish", "se:bk")]]
     await bot.send(uid, text, reply_markup=ikb(rows))
 
@@ -1361,10 +1364,55 @@ async def settings_callback(uid, data, cb):
         await bot.send(uid, txt, reply_markup=ikb([[btn("📤 Ha, joylash", "se:puby")], [btn("❌ Bekor", "cancel")]]))
     elif p[1] == "puby":
         asyncio.get_event_loop().create_task(publish_all(uid))
+    elif p[1] == "pin":
+        asyncio.get_event_loop().create_task(pin_catalog(uid))
     elif p[1] == "rep":
         asyncio.get_event_loop().create_task(publish_all(uid, repost=True))
     elif p[1] == "bk":
         await on_menu(uid, "/zaxira")
+
+
+async def pin_catalog(uid):
+    """Har bir bo'limning tepasiga katalogni ochadigan tugmali xabarni mahkamlaydi (pin)."""
+    st = store.settings
+    gid = st.get("group_id")
+    if not gid or not st["topics"]:
+        await bot.send(uid, "Avval guruh bo'limlarini ulang (/bolim).")
+        return
+    pins = store.s.setdefault("pins", {})
+    text = ("📒 <b>LENON katalogi</b>\n"
+            "Barcha dizaynlar, narxlar va qaysi mahsulot bor/qolmagani — rasmlari bilan.\n"
+            "Ochish uchun pastdagi tugmani bosing 👇")
+    markup = {"inline_keyboard": [[{"text": "📒 Katalogni ochish", "url": publisher.catalog_url()}]]}
+    ok, errs = 0, []
+    for key, thread in st["topics"].items():
+        if not thread:
+            continue
+        old = pins.get(key)
+        try:
+            if old:
+                try:
+                    await bot.call("editMessageText", chat_id=gid, message_id=old, text=text, parse_mode="HTML",
+                                   reply_markup=markup)
+                except TelegramError as e:
+                    if "not modified" not in e.description:
+                        old = None
+            if not old:
+                m = await bot.send(gid, text, message_thread_id=thread, reply_markup=markup, disable_notification=True)
+                old = m["message_id"]
+                pins[key] = old
+            await bot.call("pinChatMessage", chat_id=gid, message_id=old, disable_notification=True)
+            ok += 1
+        except TelegramError as e:
+            errs.append(f"{config.TOPIC_KEYS.get(key, key)}: {e.description}")
+        await asyncio.sleep(1.5)
+    store.save()
+    msg = f"📌 {ok} ta bo'limning tepasiga katalog havolasi qo'yildi."
+    if errs:
+        msg += "\n⚠️ " + "\n⚠️ ".join(esc(x) for x in errs)
+        if any("not enough rights" in x.lower() for x in errs):
+            msg += "\n\nBotga guruhda «Xabarlarni mahkamlash» (Pin messages) huquqini bering."
+    await bot.send(uid, msg)
 
 
 async def publish_all(uid, repost=False):
