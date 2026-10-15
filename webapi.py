@@ -101,6 +101,15 @@ async def admin_action(request):
         elif a == "add_item":
             _, warns = ops.add_item(body["design"], body.get("category", ""), body.get("name", ""),
                                     body.get("code", ""), body.get("price", ""))
+        elif a == "add_items":
+            n, warns = ops.add_items(body["design"], body.get("items") or [])
+            if not n and not warns:
+                return web.json_response({"ok": False, "error": "Hech narsa tanlanmadi"}, status=400)
+        elif a == "add_design":
+            did = ops.add_design(body["section"], body.get("title", ""))
+            return web.json_response({"ok": True, "warnings": [], "design": did, "catalog": store.public_catalog()})
+        elif a == "reorder":
+            ops.reorder(body["design"], body.get("layout") or [])
         elif a == "delete_item":
             ops.delete_item(body["design"], body["item"])
         elif a == "rename":
@@ -143,6 +152,25 @@ async def admin_photo(request):
     return web.json_response({"ok": True, "catalog": store.public_catalog()})
 
 
+async def admin_info(request):
+    """Mini ilova uchun hisobot va nazoratchi tekshiruvi."""
+    user = verify_init_data(request.headers.get("X-Init-Data", ""))
+    if not user or not store.is_admin(user.get("id")):
+        return web.json_response({"ok": False, "error": "Ruxsat yo'q"}, status=403)
+    import checker
+    import report
+    kind = request.query.get("t", "report")
+    if kind == "check":
+        sc = await checker.self_check()
+        probs = checker.audit()
+        return web.json_response({"ok": True, "bot": sc, "problems": probs})
+    try:
+        h = int(request.query.get("h", "24"))
+    except ValueError:
+        h = 24
+    return web.json_response({"ok": True, "html": await report.build(max(1, min(h, 24 * 90)))})
+
+
 def routes(app: web.Application):
     app.router.add_get("/app", page)
     app.router.add_get("/app/", page)
@@ -150,6 +178,7 @@ def routes(app: web.Application):
     app.router.add_get("/api/me", me)
     app.router.add_post("/api/admin", admin_action)
     app.router.add_post("/api/admin/photo", admin_photo)
+    app.router.add_get("/api/admin/info", admin_info)
     app.router.add_get("/img/{fid}", img)
     app.router.add_get("/static/logo.png", lambda r: web.FileResponse(
         config.ASSETS / "logo.png", headers={"Cache-Control": "public, max-age=86400"}))

@@ -10,6 +10,7 @@ import checker
 import config
 import images
 import notify
+import botextra
 import ops
 import publisher
 import report
@@ -31,6 +32,7 @@ BTN_REPORT = "📊 Hisobot"
 BTN_CHECK = "🛠 Tekshirish"
 BTN_SETTINGS = "⚙️ Sozlamalar"
 BTN_CATALOG = "📒 Katalog"
+BTN_SEARCH = "🔍 Qidirish"
 
 
 def esc(t):
@@ -42,7 +44,8 @@ def webapp_url(params: str = "") -> str:
 
 
 def main_menu():
-    rows = [[{"text": BTN_PHOTO}, {"text": BTN_STOCK}],
+    rows = [[{"text": BTN_SEARCH}],
+            [{"text": BTN_PHOTO}, {"text": BTN_STOCK}],
             [{"text": BTN_EDIT}, {"text": BTN_ADD}],
             [{"text": BTN_REPORT}, {"text": BTN_CHECK}]]
     last = [{"text": BTN_SETTINGS}]
@@ -187,7 +190,7 @@ async def on_message(m):
             return
 
     sess = sessions.get(uid)
-    if text in (BTN_PHOTO, BTN_STOCK, BTN_EDIT, BTN_ADD, BTN_REPORT, BTN_CHECK, BTN_SETTINGS) or text.startswith("/"):
+    if text in (BTN_SEARCH, BTN_PHOTO, BTN_STOCK, BTN_EDIT, BTN_ADD, BTN_REPORT, BTN_CHECK, BTN_SETTINGS) or text.startswith("/"):
         sessions.pop(uid, None)
         await on_menu(uid, text)
         return
@@ -195,6 +198,9 @@ async def on_message(m):
         await on_awaited_text(uid, sess, text)
         return
     if await quick_stock_text(uid, text):
+        return
+    if text:
+        await botextra.show_search(uid, text)
         return
     await bot.send(uid, "Menyudan tanlang 👇 yoki rasm yuboring.\n\n"
                         "Tezkor buyruq: <code>14-NL YA5724 qolmadi</code>, <code>Y936-2 keldi</code>",
@@ -235,7 +241,9 @@ async def send_public_welcome(uid):
 # =====================================================================
 async def on_menu(uid, text):
     cmd = text.split()[0].split("@")[0].lower() if text.startswith("/") else text
-    if cmd in (BTN_PHOTO,):
+    if cmd in (BTN_SEARCH, "/qidir"):
+        await botextra.ask_search(uid, sessions)
+    elif cmd in (BTN_PHOTO,):
         await bot.send(uid, "📷 Rasm(lar)ni shu yerga yuboring. Bir dizayn uchun bir nechta rasmni birga (albom qilib) yuborishingiz mumkin.\n\n"
                             "Maslahat: rasm izohiga dizayn nomini yozsangiz (masalan <code>14-NL</code> yoki <code>Y878-UW4</code>), "
                             "bot uni o'zi topadi.")
@@ -302,6 +310,22 @@ async def _album_done(key):
     alb = _albums.pop(key, None)
     if not alb:
         return
+    pf = (sessions.get(alb["uid"]) or {}).get("photo_for")
+    if pf:
+        uid = alb["uid"]
+        sessions.pop(uid, None)
+        try:
+            data = await bot.download(alb["files"][0])
+            out = await asyncio.get_event_loop().run_in_executor(None, images.process, data, True)
+            d = store.designs[pf[0]]
+            _, it = store.find_item(d, pf[1])
+            r = await bot.call("sendPhoto", files={"photo": ("rasm.jpg", out, "image/jpeg")}, chat_id=str(uid),
+                               caption=f"✅ {it['name']} ({d['title']}) — rasm qo'yildi")
+            ops.set_item_photo(d["id"], it["id"], r["photo"][-1]["file_id"])
+        except Exception as e:  # noqa
+            await checker.report_error("Mahsulot rasmini qo'yishda xato", e)
+            await bot.send(uid, "⚠️ Rasmni qo'yib bo'lmadi, qayta urinib ko'ring.")
+        return
     try:
         await process_and_ask(alb["uid"], alb["files"], alb["caption"], logo=True)
     except Exception as e:  # noqa
@@ -340,7 +364,6 @@ async def process_and_ask(uid, raw_files, caption, logo=True):
         rows.append([btn(f"🖼 {short(d0)} · {it0['name']} rasmi", f"ph:it:{d0['id']}:{it0['id']}")])
     if found:
         rows.append([btn(f"➡️ «{found['title']}» ga qo'yish", f"ph:to:{found['id']}")])
-    rows.append([btn("🖼 Mahsulot rasmi (katalog uchun)", "ph:prod")])
     rows += [[btn("LENON", "ph:sec:lenon"), btn("BODEN", "ph:sec:boden")],
              [btn("Nabor 44", "ph:sec:nabor44"), btn("Nabor 33", "ph:sec:nabor33"), btn("Nabor 39", "ph:sec:nabor39")],
              [btn("Rasmlar bo'limi", "ph:sec:rasmlar")],
@@ -457,13 +480,17 @@ async def photo_callback(uid, data, cb):
         ex = "15-OL" if sess.get("section") == "lenon" else "008"
         await bot.send(uid, f"Yangi dizayn nomini yozing (masalan <code>{ex}</code>):")
         return
-    if parts[1] == "to":
+    if parts[1] in ("to", "dz"):
         d = store.designs.get(parts[2])
         if not d:
             await bot.answer_cb(cb["id"], "Topilmadi", True)
             return
         await bot.answer_cb(cb["id"])
         sess["design"] = d["id"]
+        if parts[1] == "to" and store.section(d["section"])["kind"] == "design":
+            sess["idx"] = 0
+            await ask_item_for_photo(uid, sess, d, 0)
+            return
         if d.get("photos"):
             await bot.send(uid, f"«{esc(d['title'])}» da allaqachon {len(d['photos'])} ta rasm bor.",
                            reply_markup=ikb([[btn("🔄 Almashtirish", "ph:apply:r"), btn("➕ Qo'shish", "ph:apply:a")],
@@ -486,23 +513,21 @@ async def photo_callback(uid, data, cb):
         rows.append([btn("❌ Bekor", "cancel")])
         await bot.send(uid, "Qaysi dizayn?", reply_markup=ikb(rows))
         return
+    if parts[1] == "pg":
+        await bot.answer_cb(cb["id"])
+        d = store.designs[parts[2]]
+        try:
+            await bot.call("editMessageReplyMarkup", chat_id=uid, message_id=cb["message"]["message_id"],
+                           reply_markup=item_pick_markup(d, int(parts[3])))
+        except TelegramError:
+            pass
+        return
     if parts[1] == "pd":
         await bot.answer_cb(cb["id"])
         d = store.designs[parts[2]]
-        page = int(parts[3])
-        items = [it for c in d["categories"] for it in c["items"]]
-        chunk = items[page * PAGE:(page + 1) * PAGE]
-        rows = [[btn(("🖼 " if it.get("photo") else "▫️ ") + it["name"] + (f" · {it['code']}" if it.get("code") else ""),
-                     f"ph:it:{d['id']}:{it['id']}")] for it in chunk]
-        nav = []
-        if page > 0:
-            nav.append(btn("⬅️", f"ph:pd:{d['id']}:{page - 1}"))
-        if (page + 1) * PAGE < len(items):
-            nav.append(btn("➡️", f"ph:pd:{d['id']}:{page + 1}"))
-        if nav:
-            rows.append(nav)
-        rows.append([btn("❌ Bekor", "cancel")])
-        await bot.send(uid, f"<b>{esc(d['title'])}</b>: qaysi mahsulot? (🖼 — rasmi bor)", reply_markup=ikb(rows))
+        sess["design"] = d["id"]
+        sess.setdefault("idx", 0)
+        await ask_item_for_photo(uid, sess, d, int(parts[3]))
         return
     if parts[1] == "it":
         await bot.answer_cb(cb["id"])
@@ -510,13 +535,55 @@ async def photo_callback(uid, data, cb):
         _, it = store.find_item(d, parts[3])
         if not it:
             return
-        ops.set_item_photo(d["id"], it["id"], sess["photos"][0])
-        extra = sess["photos"][1:]
-        sessions.pop(uid, None)
-        msg = f"✅ <b>{esc(it['name'])}</b> ({esc(d['title'])}) rasmi katalogga qo'yildi."
-        if extra:
-            msg += f"\nℹ️ Faqat birinchi rasm olindi ({len(extra)} tasi ishlatilmadi)."
-        await bot.send(uid, msg, reply_markup=main_menu())
+        i = sess.get("idx", 0)
+        ops.set_item_photo(d["id"], it["id"], sess["photos"][i])
+        try:
+            await bot.call("editMessageCaption", chat_id=uid, message_id=cb["message"]["message_id"],
+                           caption=f"✅ {it['name']} ({d['title']}) — rasm qo'yildi")
+        except TelegramError:
+            pass
+        sess["idx"] = i + 1
+        if sess["idx"] < len(sess["photos"]):
+            await ask_item_for_photo(uid, sess, d, 0)
+        else:
+            n = len(sess["photos"])
+            sessions.pop(uid, None)
+            await bot.send(uid, f"✅ Tayyor: {n} ta mahsulot rasmi katalogga qo'yildi.", reply_markup=main_menu())
+        return
+    if parts[1] == "skip":
+        await bot.answer_cb(cb["id"])
+        d = store.designs[sess["design"]]
+        sess["idx"] = sess.get("idx", 0) + 1
+        if sess["idx"] < len(sess["photos"]):
+            await ask_item_for_photo(uid, sess, d, 0)
+        else:
+            sessions.pop(uid, None)
+            await bot.send(uid, "Tayyor ✅", reply_markup=main_menu())
+
+
+def item_pick_markup(d, page):
+    items = [it for c in d["categories"] for it in c["items"]]
+    chunk = items[page * PAGE:(page + 1) * PAGE]
+    rows = [[btn("🖼 Dizaynning umumiy rasmi (slayd-shou)", f"ph:dz:{d['id']}")]]
+    rows += grid([btn(("✅ " if it.get("photo") else "") + it["name"], f"ph:it:{d['id']}:{it['id']}") for it in chunk], 2)
+    nav = []
+    if page > 0:
+        nav.append(btn("⬅️ Oldingi", f"ph:pg:{d['id']}:{page - 1}"))
+    if (page + 1) * PAGE < len(items):
+        nav.append(btn("Keyingi ➡️", f"ph:pg:{d['id']}:{page + 1}"))
+    if nav:
+        rows.append(nav)
+    rows.append([btn("⏭ O'tkazib yuborish", "ph:skip"), btn("❌ Bekor", "cancel")])
+    return ikb(rows)
+
+
+async def ask_item_for_photo(uid, sess, d, page):
+    i = sess.get("idx", 0)
+    n = len(sess["photos"])
+    head = f"{i + 1}/{n}-rasm. " if n > 1 else ""
+    await bot.call("sendPhoto", chat_id=uid, photo=sess["photos"][i],
+                   caption=f"{head}{d['title']}: bu qaysi mahsulot? (✅ — rasmi bor)",
+                   reply_markup=item_pick_markup(d, page))
 
 
 async def apply_photos(uid, sess, replace):
@@ -656,6 +723,18 @@ async def design_create(uid, sess):
 # =====================================================================
 async def on_awaited_text(uid, sess, text):
     w = sess.get("await")
+    if w == "search":
+        sessions.pop(uid, None)
+        await botextra.show_search(uid, text)
+        return
+    if w == "pick_q":
+        sess["q"] = text.strip()
+        sess["page"] = 0
+        await botextra.redraw_pick(uid, sess, new=True)
+        return
+    if w == "reorder":
+        await botextra.reorder_text(uid, sess, text, sessions)
+        return
     if w == "design_title":
         title = text.strip()
         exists = store.find_design(title, sess["section"])
@@ -895,6 +974,26 @@ async def quick_stock_text(uid, text) -> bool:
                 if it.get("code", "").upper() == target.upper() or it["name"].lower() == target.lower():
                     matches.append((dd, it))
     if not matches:
+        # aqlli qidiruv: "za 5 qolmadi" -> Zaftrik 5
+        scored = []
+        for dd in ([design] if design else store.designs.values()):
+            if dd.get("deleted"):
+                continue
+            for c in dd["categories"]:
+                for it in c["items"]:
+                    sc = botextra.match_q(target, it["name"], it.get("code", ""))
+                    if sc:
+                        scored.append((sc, dd, it))
+        if scored:
+            best = max(x[0] for x in scored)
+            names = {x[2]["name"].lower() for x in scored if x[0] == best}
+            if len(names) == 1:
+                matches = [(dd, it) for sc, dd, it in scored if sc == best]
+            else:
+                await bot.send(uid, f"«{esc(target)}» bir nechta mahsulotga to'g'ri keladi: "
+                                    f"{esc(', '.join(sorted(names))[:300])}.\nAniqroq yozing.")
+                return True
+    if not matches:
         await bot.send(uid, f"«{esc(target)}» topilmadi. Kod yoki nomni tekshiring.")
         return True
     if len(matches) == 1:
@@ -907,6 +1006,7 @@ async def quick_stock_text(uid, text) -> bool:
     rows = grid([btn(short(dd), f"qs:{i}") for i, (dd, it) in enumerate(matches)], 3)
     rows.insert(0, [btn(f"Hammasida ({len(matches)} ta)", "qs:all")])
     rows.append([btn("❌ Bekor", "cancel")])
+    target = matches[0][1]["name"]
     await bot.send(uid, f"«{esc(target)}» {len(matches)} ta dizaynda bor. Qaysi birida "
                         f"{'keldi' if in_stock else 'qolmadi'}?", reply_markup=ikb(rows))
     return True
@@ -954,6 +1054,8 @@ async def edit_callback(uid, data, cb):
             rows.append([btn("📝 Mahsulotni tahrirlash", f"ed:items:{d['id']}:0")])
             rows.append([btn("➕ Mahsulot qo'shish", f"ad:d:{d['id']}")])
             rows.append([btn("👥 Agent tugmalari", f"ed:ag:{d['id']}")])
+        if kind == "design":
+            rows.append([btn("↕️ Mahsulotlar tartibi", f"ed:ro:{d['id']}")])
         rows.append([btn("🔤 Nomini o'zgartirish", f"ed:rn:{d['id']}"), btn("📤 Qayta joylash", f"ed:rp:{d['id']}")])
         rows.append([btn("🗑 O'chirish", f"ed:del:{d['id']}")])
         await bot.send(uid, f"<b>{esc(d['title'])}</b> — nima qilamiz?", reply_markup=ikb(rows))
@@ -997,6 +1099,8 @@ async def edit_callback(uid, data, cb):
     elif act == "rmy":
         ops.delete_item(p[2], p[3])
         await bot.send(uid, "🗑 O'chirildi. Jadval yangilanadi.")
+    elif act == "ro":
+        await botextra.show_order(uid, store.designs[p[2]], sessions)
     elif act == "rn":
         sessions[uid] = {"await": "rename", "design": p[2]}
         await bot.send(uid, "Yangi nomni yozing:")
@@ -1057,6 +1161,14 @@ async def add_callback(uid, data, cb):
         rows = grid([btn(short(d), f"ad:d:{d['id']}") for d in ds], 3)
         await bot.send(uid, "Qaysi dizaynga?", reply_markup=ikb(rows))
     elif p[1] == "d":
+        d = store.designs[p[2]]
+        await bot.send(uid, f"➕ <b>{esc(d['title'])}</b> ga qanday qo'shamiz?",
+                       reply_markup=ikb([[btn("📚 Mavjud mahsulotlardan (tanlab)", f"ad:old:{d['id']}")],
+                                         [btn("🆕 Yangi mahsulot (yozib)", f"ad:new:{d['id']}")],
+                                         [btn("❌ Bekor", "cancel")]]))
+    elif p[1] == "old":
+        await botextra.start_pick(uid, store.designs[p[2]], sessions)
+    elif p[1] == "new":
         d = store.designs[p[2]]
         cats = ", ".join(c["name"] for c in d["categories"])
         sessions[uid] = {"await": "add_items", "design": d["id"]}
@@ -1232,6 +1344,10 @@ async def on_callback(cb):
         await add_callback(uid, data, cb)
     elif pre == "se":
         await settings_callback(uid, data, cb)
+    elif pre == "sr":
+        await botextra.search_callback(uid, data, cb, sessions)
+    elif pre == "pk":
+        await botextra.pick_callback(uid, data, cb, sessions, main_menu)
     elif pre == "rep":
         await bot.answer_cb(cb["id"])
         await bot.send(uid, await report.build(int(data.split(":")[1])))

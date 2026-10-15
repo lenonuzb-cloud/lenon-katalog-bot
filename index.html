@@ -22,7 +22,7 @@ html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 var(--s
 header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);padding:12px 16px 0;border-bottom:1px solid var(--line)}
 .top{display:flex;align-items:center;justify-content:center;position:relative;height:34px}
 .top img{height:30px}
-.top .admin{position:absolute;right:0;font-size:10px;letter-spacing:1px;font-weight:700;color:#fff;background:var(--grad);padding:4px 9px;border-radius:20px;display:none}
+.top .admin{position:absolute;right:0;border:0;font-size:10px;letter-spacing:1px;font-weight:700;color:#fff;background:var(--grad);padding:4px 9px;border-radius:20px;display:none}
 .search{margin-top:10px;display:flex;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:0 12px;align-items:center;transition:border-color .15s}
 .search:focus-within{border-color:var(--gold2)}
 .search span{opacity:.5;font-size:14px}
@@ -155,11 +155,59 @@ h1 + div:empty{display:none}
 .backfab:active{transform:scale(.96)}
 main{padding-bottom:110px}
 .sheet{padding-bottom:90px}
+.res{align-items:center}
+.res .rt{flex:1;min-width:0}
+.res .rp{color:var(--gold-dark);font-weight:700;white-space:nowrap}
+.th{flex:none;width:48px;height:48px;border-radius:10px;background:var(--ivory) center/cover no-repeat;display:flex;align-items:center;justify-content:center;font:600 18px var(--serif);color:var(--gold);font-style:normal}
+.res-h{color:var(--hint);font-size:12px;letter-spacing:.5px;margin:0 2px 10px}
+.toolbar .tbs{display:flex;gap:8px}
+.toolbar b.red{color:var(--red);font-weight:600}
+.newdz{width:100%;border:1.5px dashed var(--gold2);background:var(--bg2);color:var(--gold-dark);border-radius:16px;padding:14px;font:600 15px var(--sans);margin-bottom:18px}
+.choice{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;font:inherit;color:var(--text)}
+.choice:active{border-color:var(--gold2);background:var(--bg2)}
+.choice span{font-size:26px;line-height:1}
+.choice b{display:block;font-size:16px;margin-bottom:4px}
+.choice small{color:var(--hint);font-size:13px;line-height:1.35}
+.search.pk{margin:0 0 10px}
+.sheet .search input{border:0;background:transparent;padding:11px 8px;border-radius:0}
+.pk-list{max-height:52vh;overflow:auto;margin:0 -4px;padding:0 4px}
+.pk-cat{font:700 10.5px var(--sans);letter-spacing:2px;text-transform:uppercase;color:var(--gold-dark);margin:14px 2px 6px}
+.sheet .pk-row{display:flex;font-size:14px;letter-spacing:0;text-transform:none;color:var(--text);margin:0 0 6px}
+.pk-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border:1px solid var(--line);border-radius:12px;margin-bottom:6px;background:#fff}
+.pk-row.on{border-color:var(--gold2);background:#fffaf0}
+.pk-row input{width:20px;height:20px;accent-color:var(--gold);flex:none;margin:0}
+.pk-row .rt{flex:1;min-width:0}
+.pk-row .rt b{font-weight:600}
+.pk-row .rt small{display:block;color:var(--hint);font-size:11.5px}
+.pk-row .rp{color:var(--gold-dark);white-space:nowrap}
+.pk-row .th{width:40px;height:40px}
+.pk-bar{display:flex;gap:10px;margin-top:12px}
+.pk-bar .btn{flex:1}
+.btn[disabled]{opacity:.45}
+.ro-help{color:var(--hint);font-size:13px;text-align:center;margin:-4px 0 14px}
+.ro-list{display:flex;flex-direction:column;gap:6px}
+.ro{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 8px 8px 4px}
+.ro .hd{flex:none;width:30px;text-align:center;font-size:22px;color:var(--gold);cursor:grab;touch-action:none;user-select:none}
+.ro .rt{flex:1;min-width:0}
+.ro .rt b{font-weight:600;font-size:14px}
+.ro .rt small{display:block;color:var(--hint);font-size:11.5px}
+.ro-cat{background:var(--bg2);border-color:var(--gold2);margin-top:10px}
+.ro-cat b{flex:1;font:700 12px var(--sans);letter-spacing:2px;text-transform:uppercase;color:var(--gold-dark)}
+.ro-btns{display:flex;gap:4px;flex:none}
+.ro-btns button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--gold-dark);font-size:13px;padding:0}
+.ro-ghost{opacity:.4;background:#fff7e0}
+.ro-bar{position:sticky;bottom:12px;display:flex;gap:10px;margin-top:14px;padding:8px;background:rgba(255,255,255,.95);border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.08);margin-left:96px}
+.ro-bar .btn{flex:1}
+.rep{font-size:14px;line-height:1.5;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:14px;max-height:62vh;overflow:auto}
+.rep ul{margin:6px 0 12px;padding-left:18px}
+.seg{display:flex;gap:6px;margin-bottom:12px}
+.seg button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px;font:600 13px var(--sans);color:var(--hint)}
+.seg button.on{border-color:var(--gold2);color:var(--gold-dark);background:#fffaf0}
 </style>
 </head>
 <body>
 <header>
-  <div class="top"><img src="/static/logo.png" alt="LENON"><span class="admin" id="adm">ADMIN</span></div>
+  <div class="top"><img src="/static/logo.png" alt="LENON"><button class="admin" id="adm">⚙️ ADMIN</button></div>
   <div class="search"><span>🔍</span><input id="q" type="search" placeholder="Nomi yoki kodi bo'yicha qidirish"></div>
   <div class="tabs" id="tabs"></div>
 </header>
@@ -193,6 +241,7 @@ async function load(){
     try{ const m = await (await fetch("/api/me",{headers:{"X-Init-Data":initData}})).json(); ADMIN = !!m.admin; }catch(e){}
   }
   $("#adm").style.display = ADMIN ? "inline-block" : "none";
+  $("#adm").onclick = adminPanel;
   const sp = tg && tg.initDataUnsafe ? tg.initDataUnsafe.start_param : null;
   if (sp && sp.startsWith("d_")){ const d = findDesign(sp.slice(2)); if (d){ if (d.sec.kind==="nabor"){ view = {name:"section", key:"naborlar"}; stack.push(view); view = {name:"nabor", key:d.sec.key}; } else view = {name:"section", key:d.sec.key}; renderTabs(); go({name:"design", id:d.d.id}); return; } }
   renderTabs(); render();
@@ -217,8 +266,8 @@ function renderTabs(){
   document.querySelectorAll(".tab").forEach(b => b.onclick = () => { stack.length=0; view={name:"section", key:b.dataset.k}; $("#q").value=""; renderTabs(); render(); updateBack(); });
 }
 
-function go(v){ view.scroll = window.scrollY; stack.push(view); view=v; render(); updateBack(); window.scrollTo(0,0); }
-function back(){ if (stack.length){ view = stack.pop(); render(); updateBack(); window.scrollTo(0, view.scroll||0); } }
+function go(v){ $("#q").value=""; view.scroll = window.scrollY; stack.push(view); view=v; render(); updateBack(); window.scrollTo(0,0); }
+function back(){ if (stack.length){ $("#q").value=""; view = stack.pop(); render(); updateBack(); window.scrollTo(0, view.scroll||0); } }
 function sheetOpen(){ return $("#sheetbg").style.display==="flex"; }
 function backAction(){ haptic(); if (sheetOpen()) closeSheet(); else back(); }
 function updateBack(){
@@ -249,15 +298,49 @@ function designBadgeState(d){
   return {is_new: d.is_new || items.some(i=>i.is_new), in_stock: d.in_stock, is_keldi: d.is_keldi};
 }
 
+function curQ(){ return $("#q").value.trim(); }
 function render(){
   const m = $("#main");
   if (!CAT){ m.innerHTML='<div class="loading">Yuklanmoqda…</div>'; return; }
-  const q = $("#q").value.trim();
-  if (q && view.name!=="design" && view.name!=="table"){ m.innerHTML = searchView(q); bindSearch(); return; }
+  updatePlaceholder();
+  const q = curQ();
+  if (q && view.name!=="design" && view.name!=="table" && view.name!=="reorder"){ m.innerHTML = searchView(q); bindSearch(); return; }
   if (view.name==="section"){ m.innerHTML = sectionView(view.key); bindCards(); }
   else if (view.name==="nabor"){ m.innerHTML = naborView(view.key); bindCards(); }
   else if (view.name==="design") renderDesign();
   else if (view.name==="table") renderTable();
+  else if (view.name==="reorder") renderReorder();
+}
+function scopeTitle(){
+  if (view.name==="design" || view.name==="table"){ const f = findDesign(view.id); return f ? f.d.title.replace("LENON ","").replace("BODEN ","BODEN ") : ""; }
+  if (view.name==="nabor"){ const s = CAT.sections.find(x=>x.key===view.key); return s ? nabTitle(s) : ""; }
+  if (view.key==="naborlar") return "Naborlar";
+  const s = CAT.sections.find(x=>x.key===view.key); return s ? s.title : "";
+}
+function updatePlaceholder(){ const t = scopeTitle(); $("#q").placeholder = t ? `${t} ichidan qidirish…` : "Qidirish…"; }
+function scopeSections(){
+  if (view.name==="nabor") return CAT.sections.filter(x=>x.key===view.key);
+  if (view.key==="naborlar") return CAT.sections.filter(x=>x.kind==="nabor");
+  return CAT.sections.filter(x=>x.key===view.key);
+}
+function nrm(t){ return String(t||"").toLowerCase().replace(/[‘’`ʻʼ]/g,"'").replace(/,/g,"."); }
+// "za 5" -> Zaftrik 5, "ta to 9" -> Tar tosh 9: har bir so'z mahsulot nomidagi so'z boshiga mos kelishi kerak
+function matchQ(q, name, code){
+  const c = nrm(code), flat = nrm(q).replace(/\s+/g,"");
+  if (c && flat.length >= 3 && c.includes(flat)) return 6;
+  const toks = nrm(q).replace(/([a-z'])(\d)/g,"$1 $2").split(/\s+/).filter(Boolean);
+  if (!toks.length) return 0;
+  const nm = nrm(name), words = nm.split(/[\s\-\/+]+/).filter(Boolean);
+  let score = 0;
+  for (const t of toks){
+    if (c && t.length >= 3 && c.includes(t)){ score += 3; continue; }
+    let hit = 0;
+    for (const w of words){ if (w === t){ hit = 3; break; } if (w.startsWith(t)) hit = Math.max(hit, 2); }
+    if (!hit && t.length >= 3 && nm.includes(t)) hit = 1;
+    if (!hit) return 0;
+    score += hit;
+  }
+  return score;
 }
 
 function sectionView(key){
@@ -267,9 +350,10 @@ function sectionView(key){
   }
   const sec = CAT.sections.find(s=>s.key===key);
   if (!sec) return '<div class="empty-msg">Bo\'lim topilmadi</div>';
-  if (!sec.designs.length) return '<div class="empty-msg">Hozircha bo\'sh</div>';
+  if (!sec.designs.length && !ADMIN) return '<div class="empty-msg">Hozircha bo\'sh</div>';
   if (sec.kind==="photos") return `<div class="grid two">${sec.designs.map(d=>cardHtml(d,true)).join("")}</div>`;
-  return `<div class="grid">${sec.designs.map(d=>cardHtml(d,false)).join("")}</div>`;
+  const add = ADMIN && sec.kind==="design" ? `<button class="newdz" id="newdz" data-sec="${sec.key}">➕ Yangi dizayn qo'shish</button>` : "";
+  return add + `<div class="grid">${sec.designs.map(d=>cardHtml(d,false)).join("")}</div>`;
 }
 function nabTitle(s){ return "Nabor " + s.title.replace(/\D+/g,""); }
 function naborCardHtml(s){
@@ -300,6 +384,7 @@ function cardHtml(d, small){
   return `<button class="card ${d.in_stock?"":"out"}" data-id="${d.id}">${ph}<div class="info"><div class="t">${esc(d.title)}</div><div class="meta"><span class="s">${sub}</span><span class="go">Ko'rish →</span></div></div></button>`;
 }
 function bindCards(){
+  const nd = $("#newdz"); if (nd) nd.onclick = () => newDesignSheet(nd.dataset.sec);
   document.querySelectorAll(".card[data-id]").forEach(c => c.onclick = () => go({name:"design", id:c.dataset.id}));
   document.querySelectorAll(".card[data-nab]").forEach(c => c.onclick = () => go({name:"nabor", key:c.dataset.nab}));
 }
@@ -320,19 +405,27 @@ function renderDesign(){
   if (!f){ m.innerHTML='<div class="empty-msg">Topilmadi</div>'; return; }
   const {sec, d} = f;
   if (sec.kind!=="design"){ renderTable(); return; }
-  let h = heroHtml(d, sec);
-  h += `<h1>${esc(d.title)}</h1><div class="orn">LENON</div>`;
-  if (d.note) h += `<div class="note">${esc(d.note)}</div>`;
-  if (d.agents.length) h += `<div class="agents">${d.agents.filter(a=>a.username).map(a=>`<button data-u="${esc(a.username)}">💬 ${esc(a.name)}</button>`).join("")}</div>`;
-  h += `<div class="toolbar"><span>${d.categories.reduce((a,c)=>a+c.items.length,0)} ta mahsulot</span>
-        <button class="tbtn" id="totable">${ADMIN?"✏️ Tahrirlash":"📋 Jadval"}</button></div>`;
-  let body = "";
-  for (const c of d.categories){
-    if (!c.items.length) continue;
-    if (c.name && c.name!=="Asosiy") body += `<div class="gcat">${esc(c.name)}</div>`;
-    body += `<div class="grid two">${c.items.map(prodCardHtml).join("")}</div>`;
+  const q = curQ();
+  let h = "";
+  if (!q){
+    h += heroHtml(d, sec);
+    h += `<h1>${esc(d.title)}</h1><div class="orn">${sec.key==="boden"?"BODEN":"LENON"}</div>`;
+    if (d.note) h += `<div class="note">${esc(d.note)}</div>`;
+    if (d.agents.length) h += `<div class="agents">${d.agents.filter(a=>a.username).map(a=>`<button data-u="${esc(a.username)}">💬 ${esc(a.name)}</button>`).join("")}</div>`;
   }
-  h += body || '<div class="empty-msg">Hozircha mahsulot yo\'q</div>';
+  const total = d.categories.reduce((a,c)=>a+c.items.length,0);
+  let body = "", found = 0;
+  for (const c of d.categories){
+    const items = q ? c.items.filter(it=>matchQ(q, it.name, it.code)) : c.items;
+    if (!items.length) continue;
+    found += items.length;
+    if (c.name && c.name!=="Asosiy") body += `<div class="gcat">${esc(c.name)}</div>`;
+    body += `<div class="grid two">${items.map(prodCardHtml).join("")}</div>`;
+  }
+  const out = q ? 0 : d.categories.reduce((a,c)=>a+c.items.filter(i=>!i.in_stock).length,0);
+  h += `<div class="toolbar"><span>${q ? `${esc(d.title)}: ${found} ta topildi` : `${total} ta mahsulot${out?` · <b class="red">${out} tasi qolmagan</b>`:""}`}</span>
+        <span class="tbs">${ADMIN?`<button class="tbtn" id="addprod">➕</button><button class="tbtn" id="reord2" title="Tartib">↕️</button>`:""}<button class="tbtn" id="totable">${ADMIN?"✏️ Jadval":"📋 Jadval"}</button></span></div>`;
+  h += body || (q ? `<div class="empty-msg">«${esc(q)}» — bu dizaynda topilmadi</div>` : '<div class="empty-msg">Hozircha mahsulot yo\'q</div>');
   if (d.link) h += `<button class="btn ghost addbtn" id="openpost">↗️ Guruhdagi postni ochish</button>`;
   m.innerHTML = h;
   const sl = $("#slides");
@@ -340,6 +433,8 @@ function renderDesign(){
   document.querySelectorAll(".agents button").forEach(b => b.onclick = () => openTg("https://t.me/"+b.dataset.u));
   const op = $("#openpost"); if (op) op.onclick = () => openTg(d.link);
   $("#totable").onclick = () => go({name:"table", id:d.id});
+  const ap = $("#addprod"); if (ap) ap.onclick = () => addChooser(d);
+  const r2 = $("#reord2"); if (r2) r2.onclick = () => go({name:"reorder", id:d.id});
   document.querySelectorAll(".pcard").forEach(b => b.onclick = () => prodSheet(d, findItem(d, b.dataset.item)));
   if (view.openItem){ const it = findItem(d, view.openItem); view.openItem = null; if (it) prodSheet(d, it); }
 }
@@ -404,9 +499,12 @@ function renderTable(){
     if (d.agents.length) h += `<div class="agents">${d.agents.filter(a=>a.username).map(a=>`<button data-u="${esc(a.username)}">💬 ${esc(a.name)}</button>`).join("")}</div>`;
     const hasCode = d.categories.some(c=>c.items.some(i=>i.code));
     let n=0, rows="";
+    const tq = curQ();
     for (const c of d.categories){
+      const its = tq ? c.items.filter(it=>matchQ(tq, it.name, it.code)) : c.items;
+      if (!its.length) continue;
       if (c.name && c.name!=="Asosiy") rows += `<div class="cat">${esc(c.name)}</div>`;
-      for (const it of c.items){
+      for (const it of its){
         n++;
         rows += `<div class="row ${it.in_stock?"":"out"} ${ADMIN?"adm":""}" data-item="${it.id}">
           <span class="n">${n}</span><span class="nm">${esc(it.name)}${chips(it)}</span>
@@ -416,6 +514,7 @@ function renderTable(){
     }
     h += `<div class="tbl">${rows || '<div class="empty-msg">Jadval bo\'sh</div>'}</div>`;
     if (ADMIN) h += `<button class="btn addbtn" id="additem">➕ Mahsulot qo'shish</button>
+                     <button class="btn ghost addbtn" id="reord">↕️ Mahsulotlar tartibini o'zgartirish</button>
                      <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="rename">🔤 Nomini o'zgartirish</button><button class="btn ghost" style="flex:1;color:var(--red)" id="deld">🗑 Dizaynni o'chirish</button></div>`;
   }
   if (d.link) h += `<button class="btn ghost addbtn" id="openpost">↗️ Guruhdagi postni ochish</button>`;
@@ -433,10 +532,89 @@ function renderTable(){
     });
     document.querySelectorAll("[data-item]").forEach(r => r.onclick = () => editSheet(d, findItem(d, r.dataset.item)));
     const ns = $("#nstock"); if (ns) ns.onclick = () => act({action:"stock", design:d.id, in_stock: !d.in_stock}, d.in_stock?"Qolmadi deb belgilandi":"Keldi deb belgilandi");
-    const ai = $("#additem"); if (ai) ai.onclick = () => editSheet(d, null);
+    const ai = $("#additem"); if (ai) ai.onclick = () => addChooser(d);
     const rn = $("#rename"); if (rn) rn.onclick = () => renameSheet(d);
+    const ro = $("#reord"); if (ro) ro.onclick = () => go({name:"reorder", id:d.id});
     const dd = $("#deld"); if (dd) dd.onclick = () => confirmDo(`«${d.title}» katalogdan va guruhdan o'chirilsinmi?`, () => act({action:"delete_design", design:d.id}, "O'chirildi").then(back));
   }
+}
+
+let SORTABLE_P = null;
+function loadSortable(){
+  if (window.Sortable) return Promise.resolve(true);
+  if (!SORTABLE_P) SORTABLE_P = new Promise(res => { const sc = document.createElement("script");
+    sc.src = "https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"; sc.onload = () => res(true); sc.onerror = () => res(false); document.head.appendChild(sc); });
+  return SORTABLE_P;
+}
+function renderReorder(){
+  const f = findDesign(view.id); const m = $("#main");
+  if (!f || !ADMIN){ m.innerHTML='<div class="empty-msg">Topilmadi</div>'; return; }
+  const d = f.d;
+  if (!view.L){
+    view.L = [];
+    for (const c of d.categories){ view.L.push({cat:c.name}); for (const it of c.items) view.L.push({item:it.id, name:it.name, code:it.code, price:it.price}); }
+  }
+  const L = view.L;
+  const rowHtml = (x, i) => x.cat !== undefined
+    ? `<div class="ro ro-cat" data-i="${i}"><span class="hd">≡</span><b>${esc(x.cat)}</b><span class="ro-btns"><button data-up="${i}">▲</button><button data-dn="${i}">▼</button><button data-ren="${i}">✎</button></span></div>`
+    : `<div class="ro" data-i="${i}"><span class="hd">≡</span><span class="rt"><b>${esc(x.name)}</b><small>${esc(x.code||"")} · ${esc(x.price)}</small></span><span class="ro-btns"><button data-up="${i}">▲</button><button data-dn="${i}">▼</button></span></div>`;
+  m.innerHTML = `<h1>${esc(d.title)}</h1><div class="orn">TARTIB</div>
+    <div class="ro-help">≡ belgisidan ushlab sudrang yoki ▲▼ bilan bittadan suring. Mahsulotni boshqa guruh ostiga ham o'tkazish mumkin.</div>
+    <div class="ro-list" id="rolist">${L.map(rowHtml).join("")}</div>
+    <button class="btn ghost addbtn" id="ro_cat">＋ Yangi guruh nomi qo'shish</button>
+    <div class="ro-bar"><button class="btn ghost" id="ro_cancel">Bekor</button><button class="btn" id="ro_save">💾 Saqlash</button></div>`;
+  const move = (i, j) => { if (j < 0 || j >= L.length) return; const [x] = L.splice(i,1); L.splice(j,0,x); const y = window.scrollY; renderReorder(); window.scrollTo(0,y); haptic(); };
+  m.querySelectorAll("[data-up]").forEach(b => b.onclick = () => move(+b.dataset.up, +b.dataset.up - 1));
+  m.querySelectorAll("[data-dn]").forEach(b => b.onclick = () => move(+b.dataset.dn, +b.dataset.dn + 1));
+  m.querySelectorAll("[data-ren]").forEach(b => b.onclick = async () => { const i = +b.dataset.ren; const v = await askText("Guruh nomi", L[i].cat); if (v){ L[i].cat = v; renderReorder(); } });
+  $("#ro_cat").onclick = async () => { const v = await askText("Yangi guruh nomi", "", "masalan: Tarelka bort"); if (v){ L.unshift({cat:v}); renderReorder(); window.scrollTo(0,0); } };
+  $("#ro_cancel").onclick = () => back();
+  $("#ro_save").onclick = async () => {
+    const layout = L.map(x => x.cat !== undefined ? {cat:x.cat} : {item:x.item});
+    if (await act({action:"reorder", design:d.id, layout}, "Tartib saqlandi")) back();
+  };
+  loadSortable().then(ok => {
+    const el = $("#rolist"); if (!ok || !el || !window.Sortable) return;
+    Sortable.create(el, {handle:".hd", animation:150, delay:0, ghostClass:"ro-ghost",
+      onEnd: () => { const order = [...el.children].map(r => L[+r.dataset.i]); L.length = 0; L.push(...order); const y = window.scrollY; renderReorder(); window.scrollTo(0,y); }});
+  });
+}
+function askText(title, val, ph){
+  return new Promise(res => {
+    openSheet(`<h3>${esc(title)}</h3><input id="ask_v" value="${esc(val||"")}" placeholder="${esc(ph||"")}">
+      <div class="acts"><button class="btn ghost" id="ask_c">Bekor</button><button class="btn" id="ask_ok">OK</button></div>`);
+    $("#ask_c").onclick = () => { closeSheet(); res(null); };
+    $("#ask_ok").onclick = () => { const v = $("#ask_v").value.trim(); closeSheet(); res(v || null); };
+    setTimeout(() => $("#ask_v").focus(), 50);
+  });
+}
+async function adminInfo(q){
+  const r = await fetch("/api/admin/info?"+q, {headers:{"X-Init-Data":initData}}); return r.json();
+}
+function adminPanel(){
+  openSheet(`<h3>⚙️ Boshqaruv</h3>
+    <button class="choice" id="ap_rep"><span>📊</span><div><b>Hisobot</b><small>Qo'shilgan, qolmadi/keldi bo'lgan, tahrirlangan mahsulotlar va hozir qolmaganlar</small></div></button>
+    <button class="choice" id="ap_chk"><span>🛠</span><div><b>Tekshirish (nazoratchi)</b><small>Bot holati va jadvallardagi xatolar: narx, kod, takrorlar</small></div></button>
+    <div class="pinfo2">Adminlar va agentlar sozlamalari — botdagi ⚙️ Sozlamalar menyusida (faqat egasi uchun).</div>`);
+  $("#ap_rep").onclick = () => reportSheet(24);
+  $("#ap_chk").onclick = async () => {
+    openSheet(`<h3>🛠 Tekshiruv</h3><div class="loading">Tekshirilmoqda…</div>`);
+    try{
+      const j = await adminInfo("t=check");
+      const bot = j.bot.length ? j.bot.map(x=>`<li>${esc(x)}</li>`).join("") : "<li>Hammasi joyida ✅</li>";
+      const pr = j.problems.length ? j.problems.slice(0,80).map(x=>`<li>${esc(x)}</li>`).join("") : "<li>Xato topilmadi ✅</li>";
+      openSheet(`<h3>🛠 Tekshiruv</h3><div class="rep"><b>Bot holati</b><ul>${bot}</ul><b>Jadvallar (${j.problems.length})</b><ul>${pr}</ul></div>`);
+    }catch(e){ toast("⚠️ Internet bilan muammo", true); }
+  };
+}
+async function reportSheet(h){
+  openSheet(`<h3>📊 Hisobot</h3><div class="loading">Tayyorlanmoqda…</div>`);
+  try{
+    const j = await adminInfo("t=report&h="+h);
+    openSheet(`<h3>📊 Hisobot</h3><div class="seg">${[[24,"Bugun"],[168,"7 kun"],[720,"30 kun"]].map(([v,t])=>`<button data-h="${v}" class="${v===h?"on":""}">${t}</button>`).join("")}</div>
+      <div class="rep">${j.html.replace(/\n/g,"<br>")}</div>`);
+    document.querySelectorAll(".seg button").forEach(b => b.onclick = () => reportSheet(+b.dataset.h));
+  }catch(e){ toast("⚠️ Internet bilan muammo", true); }
 }
 function findItem(d, id){ for (const c of d.categories) for (const i of c.items) if (i.id===id) return Object.assign({cat:c.name}, i); return null; }
 function openTg(url){ if (tg && url.startsWith("https://t.me/")) tg.openTelegramLink(url); else window.open(url, "_blank"); }
@@ -478,6 +656,71 @@ function editSheet(d, it){
   const del = $("#f_del");
   if (del) del.onclick = () => confirmDo(`«${it.name}» jadvaldan o'chirilsinmi?`, async () => { if (await act({action:"delete_item", design:d.id, item:it.id}, "O'chirildi")) closeSheet(); });
 }
+function addChooser(d){
+  openSheet(`<h3>➕ Mahsulot qo'shish</h3><div class="pinfo2" style="margin:-6px 0 14px">${esc(d.title)}</div>
+    <button class="choice" id="ch_old"><span>📚</span><div><b>Mavjud mahsulotlardan</b><small>Boshqa dizaynlardagi mahsulotlar — nomi, kodi, narxi tayyor. Bir nechtasini belgilab, birdan qo'shasiz.</small></div></button>
+    <button class="choice" id="ch_new"><span>🆕</span><div><b>Yangi mahsulot</b><small>Hech qaysi dizaynda yo'q mahsulot — nomi, kodi, narxini o'zingiz yozasiz.</small></div></button>`);
+  $("#ch_new").onclick = () => editSheet(d, null);
+  $("#ch_old").onclick = () => pickSheet(d);
+}
+function pickSheet(d){
+  const f = findDesign(d.id); const sec = f.sec;
+  const have = new Set(d.categories.flatMap(c=>c.items.map(i=>(i.name+"|"+(i.code||"")).toLowerCase())));
+  const map = new Map();
+  for (const x of sec.designs) for (const c of x.categories) for (const it of c.items){
+    const k = (it.name+"|"+(it.code||"")).toLowerCase();
+    if (have.has(k)) continue;
+    if (!map.has(k)) map.set(k, {name:it.name, code:it.code||"", prices:{}, cats:{}, photo:""});
+    const e = map.get(k); e.prices[it.price]=(e.prices[it.price]||0)+1; e.cats[c.name]=(e.cats[c.name]||0)+1; if (!e.photo && it.photo) e.photo = it.photo;
+  }
+  const top = o => Object.entries(o).sort((a,b)=>b[1]-a[1])[0]?.[0] || "";
+  const list = [...map.values()].map(e=>({name:e.name, code:e.code, price:top(e.prices), category:top(e.cats), photo:e.photo}))
+                               .sort((a,b)=>a.category.localeCompare(b.category) || a.name.localeCompare(b.name, undefined, {numeric:true}));
+  const sel = new Set();
+  openSheet(`<h3>📚 Mavjud mahsulotlar</h3><div class="pinfo2" style="margin:-6px 0 10px">${esc(sec.title)} bo'limidagi ${list.length} ta mahsulot · ${esc(d.title)} ga qo'shish</div>
+    <div class="search pk"><span>🔍</span><input id="pk_q" type="search" placeholder="Qidirish: masalan «ta to 9»"></div>
+    <div id="pk_list" class="pk-list"></div>
+    <div class="pk-bar"><button class="btn ghost" id="pk_all">Hammasini belgilash</button><button class="btn" id="pk_go" disabled>Qo'shish (0)</button></div>`);
+  const draw = () => {
+    const q = $("#pk_q").value.trim();
+    const rows = (q ? list.map((x,i)=>({x,i,sc:matchQ(q,x.name,x.code)})).filter(r=>r.sc).sort((a,b)=>b.sc-a.sc) : list.map((x,i)=>({x,i})));
+    let last = null, h = "";
+    for (const {x,i} of rows){
+      if (!q && x.category !== last){ h += `<div class="pk-cat">${esc(x.category)}</div>`; last = x.category; }
+      h += `<label class="pk-row ${sel.has(i)?"on":""}" data-i="${i}"><input type="checkbox" ${sel.has(i)?"checked":""}>
+        <span class="rt"><b>${esc(x.name)}</b><small>${esc(x.code||"—")} · ${esc(x.category)}</small></span><b class="rp">${esc(x.price)}</b>${thumbHtml(x.photo)}</label>`;
+    }
+    $("#pk_list").innerHTML = h || `<div class="empty-msg">${list.length ? "Topilmadi" : "Bu dizaynda bo'lim mahsulotlarining hammasi bor"}</div>`;
+    $("#pk_list").querySelectorAll(".pk-row").forEach(r => r.querySelector("input").onchange = e => {
+      const i = +r.dataset.i; if (e.target.checked) sel.add(i); else sel.delete(i); r.classList.toggle("on", e.target.checked); upd(); });
+  };
+  const upd = () => { const b = $("#pk_go"); b.textContent = `Qo'shish (${sel.size})`; b.disabled = !sel.size; };
+  $("#pk_q").oninput = draw;
+  $("#pk_all").onclick = () => { const q = $("#pk_q").value.trim(); list.forEach((x,i)=>{ if (!q || matchQ(q,x.name,x.code)) sel.add(i); }); draw(); upd(); };
+  $("#pk_go").onclick = async () => {
+    const items = [...sel].map(i=>({name:list[i].name, code:list[i].code, price:list[i].price, category:list[i].category}));
+    if (await act({action:"add_items", design:d.id, items}, `${items.length} ta mahsulot qo'shildi (NEW belgisi bilan)`)) closeSheet();
+  };
+  draw();
+}
+function newDesignSheet(secKey){
+  const sec = CAT.sections.find(x=>x.key===secKey);
+  openSheet(`<h3>➕ Yangi dizayn</h3><div class="pinfo2" style="margin:-6px 0 6px">${esc(sec.title)} bo'limiga</div>
+    <label>Dizayn nomi</label><input id="nd_t" placeholder="${secKey==="boden"?"masalan: 008":"masalan: 15-OL"}">
+    <div class="pinfo2" style="margin-top:8px">Keyin mahsulotlarni «📚 Mavjud mahsulotlardan» tez qo'shasiz. Dizayn rasmini botga yuborasiz.</div>
+    <div class="acts"><button class="btn ghost" id="nd_c">Bekor</button><button class="btn" id="nd_s">Yaratish</button></div>`);
+  $("#nd_c").onclick = closeSheet;
+  $("#nd_s").onclick = async () => {
+    const title = $("#nd_t").value.trim(); if (!title){ toast("Nomini yozing", true); return; }
+    try{
+      const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify({action:"add_design", section:secKey, title})});
+      const j = await r.json();
+      if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return; }
+      CAT.sections = j.catalog.sections; closeSheet(); toast("✅ Dizayn yaratildi. Endi mahsulotlarni qo'shing");
+      go({name:"design", id:j.design}); const nd = findDesign(j.design); if (nd) pickSheet(nd.d);
+    }catch(e){ toast("⚠️ Internet bilan muammo", true); }
+  };
+}
 function renameSheet(d){
   openSheet(`<h3>🔤 Nomini o'zgartirish</h3><input id="r_t" value="${esc(d.title)}">
     <div class="acts"><button class="btn ghost" id="r_c">Bekor</button><button class="btn" id="r_s">Saqlash</button></div>`);
@@ -489,18 +732,23 @@ function confirmDo(text, fn){
   else if (confirm(text)) fn();
 }
 
+function thumbHtml(fid){ return fid ? `<i class="th" style="background-image:url('${img(fid,160)}')"></i>` : `<i class="th empty">L</i>`; }
 function searchView(q){
-  const s = q.toLowerCase(); const out = [];
-  for (const sec of CAT.sections) for (const d of sec.designs){
-    if (d.title.toLowerCase().includes(s)) out.push({d, it:null});
-    for (const c of d.categories) for (const it of c.items)
-      if (it.name.toLowerCase().includes(s) || (it.code||"").toLowerCase().includes(s)) out.push({d, it});
-    if (out.length > 150) break;
+  const out = [];
+  for (const sec of scopeSections()) for (const d of sec.designs){
+    const ds = matchQ(q, d.title, "");
+    if (ds) out.push({d, it:null, sc:ds+1});
+    for (const c of d.categories) for (const it of c.items){
+      const sc = matchQ(q, it.name, it.code);
+      if (sc) out.push({d, it, sc});
+    }
   }
-  if (!out.length) return '<div class="empty-msg">Hech narsa topilmadi</div>';
-  return out.map(({d,it}) => it
-    ? `<button class="res" data-id="${d.id}" data-item="${it.id}"><span><b>${esc(it.name)}</b>${chips(it)}<small>${esc(d.title)} · ${esc(it.code)}</small></span><b>${esc(it.price)}</b></button>`
-    : `<button class="res" data-id="${d.id}"><span><b>${esc(d.title)}</b>${chips(d)}<small>dizayn</small></span><span>›</span></button>`).join("");
+  if (!out.length) return `<div class="empty-msg">«${esc(q)}» — hech narsa topilmadi</div>`;
+  out.sort((a,b)=>b.sc-a.sc);
+  const head = `<div class="res-h">${out.length} ta natija · ${esc(scopeTitle())}</div>`;
+  return head + out.slice(0,200).map(({d,it}) => it
+    ? `<button class="res" data-id="${d.id}" data-item="${it.id}"><span class="rt"><b>${esc(it.name)}</b>${chips(it)}<small>${esc(d.title)} · ${esc(it.code||"")}</small></span><b class="rp">${esc(it.price)}</b>${thumbHtml(it.photo || d.photos[0])}</button>`
+    : `<button class="res" data-id="${d.id}"><span class="rt"><b>${esc(d.title)}</b>${chips(d)}<small>dizayn</small></span><span class="rp">›</span>${thumbHtml(d.photos[0])}</button>`).join("");
 }
 function bindSearch(){ document.querySelectorAll(".res").forEach(b => b.onclick = () => { $("#q").value=""; go({name:"design", id:b.dataset.id, openItem:b.dataset.item||null}); }); }
 $("#q").oninput = () => render();

@@ -142,3 +142,64 @@ def set_item_photo(design_id, item_id, file_id):
     it["updated"] = __import__("time").time()
     store.event("edit", f"{it['name']} ({d['title']}): rasm qo'yildi", design_id)
     store.save()
+
+
+def add_items(design_id, items: list) -> tuple[int, list]:
+    """Bir nechta mahsulotni birdan qo'shadi (mavjud mahsulotlar ro'yxatidan)."""
+    d = _design(design_id)
+    warns, n = [], 0
+    for x in items:
+        name, code, price, warns1 = checker.validate_new_item(d, x.get("name", ""), x.get("code", ""), x.get("price", ""))
+        if not name:
+            continue
+        dup = any(it["name"].lower() == name.lower() and it.get("code", "") == code
+                  for c in d["categories"] for it in c["items"])
+        if dup:
+            warns.append(f"{name} bu dizaynda allaqachon bor")
+            continue
+        store.add_item(d, x.get("category") or "Aralash", name, code, price)
+        notify.add("new", f"{name} ({d['title']})")
+        warns += [f"{name}: {w}" for w in warns1]
+        n += 1
+    if n:
+        store.save()
+        publisher.queue_update(design_id)
+    return n, warns
+
+
+def add_design(section_key, title) -> str:
+    title = " ".join((title or "").split())
+    if not title:
+        raise OpError("Nomini yozing")
+    if not store.section(section_key):
+        raise OpError("Bo'lim topilmadi")
+    if store.find_design(title, section_key):
+        raise OpError("Bunday nomli dizayn allaqachon bor")
+    did = store.add_design(section_key, title)
+    store.save()
+    notify.add("new", f"{store.designs[did]['title']} — yangi dizayn")
+    return did
+
+
+def reorder(design_id, layout: list):
+    """layout: [{"cat": "Tarelka bort"}, {"item": "id1"}, {"item": "id2"}, {"cat": "Aval"}, ...]"""
+    d = _design(design_id)
+    by_id = {it["id"]: it for c in d["categories"] for it in c["items"]}
+    seen, cats, cur = set(), [], None
+    for x in layout:
+        if "cat" in x:
+            cur = {"name": (x.get("cat") or "").strip() or "Aralash", "items": []}
+            cats.append(cur)
+        elif x.get("item") in by_id and x["item"] not in seen:
+            if cur is None:
+                cur = {"name": "Asosiy", "items": []}
+                cats.append(cur)
+            cur["items"].append(by_id[x["item"]])
+            seen.add(x["item"])
+    missing = [it for iid, it in by_id.items() if iid not in seen]
+    if missing:
+        raise OpError("Tartib saqlanmadi: ba'zi mahsulotlar yo'qolib qoldi. Sahifani yangilab, qayta urinib ko'ring.")
+    d["categories"] = [c for c in cats if c["items"]]
+    store.event("edit", f"{d['title']}: mahsulotlar tartibi o'zgartirildi", design_id)
+    store.save()
+    publisher.queue_update(design_id)
