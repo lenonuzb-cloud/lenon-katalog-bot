@@ -206,8 +206,8 @@ async def on_group_message(m):
             return
         thread = m.get("message_thread_id") if m.get("is_topic_message") else None
         if not thread:
-            await bot.send(chat["id"], "Bu buyruqni kerakli bo'limning ICHIDA yozing.")
-            return
+            # guruhning umumiy (General) bo'limi — Telegram unga raqam bermaydi, -1 deb saqlaymiz
+            thread = -1
         st = store.settings
         st["group_id"] = chat["id"]
         st["group_username"] = chat.get("username", "") or st.get("group_username", "")

@@ -356,6 +356,8 @@ class Store:
         if not m or not st.get("group_id"):
             return ""
         thread = st["topics"].get(d["section"])
+        if thread == -1:
+            thread = None
         if st.get("group_username"):
             base = f"https://t.me/{st['group_username']}"
         else:

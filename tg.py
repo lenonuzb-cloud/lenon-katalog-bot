@@ -45,6 +45,9 @@ class Bot:
     async def call(self, method: str, files: dict | None = None, _retries: int = 3, **params):
         """Bot API metodini chaqiradi. 429 (juda tez) bo'lsa kutib qayta urinadi."""
         params = {k: v for k, v in params.items() if v is not None}
+        # -1 = guruhning umumiy (General) bo'limi: Telegram'ga raqamsiz yuboriladi
+        if str(params.get("message_thread_id", "")) == "-1":
+            params.pop("message_thread_id")
         for attempt in range(_retries + 1):
             try:
                 if files:
