@@ -130,6 +130,13 @@ def _topic_key_by_name(name: str):
     for k, v in config.TOPIC_KEYS.items():
         if n == v.lower():
             return k
+    # yumshoq moslash: "LENON nabor 44 talik", "📦 BODEN" va h.k.
+    for num in ("44", "33", "39"):
+        if "nabor" in n and num in n:
+            return "nabor" + num
+    for k in ("muhokama", "rasmlar", "boden", "lenon"):
+        if k in n or (k == "rasmlar" and "rasm" in n):
+            return k
     return None
 
 
@@ -1419,4 +1426,9 @@ async def on_callback(cb):
     else:
         await bot.answer_cb(cb["id"])
 _orig_on_message = on_message
-async def on_message(m): return None if (m.get("from") or {}).get("is_bot") or m.get("pinned_message") else await _orig_on_message(m)
+async def on_message(m):
+    frm = m.get("from") or {}
+    # anonim admin (guruh nomidan yozilgan) xabarlari bot emas — ularni o'tkazib yubormaymiz
+    if (frm.get("is_bot") and frm.get("id") != ANON_BOT_ID) or m.get("pinned_message"):
+        return None
+    return await _orig_on_message(m)
