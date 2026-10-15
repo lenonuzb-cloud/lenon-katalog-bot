@@ -8,6 +8,7 @@ import traceback
 from collections import defaultdict
 
 import config
+import registry
 from store import store, now
 from tg import bot, TelegramError
 
@@ -72,6 +73,7 @@ def audit() -> list[str]:
                         price_by[(it["code"], it["name"].lower().replace(" ", ""))].add(it["price"])
             if not d["categories"]:
                 probs.append(f"{d['title']}: jadval bo'sh")
+            probs.extend(registry.duplicates_in(d))
         if not d.get("photos"):
             no_photo.append(d["title"])
     for code, names in by_code.items():
@@ -110,11 +112,15 @@ async def self_check() -> list[str]:
         if missing:
             out.append("⚠️ Sozlanmagan bo'limlar: " + ", ".join(missing))
     no_post = [d["title"] for d in store.designs.values()
-               if not d.get("deleted") and not d.get("msg") and d["section"] != "rasmlar"]
+               if not d.get("deleted") and not d.get("msg") and d["section"] != "rasmlar"
+               and not (store.section(d["section"])["kind"] == "nabor" and not d.get("photos"))]
     if no_post:
         out.append(f"ℹ️ Guruhga hali bot joylamagan dizaynlar: {len(no_post)} ta")
     if store.last_backup_error:
         out.append(f"❗ Zaxira nusxa saqlanmadi: {store.last_backup_error}")
+    if not bot.me.get("has_main_web_app"):
+        out.append("⚠️ BotFather'da Mini App yoqilmagan — jadval tagidagi «Katalog» havolasi Telegram ichida emas, "
+                   "brauzerda ochiladi. Yoqish: @BotFather → /mybots → bot → Bot Settings → Configure Mini App.")
     if st.get("rich_ok") is False:
         out.append("ℹ️ Boy (rich) xabarlar ishlamadi — jadvallar rasm ko'rinishida joylanmoqda.")
     return out

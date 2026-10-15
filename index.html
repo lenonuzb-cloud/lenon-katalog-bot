@@ -203,6 +203,8 @@ main{padding-bottom:110px}
 .seg{display:flex;gap:6px;margin-bottom:12px}
 .seg button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px;font:600 13px var(--sans);color:var(--hint)}
 .seg button.on{border-color:var(--gold2);color:var(--gold-dark);background:#fffaf0}
+.pk-row.have{opacity:.55;background:var(--bg2)}
+.pk-row.have input{accent-color:#9a9a9a}
 </style>
 </head>
 <body>
@@ -242,7 +244,8 @@ async function load(){
   }
   $("#adm").style.display = ADMIN ? "inline-block" : "none";
   $("#adm").onclick = adminPanel;
-  const sp = tg && tg.initDataUnsafe ? tg.initDataUnsafe.start_param : null;
+  let sp = tg && tg.initDataUnsafe ? tg.initDataUnsafe.start_param : null;
+  if (!sp){ const u = new URLSearchParams(location.search); if (u.get("d")) sp = "d_" + u.get("d"); }
   if (sp && sp.startsWith("d_")){ const d = findDesign(sp.slice(2)); if (d){ if (d.sec.kind==="nabor"){ view = {name:"section", key:"naborlar"}; stack.push(view); view = {name:"nabor", key:d.sec.key}; } else view = {name:"section", key:d.sec.key}; renderTabs(); go({name:"design", id:d.d.id}); return; } }
   renderTabs(); render();
 }
@@ -474,7 +477,7 @@ async function uploadPhoto(d, it, file){
     const r = await fetch("/api/admin/photo", {method:"POST", headers:{"X-Init-Data":initData}, body:fd});
     const j = await r.json();
     if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return false; }
-    CAT.sections = j.catalog.sections; render(); toast("✅ Rasm qo'yildi"); return true;
+    Object.assign(CAT, j.catalog); render(); toast("✅ Rasm qo'yildi"); return true;
   }catch(e){ toast("⚠️ Rasm yuklanmadi", true); return false; }
 }
 function renderTable(){
@@ -624,7 +627,7 @@ async function act(body, okMsg){
     const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify(body)});
     const j = await r.json();
     if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return false; }
-    CAT.sections = j.catalog.sections;
+    Object.assign(CAT, j.catalog);
     render();
     if (j.warnings && j.warnings.length) toast("⚠️ Nazoratchi: "+j.warnings.join("; "), true);
     else if (okMsg) toast("✅ "+okMsg+". Guruhdagi jadval yangilanadi.");
@@ -665,19 +668,12 @@ function addChooser(d){
 }
 function pickSheet(d){
   const f = findDesign(d.id); const sec = f.sec;
-  const have = new Set(d.categories.flatMap(c=>c.items.map(i=>(i.name+"|"+(i.code||"")).toLowerCase())));
-  const map = new Map();
-  for (const x of sec.designs) for (const c of x.categories) for (const it of c.items){
-    const k = (it.name+"|"+(it.code||"")).toLowerCase();
-    if (have.has(k)) continue;
-    if (!map.has(k)) map.set(k, {name:it.name, code:it.code||"", prices:{}, cats:{}, photo:""});
-    const e = map.get(k); e.prices[it.price]=(e.prices[it.price]||0)+1; e.cats[c.name]=(e.cats[c.name]||0)+1; if (!e.photo && it.photo) e.photo = it.photo;
-  }
-  const top = o => Object.entries(o).sort((a,b)=>b[1]-a[1])[0]?.[0] || "";
-  const list = [...map.values()].map(e=>({name:e.name, code:e.code, price:top(e.prices), category:top(e.cats), photo:e.photo}))
-                               .sort((a,b)=>a.category.localeCompare(b.category) || a.name.localeCompare(b.name, undefined, {numeric:true}));
+  const keyOf = (n,c,g) => [String(n||"").trim().toLowerCase().replace(/\s+/g," "), String(c||"").trim().toUpperCase(), String(g||"").trim().toLowerCase()].join("|");
+  const have = new Set(d.categories.flatMap(c=>c.items.map(i=>keyOf(i.name, i.code, ""))));
+  const reg = (CAT.registry && CAT.registry[sec.key]) || [];
+  const list = reg.map(e => Object.assign({}, e, {have: have.has(keyOf(e.name, e.code, ""))}));
   const sel = new Set();
-  openSheet(`<h3>📚 Mavjud mahsulotlar</h3><div class="pinfo2" style="margin:-6px 0 10px">${esc(sec.title)} bo'limidagi ${list.length} ta mahsulot · ${esc(d.title)} ga qo'shish</div>
+  openSheet(`<h3>📚 Mavjud mahsulotlar</h3><div class="pinfo2" style="margin:-6px 0 10px">${esc(sec.title)} ro'yxatida ${list.length} ta mahsulot · ${list.filter(x=>x.have).length} tasi ${esc(d.title)} da bor</div>
     <div class="search pk"><span>🔍</span><input id="pk_q" type="search" placeholder="Qidirish: masalan «ta to 9»"></div>
     <div id="pk_list" class="pk-list"></div>
     <div class="pk-bar"><button class="btn ghost" id="pk_all">Hammasini belgilash</button><button class="btn" id="pk_go" disabled>Qo'shish (0)</button></div>`);
@@ -687,16 +683,16 @@ function pickSheet(d){
     let last = null, h = "";
     for (const {x,i} of rows){
       if (!q && x.category !== last){ h += `<div class="pk-cat">${esc(x.category)}</div>`; last = x.category; }
-      h += `<label class="pk-row ${sel.has(i)?"on":""}" data-i="${i}"><input type="checkbox" ${sel.has(i)?"checked":""}>
-        <span class="rt"><b>${esc(x.name)}</b><small>${esc(x.code||"—")} · ${esc(x.category)}</small></span><b class="rp">${esc(x.price)}</b>${thumbHtml(x.photo)}</label>`;
+      h += `<label class="pk-row ${sel.has(i)?"on":""} ${x.have?"have":""}" data-i="${i}"><input type="checkbox" ${sel.has(i)||x.have?"checked":""} ${x.have?"disabled":""}>
+        <span class="rt"><b>${esc(x.name)}</b><small>${x.have?"✓ bu dizaynda bor · ":""}${esc(x.code||"—")} · ${esc(x.category)}${x.prices&&x.prices.length>1?` · narxlar: ${esc(x.prices.join(" / "))}`:""}</small></span><b class="rp">${esc(x.price)}</b>${thumbHtml(x.photo)}</label>`;
     }
-    $("#pk_list").innerHTML = h || `<div class="empty-msg">${list.length ? "Topilmadi" : "Bu dizaynda bo'lim mahsulotlarining hammasi bor"}</div>`;
+    $("#pk_list").innerHTML = h || `<div class="empty-msg">${list.length ? "Topilmadi" : "Ro'yxat hali bo'sh"}</div>`;
     $("#pk_list").querySelectorAll(".pk-row").forEach(r => r.querySelector("input").onchange = e => {
       const i = +r.dataset.i; if (e.target.checked) sel.add(i); else sel.delete(i); r.classList.toggle("on", e.target.checked); upd(); });
   };
   const upd = () => { const b = $("#pk_go"); b.textContent = `Qo'shish (${sel.size})`; b.disabled = !sel.size; };
   $("#pk_q").oninput = draw;
-  $("#pk_all").onclick = () => { const q = $("#pk_q").value.trim(); list.forEach((x,i)=>{ if (!q || matchQ(q,x.name,x.code)) sel.add(i); }); draw(); upd(); };
+  $("#pk_all").onclick = () => { const q = $("#pk_q").value.trim(); list.forEach((x,i)=>{ if (!x.have && (!q || matchQ(q,x.name,x.code))) sel.add(i); }); draw(); upd(); };
   $("#pk_go").onclick = async () => {
     const items = [...sel].map(i=>({name:list[i].name, code:list[i].code, price:list[i].price, category:list[i].category}));
     if (await act({action:"add_items", design:d.id, items}, `${items.length} ta mahsulot qo'shildi (NEW belgisi bilan)`)) closeSheet();
@@ -716,7 +712,7 @@ function newDesignSheet(secKey){
       const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify({action:"add_design", section:secKey, title})});
       const j = await r.json();
       if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return; }
-      CAT.sections = j.catalog.sections; closeSheet(); toast("✅ Dizayn yaratildi. Endi mahsulotlarni qo'shing");
+      Object.assign(CAT, j.catalog); closeSheet(); toast("✅ Dizayn yaratildi. Endi mahsulotlarni qo'shing");
       go({name:"design", id:j.design}); const nd = findDesign(j.design); if (nd) pickSheet(nd.d);
     }catch(e){ toast("⚠️ Internet bilan muammo", true); }
   };

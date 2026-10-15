@@ -1,6 +1,7 @@
 """Katalog ustidagi amallar — bot ham, mini ilova ham shularni ishlatadi.
 Har bir amal: ma'lumotni o'zgartiradi -> saqlaydi -> guruhdagi postni yangilaydi -> a'zolarni xabardor qiladi."""
 import checker
+import registry
 import notify
 import publisher
 from store import store
@@ -43,7 +44,14 @@ def add_item(design_id, category, name, code, price) -> tuple[dict, list]:
     name, code, price, warns = checker.validate_new_item(d, name, code, price)
     if not name:
         raise OpError("Mahsulot nomi bo'sh")
-    it = store.add_item(d, category or "Aralash", name, code, price)
+    category = (category or "Aralash").strip()
+    if registry.find_duplicate(d, name, code, category):
+        raise OpError(f"«{name}» bu dizaynda ({category}) allaqachon bor — takrorlanmaydi")
+    is_new = not registry.known(d["section"], name, code, category)
+    it = store.add_item(d, category, name, code, price)
+    if is_new:
+        store.event("new", f"Ro'yxatga yangi mahsulot: {name}", design_id)
+        warns = list(warns) + [f"📚 «{name}» mavjud mahsulotlar ro'yxatiga ham qo'shildi"]
     store.save()
     notify.add("new", f"{name} ({d['title']})")
     publisher.queue_update(design_id)
@@ -67,6 +75,9 @@ def edit_item(design_id, item_id, name=None, code=None, price=None, category=Non
         changes.append(f"kodi: {it.get('code') or '—'} → {new_code or '—'}")
     if new_price != it["price"]:
         changes.append(f"narxi: {it['price']} → {new_price}")
+    dup = registry.find_duplicate(d, new_name, new_code, category or cat["name"], exclude_id=item_id)
+    if dup:
+        raise OpError(f"«{new_name}» bu dizaynda allaqachon bor — takrorlanmaydi")
     it.update(name=new_name, code=new_code, price=new_price)
     if category and category.strip().lower() != cat["name"].lower():
         cat["items"].remove(it)
@@ -152,9 +163,7 @@ def add_items(design_id, items: list) -> tuple[int, list]:
         name, code, price, warns1 = checker.validate_new_item(d, x.get("name", ""), x.get("code", ""), x.get("price", ""))
         if not name:
             continue
-        dup = any(it["name"].lower() == name.lower() and it.get("code", "") == code
-                  for c in d["categories"] for it in c["items"])
-        if dup:
+        if registry.find_duplicate(d, name, code, x.get("category") or "Aralash"):
             warns.append(f"{name} bu dizaynda allaqachon bor")
             continue
         store.add_item(d, x.get("category") or "Aralash", name, code, price)

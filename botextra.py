@@ -185,20 +185,11 @@ async def search_callback(uid, data, cb, sessions):
 
 # ---------------- mavjud mahsulotlardan tanlash ----------------
 def build_pick_list(d):
-    have = {(i["name"].lower(), i.get("code", "")) for c in d["categories"] for i in c["items"]}
-    agg = {}
-    for x in store.designs_in(d["section"]):
-        for c in x["categories"]:
-            for it in c["items"]:
-                k = (it["name"].lower(), it.get("code", ""))
-                if k in have:
-                    continue
-                e = agg.setdefault(k, {"name": it["name"], "code": it.get("code", ""), "prices": {}, "cats": {}})
-                e["prices"][it["price"]] = e["prices"].get(it["price"], 0) + 1
-                e["cats"][c["name"]] = e["cats"].get(c["name"], 0) + 1
-    top = lambda o: max(o.items(), key=lambda kv: kv[1])[0] if o else ""
-    lst = [{"name": e["name"], "code": e["code"], "price": top(e["prices"]), "category": top(e["cats"])} for e in agg.values()]
-    lst.sort(key=lambda x: (x["category"], [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", x["name"].lower())]))
+    """9-agent ro'yxati: bo'limdagi barcha mahsulotlar; bu dizaynda borlari belgilanadi."""
+    import registry
+    lst = registry.products(d["section"])
+    for e in lst:
+        e["have"] = registry.in_design(d, e["name"], e["code"])
     return lst
 
 
@@ -209,7 +200,8 @@ def pick_view(sess):
     pages = max(1, (len(idx) + PICK_PAGE - 1) // PICK_PAGE)
     sess["page"] = min(sess.get("page", 0), pages - 1)
     chunk = idx[sess["page"] * PICK_PAGE:(sess["page"] + 1) * PICK_PAGE]
-    rows = [[btn(("✅ " if i in sel else "▫️ ") + f"{lst[i]['name']} · {lst[i]['price']}", f"pk:t:{i}")] for i in chunk]
+    rows = [[btn(("✔️ bor · " if lst[i].get("have") else ("✅ " if i in sel else "▫️ ")) + f"{lst[i]['name']} · {lst[i]['price']}",
+                 "noop" if lst[i].get("have") else f"pk:t:{i}")] for i in chunk]
     nav = []
     if sess["page"] > 0:
         nav.append(btn("⬅️", "pk:p:-1"))
@@ -219,8 +211,9 @@ def pick_view(sess):
     rows.append(nav)
     rows.append([btn("☑️ Ko'ringanlarni belgilash", "pk:all")] + ([btn("🔄 Qidiruvni tozalash", "pk:clr")] if q else []))
     rows.append([btn(f"➕ Qo'shish ({len(sel)})", "pk:go"), btn("❌ Bekor", "cancel")])
+    have = sum(1 for x in lst if x.get("have"))
     head = (f"📚 <b>{esc(d['title'])}</b> ga mavjud mahsulotlardan qo'shish\n"
-            f"Bo'limda {len(lst)} ta mahsulot" + (f" · «{esc(q)}» bo'yicha {len(idx)} ta" if q else "") +
+            f"Ro'yxatda {len(lst)} ta mahsulot ({have} tasi bu dizaynda bor)" + (f" · «{esc(q)}» bo'yicha {len(idx)} ta" if q else "") +
             f" · tanlangan: <b>{len(sel)}</b>\n\n🔍 Qidirish uchun shunchaki yozing (masalan <code>ta to 9</code>).")
     return head, ikb(rows)
 
@@ -228,7 +221,7 @@ def pick_view(sess):
 async def start_pick(uid, d, sessions):
     lst = build_pick_list(d)
     if not lst:
-        await bot.send(uid, "Bu dizaynda bo'limdagi barcha mahsulotlar allaqachon bor.")
+        await bot.send(uid, "Ro'yxat hali bo'sh.")
         return
     sess = {"await": "pick_q", "design": d["id"], "list": lst, "sel": set(), "q": "", "page": 0}
     sessions[uid] = sess
@@ -266,7 +259,7 @@ async def pick_callback(uid, data, cb, sessions, main_menu):
         await bot.answer_cb(cb["id"])
     elif p[1] == "all":
         q = sess.get("q", "")
-        sess["sel"].update(i for i, x in enumerate(sess["list"]) if not q or match_q(q, x["name"], x["code"]))
+        sess["sel"].update(i for i, x in enumerate(sess["list"]) if not x.get("have") and (not q or match_q(q, x["name"], x["code"])))
         await bot.answer_cb(cb["id"], "Belgilandi")
     elif p[1] == "clr":
         sess["q"] = ""

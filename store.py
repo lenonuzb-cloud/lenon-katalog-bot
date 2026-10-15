@@ -337,7 +337,8 @@ class Store:
             if s["kind"] == "nabor":
                 item["template"] = self.s["nabor_templates"].get(s["key"])
             secs.append(item)
-        return {"sections": secs, "bot": None, "updated": self.s.get("saved_at", 0)}
+        import registry
+        return {"sections": secs, "registry": registry.all_registries(), "bot": None, "updated": self.s.get("saved_at", 0)}
 
     def known_photo(self, fid: str) -> bool:
         for d in self.designs.values():

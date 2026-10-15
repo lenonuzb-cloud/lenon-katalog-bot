@@ -55,8 +55,12 @@ def item_state(obj) -> str:
 
 
 def catalog_url(design_id=None) -> str:
-    u = f"https://t.me/{bot.username}?startapp"
-    return u + (f"=d_{design_id}" if design_id else "")
+    """Jadval tagidagi «📒 Katalog» havolasi — aynan shu dizaynni ochadi.
+    BotFather'da Mini App yoqilgan bo'lsa Telegram ichida, aks holda brauzerda ochiladi."""
+    if bot.me.get("has_main_web_app") or not config.PUBLIC_URL:
+        u = f"https://t.me/{bot.username}?startapp"
+        return u + (f"=d_{design_id}" if design_id else "")
+    return f"{config.PUBLIC_URL}/app" + (f"?d={design_id}" if design_id else "")
 
 
 def keyboard(d) -> dict | None:
@@ -69,7 +73,7 @@ def keyboard(d) -> dict | None:
     if agents:
         rows.append(agents)
     if bot.username:
-        rows.append([{"text": "📒 Katalog", "url": catalog_url(d["id"])}])
+        rows.append([{"text": f"📒 {d['title']} — katalogda ochish", "url": catalog_url(d["id"])}])
     return {"inline_keyboard": rows} if rows else None
 
 

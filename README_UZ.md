@@ -2,7 +2,7 @@
 
 Lenon 55 guruhini boshqaradigan, kecha-kunduz ishlaydigan katalog boti.
 
-## Bot ichidagi 8 ta "agent"
+## Bot ichidagi 9 ta "agent"
 
 | № | Vazifasi | Fayl |
 |---|---|---|
@@ -14,6 +14,7 @@ Lenon 55 guruhini boshqaradigan, kecha-kunduz ishlaydigan katalog boti.
 | 6 | Jadvallarni tahrirlashga yordam beradi (narx, nom, kod, guruh, o'chirish, yangi mahsulot) | `admin.py`, `index.html` |
 | 7 | O'zgarishlar haqida Muhokama bo'limida a'zolarni xabardor qiladi (bir necha o'zgarishni bitta xabarga yig'adi) | `notify.py` |
 | 8 | Har kuni 21:00 da va so'raganingizda hisobot beradi | `report.py` |
+| 9 | Ro'yxatchi: LENON va BODEN'dagi barcha mahsulotlar ro'yxatini yuritadi, yangi mahsulotni avtomatik qo'shadi, bitta dizaynda takrorlanishga yo'l qo'ymaydi | `registry.py` |
 
 Katalog — Telegram ichida ochiladigan mini ilova (`index.html`): LENON → dizaynlar → mahsulotlar,
 BODEN, Naborlar; qidiruv; NEW / QOLMADI / KELDI belgilari. Adminlar shu yerning o'zida tahrir qila oladi.

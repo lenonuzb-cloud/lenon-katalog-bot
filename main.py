@@ -88,7 +88,13 @@ async def background():
                     await bot.send(owner, await report.build(24))
                 except Exception as e:  # noqa
                     await checker.report_error("Kunlik hisobot yuborilmadi", e)
-            # 3) server uxlab qolmasligi uchun o'zini "uyg'otib" turadi
+            # 3) BotFather sozlamalari o'zgargan bo'lsa (masalan Mini App yoqilgan) — yangilab olamiz
+            if int(asyncio.get_event_loop().time()) % 1800 < 60:
+                try:
+                    bot.me = await bot.call("getMe")
+                except TelegramError:
+                    pass
+            # 4) server uxlab qolmasligi uchun o'zini "uyg'otib" turadi
             if config.PUBLIC_URL and asyncio.get_event_loop().time() - last_ping > 600:
                 last_ping = asyncio.get_event_loop().time()
                 try:

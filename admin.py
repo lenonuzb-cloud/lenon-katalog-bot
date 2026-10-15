@@ -111,6 +111,10 @@ async def on_my_chat_member(upd):
     if chat["type"] in ("group", "supergroup"):
         status = upd["new_chat_member"]["status"]
         owner = store.settings.get("owner_id")
+        if status == "administrator":
+            store.settings["group_id"] = chat["id"]
+            store.settings["group_username"] = chat.get("username", "") or store.settings.get("group_username", "")
+            store.save()
         if owner:
             if status == "administrator":
                 await bot.send(owner, f"✅ Bot «{esc(chat.get('title'))}» guruhiga admin qilib qo'shildi.\n\n"
@@ -120,7 +124,53 @@ async def on_my_chat_member(upd):
                 await bot.send(owner, f"⚠️ Bot «{esc(chat.get('title'))}» guruhidan chiqarildi.")
 
 
+def _topic_key_by_name(name: str):
+    n = re.sub(r"[^\w\s]", "", (name or "").lower()).strip()
+    n = re.sub(r"\s+", " ", n)
+    for k, v in config.TOPIC_KEYS.items():
+        if n == v.lower():
+            return k
+    return None
+
+
+async def learn_topic(m):
+    """Bo'limdagi istalgan xabardan bo'lim raqamini o'zi aniqlaydi (/bolim yozish shart emas)."""
+    if not m.get("is_topic_message") or not m.get("message_thread_id"):
+        return
+    created = m.get("forum_topic_created") or (m.get("reply_to_message") or {}).get("forum_topic_created")
+    if not created:
+        return
+    key = _topic_key_by_name(created.get("name", ""))
+    st = store.settings
+    if not key or st["topics"].get(key) == m["message_thread_id"]:
+        return
+    st["group_id"] = m["chat"]["id"]
+    st["group_username"] = m["chat"].get("username", "") or st.get("group_username", "")
+    st["topics"][key] = m["message_thread_id"]
+    store.save()
+    await topic_connected(key)
+
+
+async def topic_connected(key):
+    st = store.settings
+    owner = st.get("owner_id")
+    if not owner:
+        return
+    missing = [v for k, v in config.TOPIC_KEYS.items() if not st["topics"].get(k)]
+    if missing:
+        await bot.send(owner, f"✅ «{config.TOPIC_KEYS[key]}» bo'limi ulandi.\nQolgan bo'limlar: " + ", ".join(missing))
+    else:
+        await bot.send(owner, f"✅ «{config.TOPIC_KEYS[key]}» bo'limi ulandi.\n<b>Barcha bo'limlar sozlandi ✅</b>\n\n"
+                              "Jadvallarni katalogdagi holati bilan (qolmadi/keldi belgilari va katalog havolasi bilan) "
+                              "guruhga joylaymi?",
+                       reply_markup=ikb([[btn("📤 Ha, hammasini joylash", "se:puby")], [btn("Keyinroq", "noop")]]))
+
+
 async def on_group_message(m):
+    try:
+        await learn_topic(m)
+    except Exception as e:  # noqa
+        await checker.report_error("Bo'limni aniqlashda xato", e)
     text = (m.get("text") or "").strip()
     if not text.startswith("/"):
         return
@@ -133,6 +183,16 @@ async def on_group_message(m):
     chat = m["chat"]
     if cmd == "/bolim":
         key = arg.strip().lower()
+        if not key:
+            # /bolim yolg'iz yozilsa — bo'lim nomidan o'zi aniqlaydi (learn_topic yuqorida ishladi)
+            await bot.safe_delete(chat["id"], m["message_id"])
+            created = (m.get("reply_to_message") or {}).get("forum_topic_created")
+            if not created or not _topic_key_by_name(created.get("name", "")):
+                owner = store.settings.get("owner_id")
+                if owner:
+                    await bot.send(owner, "⚠️ Bu bo'limni nomidan aniqlab bo'lmadi. Bo'lim ichida masalan "
+                                          "<code>/bolim lenon</code> deb yozing. Kalitlar: " + ", ".join(config.TOPIC_KEYS))
+            return
         if key not in config.TOPIC_KEYS:
             await bot.send(chat["id"], "Bo'lim kalitlari: " + ", ".join(config.TOPIC_KEYS),
                            message_thread_id=m.get("message_thread_id"))
@@ -147,11 +207,7 @@ async def on_group_message(m):
         st["topics"][key] = thread
         store.save()
         await bot.safe_delete(chat["id"], m["message_id"])
-        owner = st.get("owner_id")
-        if owner:
-            missing = [v for k, v in config.TOPIC_KEYS.items() if not st["topics"].get(k)]
-            tail = ("Qolgan bo'limlar: " + ", ".join(missing)) if missing else "Barcha bo'limlar sozlandi ✅"
-            await bot.send(owner, f"✅ «{config.TOPIC_KEYS[key]}» bo'limi ulandi.\n{tail}")
+        await topic_connected(key)
     elif cmd == "/tekshir":
         await bot.safe_delete(chat["id"], m["message_id"])
 
@@ -260,6 +316,8 @@ async def on_menu(uid, text):
         await do_check(uid)
     elif cmd in (BTN_SETTINGS, "/sozlamalar"):
         await settings_menu(uid)
+    elif cmd == "/joyla":
+        await settings_callback(uid, "se:pub", {"id": "x"})
     elif cmd == "/zaxira":
         await bot.call("sendDocument", files={"document": ("baza.json", store.dump_bytes(), "application/json")},
                        chat_id=str(uid), caption="Katalog ma'lumotlari (zaxira nusxa)")
@@ -1192,7 +1250,11 @@ async def add_items_text(uid, sess, text):
             if line.strip():
                 bad.append(line.strip())
             continue
-        it, w = ops.add_item(d["id"], cat, name, code, price)
+        try:
+            it, w = ops.add_item(d["id"], cat, name, code, price)
+        except ops.OpError as e:
+            warns.append(str(e))
+            continue
         added.append(it["name"])
         warns += [f"{it['name']}: {x}" for x in w]
     sessions.pop(uid, None)
@@ -1271,8 +1333,11 @@ async def settings_callback(uid, data, cb):
 
 
 async def publish_all(uid):
-    todo = [d for d in sorted(store.designs.values(), key=lambda x: (x["section"], x.get("order", 0)))
-            if not d.get("deleted") and not d.get("msg")]
+    sec_order = {"lenon": 0, "boden": 1, "nabor44": 2, "nabor33": 3, "nabor39": 4, "rasmlar": 5}
+    todo = [d for d in sorted(store.designs.values(), key=lambda x: (sec_order.get(x["section"], 9), x.get("order", 0)))
+            if not d.get("deleted") and not d.get("msg")
+            # naborlarning rasmi yo'q postlari joylanmaydi — ular uchun ro'yxat (❌ belgilari bilan) yangilanadi
+            and not (store.section(d["section"])["kind"] in ("nabor", "photos") and not d.get("photos"))]
     await bot.send(uid, f"⏳ {len(todo)} ta post joylanmoqda… (har biri orasida bir oz kutiladi)")
     ok = 0
     for d in todo:
