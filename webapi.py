@@ -70,7 +70,7 @@ async def img(request):
         lock = _img_locks.setdefault(key, asyncio.Lock())
         async with lock:
             if not path.exists():
-                known = any(fid in d.get("photos", []) for d in store.designs.values())
+                known = store.known_photo(fid)
                 if not known:
                     raise web.HTTPNotFound()
                 try:
@@ -116,12 +116,40 @@ async def admin_action(request):
     return web.json_response({"ok": True, "warnings": warns, "catalog": store.public_catalog()})
 
 
+async def admin_photo(request):
+    """Mini ilovadan mahsulot rasmini yuklash: tahrirlash -> logo -> Telegram'ga saqlash."""
+    user = verify_init_data(request.headers.get("X-Init-Data", ""))
+    if not user or not store.is_admin(user.get("id")):
+        return web.json_response({"ok": False, "error": "Ruxsat yo'q"}, status=403)
+    form = await request.post()
+    design_id, item_id = form.get("design"), form.get("item")
+    f = form.get("file")
+    if not design_id or not item_id or f is None or not hasattr(f, "file"):
+        return web.json_response({"ok": False, "error": "Rasm topilmadi"}, status=400)
+    raw = f.file.read()
+    try:
+        out = await asyncio.get_event_loop().run_in_executor(None, images.process, raw, True)
+    except Exception:  # noqa
+        return web.json_response({"ok": False, "error": "Rasmni o'qib bo'lmadi"}, status=400)
+    owner = store.settings.get("owner_id") or user["id"]
+    m = await bot.call("sendPhoto", files={"photo": ("rasm.jpg", out, "image/jpeg")},
+                       chat_id=str(owner), disable_notification="true")
+    fid = m["photo"][-1]["file_id"]
+    await bot.safe_delete(owner, m["message_id"])
+    try:
+        ops.set_item_photo(design_id, item_id, fid)
+    except ops.OpError as e:
+        return web.json_response({"ok": False, "error": str(e)}, status=400)
+    return web.json_response({"ok": True, "catalog": store.public_catalog()})
+
+
 def routes(app: web.Application):
     app.router.add_get("/app", page)
     app.router.add_get("/app/", page)
     app.router.add_get("/api/catalog", catalog)
     app.router.add_get("/api/me", me)
     app.router.add_post("/api/admin", admin_action)
+    app.router.add_post("/api/admin/photo", admin_photo)
     app.router.add_get("/img/{fid}", img)
     app.router.add_get("/static/logo.png", lambda r: web.FileResponse(
         config.ASSETS / "logo.png", headers={"Cache-Control": "public, max-age=86400"}))

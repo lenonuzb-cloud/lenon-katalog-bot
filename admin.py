@@ -334,13 +334,34 @@ async def process_and_ask(uid, raw_files, caption, logo=True):
     sessions[uid] = {"step": "photo_dest", "raw": raw_files, "photos": fids, "caption": caption or "", "logo": logo}
     found = store.find_design(caption) if caption else None
     rows = []
+    hit = find_item_by_caption(caption) if caption else None
+    if hit:
+        d0, it0 = hit
+        rows.append([btn(f"🖼 {short(d0)} · {it0['name']} rasmi", f"ph:it:{d0['id']}:{it0['id']}")])
     if found:
         rows.append([btn(f"➡️ «{found['title']}» ga qo'yish", f"ph:to:{found['id']}")])
+    rows.append([btn("🖼 Mahsulot rasmi (katalog uchun)", "ph:prod")])
     rows += [[btn("LENON", "ph:sec:lenon"), btn("BODEN", "ph:sec:boden")],
              [btn("Nabor 44", "ph:sec:nabor44"), btn("Nabor 33", "ph:sec:nabor33"), btn("Nabor 39", "ph:sec:nabor39")],
              [btn("Rasmlar bo'limi", "ph:sec:rasmlar")],
              [btn("🚫 Logosiz" if logo else "👑 Logo bilan", "ph:logo"), btn("❌ Bekor", "cancel")]]
     await bot.send(uid, "Bu rasm(lar) qayerga joylansin?", reply_markup=ikb(rows))
+
+
+def find_item_by_caption(caption: str):
+    """'01-AL YA4978' yoki '01-AL Pela' -> (dizayn, mahsulot)."""
+    t = caption.strip().split()
+    if len(t) < 2:
+        return None
+    d = store.find_design(t[0])
+    if not d:
+        return None
+    rest = " ".join(t[1:]).lower()
+    for c in d["categories"]:
+        for it in c["items"]:
+            if it.get("code", "").lower() == rest or it["name"].lower() == rest:
+                return d, it
+    return None
 
 
 async def try_import_forward(m) -> bool:
@@ -453,6 +474,49 @@ async def photo_callback(uid, data, cb):
     if parts[1] == "apply":
         await bot.answer_cb(cb["id"])
         await apply_photos(uid, sess, replace=parts[2] == "r")
+        return
+    if parts[1] == "prod":
+        await bot.answer_cb(cb["id"])
+        rows = [[btn(s["title"], f"ph:psec:{s['key']}") for s in design_sections()], [btn("❌ Bekor", "cancel")]]
+        await bot.send(uid, "🖼 Qaysi bo'lim mahsuloti?", reply_markup=ikb(rows))
+        return
+    if parts[1] == "psec":
+        await bot.answer_cb(cb["id"])
+        rows = grid([btn(short(d), f"ph:pd:{d['id']}:0") for d in store.designs_in(parts[2])], 3)
+        rows.append([btn("❌ Bekor", "cancel")])
+        await bot.send(uid, "Qaysi dizayn?", reply_markup=ikb(rows))
+        return
+    if parts[1] == "pd":
+        await bot.answer_cb(cb["id"])
+        d = store.designs[parts[2]]
+        page = int(parts[3])
+        items = [it for c in d["categories"] for it in c["items"]]
+        chunk = items[page * PAGE:(page + 1) * PAGE]
+        rows = [[btn(("🖼 " if it.get("photo") else "▫️ ") + it["name"] + (f" · {it['code']}" if it.get("code") else ""),
+                     f"ph:it:{d['id']}:{it['id']}")] for it in chunk]
+        nav = []
+        if page > 0:
+            nav.append(btn("⬅️", f"ph:pd:{d['id']}:{page - 1}"))
+        if (page + 1) * PAGE < len(items):
+            nav.append(btn("➡️", f"ph:pd:{d['id']}:{page + 1}"))
+        if nav:
+            rows.append(nav)
+        rows.append([btn("❌ Bekor", "cancel")])
+        await bot.send(uid, f"<b>{esc(d['title'])}</b>: qaysi mahsulot? (🖼 — rasmi bor)", reply_markup=ikb(rows))
+        return
+    if parts[1] == "it":
+        await bot.answer_cb(cb["id"])
+        d = store.designs[parts[2]]
+        _, it = store.find_item(d, parts[3])
+        if not it:
+            return
+        ops.set_item_photo(d["id"], it["id"], sess["photos"][0])
+        extra = sess["photos"][1:]
+        sessions.pop(uid, None)
+        msg = f"✅ <b>{esc(it['name'])}</b> ({esc(d['title'])}) rasmi katalogga qo'yildi."
+        if extra:
+            msg += f"\nℹ️ Faqat birinchi rasm olindi ({len(extra)} tasi ishlatilmadi)."
+        await bot.send(uid, msg, reply_markup=main_menu())
 
 
 async def apply_photos(uid, sess, replace):

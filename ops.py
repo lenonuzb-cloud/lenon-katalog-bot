@@ -133,3 +133,12 @@ def mark_design_photos(design_id, photos: list, replace: bool):
     d["photos"] = list(photos) if replace else (d.get("photos", []) + list(photos))[:20]
     store.event("edit", f"{d['title']}: rasmlar yangilandi", design_id)
     store.save()
+
+
+def set_item_photo(design_id, item_id, file_id):
+    d = _design(design_id)
+    _, it = _item(d, item_id)
+    it["photo"] = file_id
+    it["updated"] = __import__("time").time()
+    store.event("edit", f"{it['name']} ({d['title']}): rasm qo'yildi", design_id)
+    store.save()

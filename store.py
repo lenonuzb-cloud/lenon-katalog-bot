@@ -325,6 +325,7 @@ class Store:
                     "categories": [
                         {"name": c["name"], "items": [
                             {"id": it["id"], "name": it["name"], "code": it["code"], "price": it["price"],
+                             "photo": it.get("photo", ""),
                              "in_stock": it.get("in_stock", True),
                              "is_new": it.get("new_until", 0) > t,
                              "is_keldi": it.get("keldi_until", 0) > t}
@@ -337,6 +338,16 @@ class Store:
                 item["template"] = self.s["nabor_templates"].get(s["key"])
             secs.append(item)
         return {"sections": secs, "bot": None, "updated": self.s.get("saved_at", 0)}
+
+    def known_photo(self, fid: str) -> bool:
+        for d in self.designs.values():
+            if fid in d.get("photos", []):
+                return True
+            for c in d["categories"]:
+                for it in c["items"]:
+                    if it.get("photo") == fid:
+                        return True
+        return False
 
     def post_link(self, d) -> str:
         m = d.get("msg")
