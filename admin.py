@@ -1173,3 +1173,5 @@ async def on_callback(cb):
         await bot.send(uid, await report.build(int(data.split(":")[1])))
     else:
         await bot.answer_cb(cb["id"])
+_orig_on_message = on_message
+async def on_message(m): return None if (m.get("from") or {}).get("is_bot") or m.get("pinned_message") else await _orig_on_message(m)
