@@ -105,7 +105,7 @@ h1 + div:empty{display:none}
 .sheet input:focus{outline:none;border-color:var(--gold2)}
 .sheet .acts{display:flex;gap:10px;margin-top:18px}
 .sheet .acts .btn{flex:1}
-.toast{position:fixed;left:16px;right:16px;bottom:22px;z-index:60;background:#1c1a16;color:#fff;padding:13px 15px;border-radius:14px;font-size:14px;display:none;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.toast{position:fixed;left:16px;right:16px;bottom:84px;z-index:60;background:#1c1a16;color:#fff;padding:13px 15px;border-radius:14px;font-size:14px;display:none;box-shadow:0 8px 30px rgba(0,0,0,.2)}
 .toast.warn{background:#8a5a00}
 .addbtn{width:100%;margin-top:12px}
 .loading{text-align:center;padding:80px;color:var(--hint);font-family:var(--serif);font-size:18px}
@@ -148,6 +148,13 @@ h1 + div:empty{display:none}
 .pinfo b{color:var(--text)}
 .pinfo .pp{font:700 22px var(--sans);color:var(--gold-dark)}
 .pinfo2{color:var(--hint);font-size:12px;margin-top:4px}
+.backfab{position:fixed;left:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:55;display:none;align-items:center;gap:2px;
+  border:0;border-radius:30px;padding:13px 22px 13px 18px;background:var(--grad);color:#fff;font:600 15px var(--sans);
+  box-shadow:0 8px 24px rgba(140,100,20,.35)}
+.backfab.on{display:flex}
+.backfab:active{transform:scale(.96)}
+main{padding-bottom:110px}
+.sheet{padding-bottom:90px}
 </style>
 </head>
 <body>
@@ -160,6 +167,7 @@ h1 + div:empty{display:none}
 
 <div class="sheet-bg" id="sheetbg"><div class="sheet" id="sheet"></div></div>
 <div class="toast" id="toast"></div>
+<button class="backfab" id="backfab" aria-label="Ortga">‹&nbsp; Ortga</button>
 
 <script>
 const tg = window.Telegram ? Telegram.WebApp : null;
@@ -209,10 +217,17 @@ function renderTabs(){
   document.querySelectorAll(".tab").forEach(b => b.onclick = () => { stack.length=0; view={name:"section", key:b.dataset.k}; $("#q").value=""; renderTabs(); render(); updateBack(); });
 }
 
-function go(v){ stack.push(view); view=v; render(); updateBack(); window.scrollTo(0,0); }
-function back(){ if (stack.length){ view = stack.pop(); render(); updateBack(); } }
-function updateBack(){ if (!tg) return; if (stack.length){ tg.BackButton.show(); } else tg.BackButton.hide(); }
-if (tg) tg.BackButton.onClick(back);
+function go(v){ view.scroll = window.scrollY; stack.push(view); view=v; render(); updateBack(); window.scrollTo(0,0); }
+function back(){ if (stack.length){ view = stack.pop(); render(); updateBack(); window.scrollTo(0, view.scroll||0); } }
+function sheetOpen(){ return $("#sheetbg").style.display==="flex"; }
+function backAction(){ haptic(); if (sheetOpen()) closeSheet(); else back(); }
+function updateBack(){
+  const show = stack.length > 0 || sheetOpen();
+  $("#backfab").classList.toggle("on", show);
+  if (tg){ if (show) tg.BackButton.show(); else tg.BackButton.hide(); }
+}
+$("#backfab").onclick = backAction;
+if (tg) tg.BackButton.onClick(backAction);
 
 function badges(o){
   let l="", r="";
@@ -439,8 +454,8 @@ async function act(body, okMsg){
   }catch(e){ toast("⚠️ Internet bilan muammo", true); return false; }
 }
 
-function openSheet(html){ $("#sheet").innerHTML = html; $("#sheetbg").style.display="flex"; }
-function closeSheet(){ $("#sheetbg").style.display="none"; }
+function openSheet(html){ $("#sheet").innerHTML = html; $("#sheetbg").style.display="flex"; updateBack(); }
+function closeSheet(){ $("#sheetbg").style.display="none"; updateBack(); }
 $("#sheetbg").onclick = e => { if (e.target.id==="sheetbg") closeSheet(); };
 
 function editSheet(d, it){
