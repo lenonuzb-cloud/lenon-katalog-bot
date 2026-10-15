@@ -140,22 +140,54 @@ def _topic_key_by_name(name: str):
     return None
 
 
-async def learn_topic(m):
-    """Bo'limdagi istalgan xabardan bo'lim raqamini o'zi aniqlaydi (/bolim yozish shart emas)."""
-    if not m.get("is_topic_message") or not m.get("message_thread_id"):
-        return
-    created = m.get("forum_topic_created") or (m.get("reply_to_message") or {}).get("forum_topic_created")
-    if not created:
-        return
-    key = _topic_key_by_name(created.get("name", ""))
+async def assign_topic(key, thread, chat):
+    """Bo'limni ulaydi. Shu bo'lim boshqa kalitga xato ulangan bo'lsa — o'sha bog'lanishni olib tashlaydi.
+    Bo'lim o'zgargan bo'lsa, oldin noto'g'ri joyga tushgan postlar to'g'ri bo'limga qayta joylanadi."""
     st = store.settings
-    if not key or st["topics"].get(key) == m["message_thread_id"]:
-        return
-    st["group_id"] = m["chat"]["id"]
-    st["group_username"] = m["chat"].get("username", "") or st.get("group_username", "")
-    st["topics"][key] = m["message_thread_id"]
+    st["group_id"] = chat["id"]
+    st["group_username"] = chat.get("username", "") or st.get("group_username", "")
+    old = st["topics"].get(key)
+    stolen = [k for k, v in st["topics"].items() if v == thread and k != key]
+    for k in stolen:
+        st["topics"].pop(k, None)
+    st["topics"][key] = thread
     store.save()
+    owner = st.get("owner_id")
+    if stolen and owner:
+        await bot.send(owner, "ℹ️ Bu bo'lim avval xato bilan «" + ", ".join(config.TOPIC_KEYS[k] for k in stolen)
+                       + f"» deb ulangan edi — tuzatildi, endi u «{config.TOPIC_KEYS[key]}».\n"
+                       + "\n".join(f"Iltimos, «{config.TOPIC_KEYS[k]}» bo'limiga kirib <code>/bolim {k}</code> deb yozing."
+                                   for k in stolen))
+    if old and old != thread:
+        asyncio.get_event_loop().create_task(repost_section(key))
     await topic_connected(key)
+
+
+async def repost_section(key):
+    """Bo'limdagi bot postlarini o'chirib, to'g'ri bo'limga qaytadan joylaydi."""
+    owner = store.settings.get("owner_id")
+    todo = [d for d in store.designs.values() if d["section"] == key and d.get("msg") and not d.get("deleted")]
+    info = store.s["index_msgs"].pop(key, None)
+    if info:
+        await bot.safe_delete(info["chat_id"], info["message_id"])
+    if not todo and not info:
+        return
+    if owner:
+        await bot.send(owner, f"🔁 «{config.TOPIC_KEYS[key]}»: {len(todo)} ta post to'g'ri bo'limga qayta joylanmoqda…")
+    for d in todo:
+        try:
+            await publisher.publish(d["id"], repost=True)
+        except publisher.NotConfigured:
+            return
+        except Exception as e:  # noqa
+            await checker.report_error(f"{d['title']} qayta joylanmadi", e)
+        await asyncio.sleep(3.5)
+    try:
+        await publisher.publish_index(key)
+    except Exception:  # noqa
+        pass
+    if owner:
+        await bot.send(owner, f"✅ «{config.TOPIC_KEYS[key]}» qayta joylandi.")
 
 
 async def topic_connected(key):
@@ -174,10 +206,6 @@ async def topic_connected(key):
 
 
 async def on_group_message(m):
-    try:
-        await learn_topic(m)
-    except Exception as e:  # noqa
-        await checker.report_error("Bo'limni aniqlashda xato", e)
     text = (m.get("text") or "").strip()
     if not text.startswith("/"):
         return
@@ -191,10 +219,12 @@ async def on_group_message(m):
     if cmd == "/bolim":
         key = arg.strip().lower()
         if not key:
-            # /bolim yolg'iz yozilsa — bo'lim nomidan o'zi aniqlaydi (learn_topic yuqorida ishladi)
+            # /bolim yolg'iz yozilsa — bo'lim nomidan o'zi aniqlaydi
             await bot.safe_delete(chat["id"], m["message_id"])
             created = (m.get("reply_to_message") or {}).get("forum_topic_created")
-            if not created or not _topic_key_by_name(created.get("name", "")):
+            if created and _topic_key_by_name(created.get("name", "")) and m.get("message_thread_id"):
+                await assign_topic(_topic_key_by_name(created["name"]), m["message_thread_id"], chat)
+            else:
                 owner = store.settings.get("owner_id")
                 if owner:
                     await bot.send(owner, "⚠️ Bu bo'limni nomidan aniqlab bo'lmadi. Bo'lim ichida masalan "
@@ -208,13 +238,8 @@ async def on_group_message(m):
         if not thread:
             # guruhning umumiy (General) bo'limi — Telegram unga raqam bermaydi, -1 deb saqlaymiz
             thread = -1
-        st = store.settings
-        st["group_id"] = chat["id"]
-        st["group_username"] = chat.get("username", "") or st.get("group_username", "")
-        st["topics"][key] = thread
-        store.save()
         await bot.safe_delete(chat["id"], m["message_id"])
-        await topic_connected(key)
+        await assign_topic(key, thread, chat)
     elif cmd == "/tekshir":
         await bot.safe_delete(chat["id"], m["message_id"])
 
@@ -1292,6 +1317,7 @@ async def settings_menu(uid):
     rows = [[btn("➕ Admin qo'shish", "se:aa"), btn("➖ Adminni olib tashlash", "se:ar")],
             [btn("👥 Agent username", "se:ag")],
             [btn("📤 Katalogni guruhga joylash", "se:pub")],
+            [btn("🔁 Hamma postlarni qayta joylash", "se:rep")],
             [btn("💾 Zaxira faylini olish", "se:bk")]]
     await bot.send(uid, text, reply_markup=ikb(rows))
 
@@ -1335,21 +1361,29 @@ async def settings_callback(uid, data, cb):
         await bot.send(uid, txt, reply_markup=ikb([[btn("📤 Ha, joylash", "se:puby")], [btn("❌ Bekor", "cancel")]]))
     elif p[1] == "puby":
         asyncio.get_event_loop().create_task(publish_all(uid))
+    elif p[1] == "rep":
+        asyncio.get_event_loop().create_task(publish_all(uid, repost=True))
     elif p[1] == "bk":
         await on_menu(uid, "/zaxira")
 
 
-async def publish_all(uid):
+async def publish_all(uid, repost=False):
     sec_order = {"lenon": 0, "boden": 1, "nabor44": 2, "nabor33": 3, "nabor39": 4, "rasmlar": 5}
     todo = [d for d in sorted(store.designs.values(), key=lambda x: (sec_order.get(x["section"], 9), x.get("order", 0)))
-            if not d.get("deleted") and not d.get("msg")
+            if not d.get("deleted") and (repost or not d.get("msg"))
             # naborlarning rasmi yo'q postlari joylanmaydi — ular uchun ro'yxat (❌ belgilari bilan) yangilanadi
             and not (store.section(d["section"])["kind"] in ("nabor", "photos") and not d.get("photos"))]
+    if repost:
+        for key, info in list(store.s["index_msgs"].items()):
+            if info:
+                await bot.safe_delete(info["chat_id"], info["message_id"])
+            store.s["index_msgs"].pop(key, None)
+        store.save()
     await bot.send(uid, f"⏳ {len(todo)} ta post joylanmoqda… (har biri orasida bir oz kutiladi)")
     ok = 0
     for d in todo:
         try:
-            await publisher.publish(d["id"])
+            await publisher.publish(d["id"], repost=repost)
             ok += 1
         except publisher.NotConfigured as e:
             await bot.send(uid, f"⚠️ {esc(e)}")
