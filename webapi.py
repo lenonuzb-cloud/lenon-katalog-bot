@@ -155,8 +155,16 @@ async def admin_photo(request):
                        chat_id=str(owner), disable_notification="true")
     fid = m["photo"][-1]["file_id"]
     await bot.safe_delete(owner, m["message_id"])
+    raw_fid = None
+    try:  # asl rasmni ham saqlab qo'yamiz — keyin qayta tayyorlash uchun
+        m2 = await bot.call("sendDocument", files={"document": ("asl.jpg", raw, "image/jpeg")},
+                            chat_id=str(owner), disable_notification="true", disable_content_type_detection="true")
+        raw_fid = m2["document"]["file_id"]
+        await bot.safe_delete(owner, m2["message_id"])
+    except Exception:  # noqa
+        pass
     try:
-        ops.set_item_photo(design_id, item_id, fid)
+        ops.set_item_photo(design_id, item_id, fid, raw=raw_fid)
     except ops.OpError as e:
         return web.json_response({"ok": False, "error": str(e)}, status=400)
     return web.json_response({"ok": True, "catalog": store.public_catalog()})
@@ -181,6 +189,72 @@ async def admin_info(request):
     return web.json_response({"ok": True, "html": await report.build(max(1, min(h, 24 * 90)))})
 
 
+_pdf_busy: set = set()
+
+
+async def make_pdf(design_id: str) -> tuple[bytes, str]:
+    """Dizayn katalogini PDF qiladi. Qaytaradi: (pdf, fayl nomi)."""
+    import pdfgen
+    import publisher
+    d = store.designs[design_id]
+    sec = store.section(d["section"])
+    fids = {it["id"]: it["photo"] for c in d.get("categories", []) for it in c["items"] if it.get("photo")}
+    sem = asyncio.Semaphore(6)
+    photos = {}
+
+    async def get(iid, fid):
+        async with sem:
+            try:
+                photos[iid] = await bot.download(fid)
+            except Exception:  # noqa
+                pass
+    await asyncio.gather(*(get(i, f) for i, f in fids.items()))
+    cover = None
+    if d.get("photos"):
+        try:
+            cover = await bot.download(d["photos"][0])
+        except Exception:  # noqa
+            pass
+    view = {"title": d["title"], "categories": [
+        {"name": c["name"], "items": [dict(it, size=ops.item_size(d, it)) for it in c["items"]]}
+        for c in d.get("categories", [])]}
+    pdf = await asyncio.get_event_loop().run_in_executor(
+        None, lambda: pdfgen.build(view, sec["title"], photos, cover, publisher.item_state))
+    name = "" + "".join(ch if ch.isalnum() or ch in "-_" else "_" for ch in d["title"]) + ".pdf"
+    return pdf, name
+
+
+async def pdf_export(request):
+    """Mini ilovadagi «PDF» tugmasi: dizayn katalogini PDF qilib, foydalanuvchining Telegram chatiga yuboradi."""
+    user = verify_init_data(request.headers.get("X-Init-Data", ""))
+    if not user:
+        return web.json_response({"ok": False, "error": "Telegram orqali oching"}, status=403)
+    body = await request.json()
+    did = body.get("design")
+    if did not in store.designs:
+        return web.json_response({"ok": False, "error": "Dizayn topilmadi"}, status=404)
+    key = (user["id"], did)
+    if key in _pdf_busy:
+        return web.json_response({"ok": False, "error": "PDF tayyorlanmoqda, biroz kuting"}, status=429)
+    _pdf_busy.add(key)
+    try:
+        pdf, name = await make_pdf(did)
+        d = store.designs[did]
+        await bot.call("sendDocument", files={"document": (name, pdf, "application/pdf")}, chat_id=str(user["id"]),
+                       caption=f"📄 {d['title']} — katalog (PDF)")
+    except Exception as e:  # noqa
+        desc = str(getattr(e, "description", e))
+        if "blocked" in desc or "chat not found" in desc or "initiate" in desc:
+            return web.json_response({"ok": False, "error": "Avval botni oching va /start bosing, keyin qayta urining"},
+                                     status=400)
+        import checker
+        await checker.report_error("PDF tayyorlanmadi", e)
+        return web.json_response({"ok": False, "error": "PDF tayyorlab bo'lmadi"}, status=500)
+    finally:
+        _pdf_busy.discard(key)
+    return web.json_response({"ok": True})
+
+
 def routes(app: web.Application):
     app.router.add_get("/app", page)
     app.router.add_get("/app/", page)
@@ -188,6 +262,7 @@ def routes(app: web.Application):
     app.router.add_get("/api/me", me)
     app.router.add_post("/api/admin", admin_action)
     app.router.add_post("/api/admin/photo", admin_photo)
+    app.router.add_post("/api/pdf", pdf_export)
     app.router.add_get("/api/admin/info", admin_info)
     app.router.add_get("/img/{fid}", img)
     app.router.add_get("/static/logo.png", lambda r: web.FileResponse(

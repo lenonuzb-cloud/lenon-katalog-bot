@@ -348,6 +348,13 @@ async def on_menu(uid, text):
         await do_check(uid)
     elif cmd in (BTN_SETTINGS, "/sozlamalar"):
         await settings_menu(uid)
+    elif cmd == "/pdf":
+        q = text.partition(" ")[2].strip()
+        await pdf_command(uid, q)
+    elif cmd == "/rasmlar":
+        if store.is_owner(uid):
+            import relabel
+            asyncio.get_event_loop().create_task(relabel.run(uid))
     elif cmd == "/pin":
         await pin_catalog(uid)
     elif cmd == "/joyla":
@@ -415,7 +422,7 @@ async def _album_done(key):
                                                                  ops.item_label(d, it))
             r = await bot.call("sendPhoto", files={"photo": ("rasm.jpg", out, "image/jpeg")}, chat_id=str(uid),
                                caption=f"✅ {it['name']} ({d['title']}) — rasm qo'yildi")
-            ops.set_item_photo(d["id"], it["id"], r["photo"][-1]["file_id"])
+            ops.set_item_photo(d["id"], it["id"], r["photo"][-1]["file_id"], raw=alb["files"][0])
         except Exception as e:  # noqa
             await checker.report_error("Mahsulot rasmini qo'yishda xato", e)
             await bot.send(uid, "⚠️ Rasmni qo'yib bo'lmadi, qayta urinib ko'ring.")
@@ -651,9 +658,11 @@ async def photo_callback(uid, data, cb):
             return
         i = sess.get("idx", 0)
         await bot.safe_delete(uid, cb["message"]["message_id"])
+        raw = None
         if sess.get("photos"):          # forward qilingan, allaqachon tayyor rasm
             fid = sess["photos"][i]
         else:
+            raw = sess["raw"][i]
             _size_from_caption(it, sess.get("caption"))
             data = await bot.download(sess["raw"][i])
             out = await asyncio.get_event_loop().run_in_executor(None, images.process, data, sess["logo"],
@@ -661,7 +670,7 @@ async def photo_callback(uid, data, cb):
             r = await bot.call("sendPhoto", files={"photo": ("rasm.jpg", out, "image/jpeg")}, chat_id=str(uid),
                                caption=f"✅ {it['name']} ({d['title']}) — rasm qo'yildi")
             fid = r["photo"][-1]["file_id"]
-        ops.set_item_photo(d["id"], it["id"], fid)
+        ops.set_item_photo(d["id"], it["id"], fid, raw=raw)
         sess["idx"] = i + 1
         if sess["idx"] < len(sess["raw"]):
             await ask_item_for_photo(uid, sess, d, 0)
@@ -1353,6 +1362,7 @@ async def settings_menu(uid):
             [btn("📤 Katalogni guruhga joylash", "se:pub")],
             [btn("🔁 Hamma postlarni qayta joylash", "se:rep")],
             [btn("📌 Katalog havolasini tepaga qo'yish", "se:pin")],
+            [btn("🖼 Mahsulot rasmlarini qayta tayyorlash", "se:relabel")],
             [btn("💾 Zaxira faylini olish", "se:bk")]]
     await bot.send(uid, text, reply_markup=ikb(rows))
 
@@ -1396,12 +1406,33 @@ async def settings_callback(uid, data, cb):
         await bot.send(uid, txt, reply_markup=ikb([[btn("📤 Ha, joylash", "se:puby")], [btn("❌ Bekor", "cancel")]]))
     elif p[1] == "puby":
         asyncio.get_event_loop().create_task(publish_all(uid))
+    elif p[1] == "relabel":
+        import relabel
+        asyncio.get_event_loop().create_task(relabel.run(uid))
     elif p[1] == "pin":
         asyncio.get_event_loop().create_task(pin_catalog(uid))
     elif p[1] == "rep":
         asyncio.get_event_loop().create_task(publish_all(uid, repost=True))
     elif p[1] == "bk":
         await on_menu(uid, "/zaxira")
+
+
+async def pdf_command(uid, q):
+    """/pdf 01-AL — dizayn katalogini PDF qilib yuboradi."""
+    d = store.find_design(q) if q else None
+    if not d:
+        await bot.send(uid, "Qaysi dizayn? Masalan: <code>/pdf 01-AL</code> yoki <code>/pdf BODEN 003</code>")
+        return
+    import webapi
+    note = await bot.send(uid, f"⏳ «{esc(d['title'])}» PDF tayyorlanmoqda…")
+    try:
+        pdf, name = await webapi.make_pdf(d["id"])
+        await bot.call("sendDocument", files={"document": (name, pdf, "application/pdf")}, chat_id=str(uid),
+                       caption=f"📄 {d['title']} — katalog (PDF)")
+    except Exception as e:  # noqa
+        await checker.report_error("PDF tayyorlanmadi", e)
+        await bot.send(uid, "⚠️ PDF tayyorlab bo'lmadi.")
+    await bot.safe_delete(uid, note["message_id"])
 
 
 async def pin_catalog(uid):

@@ -153,10 +153,12 @@ def mark_design_photos(design_id, photos: list, replace: bool):
     store.save()
 
 
-def set_item_photo(design_id, item_id, file_id):
+def set_item_photo(design_id, item_id, file_id, raw=None):
     d = _design(design_id)
     _, it = _item(d, item_id)
     it["photo"] = file_id
+    if raw:
+        it["photo_raw"] = raw  # asl (formatlanmagan) rasm — keyin qayta tayyorlash uchun
     it["updated"] = __import__("time").time()
     store.event("edit", f"{it['name']} ({d['title']}): rasm qo'yildi", design_id)
     store.save()
@@ -255,6 +257,6 @@ def item_size(d, it) -> str:
 
 
 def item_label(d, it) -> list:
-    """Rasm tagiga yoziladigan qatorlar: (23sm) / tar tosh 9 / YA4961 / 11.4$"""
+    """Rasm tagiga yoziladigan qatorlar: (23sm) / tar tosh 9 / YA4961  (narx yozilmaydi)"""
     size = item_size(d, it)
-    return [f"({size})" if size else "", it["name"].lower(), it.get("code", ""), it.get("price", "")]
+    return [f"({size})" if size else "", it["name"].lower(), it.get("code", "")]

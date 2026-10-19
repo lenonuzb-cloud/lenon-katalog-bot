@@ -124,7 +124,7 @@ h1 + div:empty{display:none}
 .compo{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:0 0 18px}
 .compo span{background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:5px 11px;font-size:12px;color:var(--hint)}
 .compo b{color:var(--text);font-weight:600}
-.toolbar{display:flex;align-items:center;justify-content:space-between;margin:18px 0 4px;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin:18px 0 4px;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .toolbar span{color:var(--hint);font-size:13px}
 .tbtn{border:1.5px solid var(--gold2);background:#fff;color:var(--gold-dark);border-radius:30px;padding:8px 16px;font:600 13px var(--sans)}
 .gcat{font:700 11px var(--sans);letter-spacing:2.5px;text-transform:uppercase;color:var(--gold-dark);text-align:center;margin:22px 0 12px;display:flex;align-items:center;gap:10px}
@@ -160,7 +160,7 @@ main{padding-bottom:110px}
 .res .rp{color:var(--gold-dark);font-weight:700;white-space:nowrap}
 .th{flex:none;width:48px;height:48px;border-radius:10px;background:var(--ivory) center/cover no-repeat;display:flex;align-items:center;justify-content:center;font:600 18px var(--serif);color:var(--gold);font-style:normal}
 .res-h{color:var(--hint);font-size:12px;letter-spacing:.5px;margin:0 2px 10px}
-.toolbar .tbs{display:flex;gap:8px}
+.toolbar .tbs{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
 .toolbar b.red{color:var(--red);font-weight:600}
 .newdz{width:100%;border:1.5px dashed var(--gold2);background:var(--bg2);color:var(--gold-dark);border-radius:16px;padding:14px;font:600 15px var(--sans);margin-bottom:18px}
 .choice{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;font:inherit;color:var(--text)}
@@ -427,7 +427,7 @@ function renderDesign(){
   }
   const out = q ? 0 : d.categories.reduce((a,c)=>a+c.items.filter(i=>!i.in_stock).length,0);
   h += `<div class="toolbar"><span>${q ? `${esc(d.title)}: ${found} ta topildi` : `${total} ta mahsulot${out?` · <b class="red">${out} tasi qolmagan</b>`:""}`}</span>
-        <span class="tbs">${ADMIN?`<button class="tbtn" id="addprod">➕</button><button class="tbtn" id="reord2" title="Tartib">↕️</button>`:""}<button class="tbtn" id="totable">${ADMIN?"✏️ Jadval":"📋 Jadval"}</button></span></div>`;
+        <span class="tbs">${ADMIN?`<button class="tbtn" id="addprod">➕</button><button class="tbtn" id="reord2" title="Tartib">↕️</button>`:""}<button class="tbtn" id="topdf" title="PDF qilib yuklab olish">📄 PDF</button><button class="tbtn" id="totable">${ADMIN?"✏️ Jadval":"📋 Jadval"}</button></span></div>`;
   h += body || (q ? `<div class="empty-msg">«${esc(q)}» — bu dizaynda topilmadi</div>` : '<div class="empty-msg">Hozircha mahsulot yo\'q</div>');
   if (d.link) h += `<button class="btn ghost addbtn" id="openpost">↗️ Guruhdagi postni ochish</button>`;
   m.innerHTML = h;
@@ -436,10 +436,21 @@ function renderDesign(){
   document.querySelectorAll(".agents button").forEach(b => b.onclick = () => openTg("https://t.me/"+b.dataset.u));
   const op = $("#openpost"); if (op) op.onclick = () => openTg(d.link);
   $("#totable").onclick = () => go({name:"table", id:d.id});
+  $("#topdf").onclick = () => exportPdf(d);
   const ap = $("#addprod"); if (ap) ap.onclick = () => addChooser(d);
   const r2 = $("#reord2"); if (r2) r2.onclick = () => go({name:"reorder", id:d.id});
   document.querySelectorAll(".pcard").forEach(b => b.onclick = () => prodSheet(d, findItem(d, b.dataset.item)));
   if (view.openItem){ const it = findItem(d, view.openItem); view.openItem = null; if (it) prodSheet(d, it); }
+}
+async function exportPdf(d){
+  toast("⏳ PDF tayyorlanmoqda… bir oz kuting");
+  try{
+    const r = await fetch("/api/pdf", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify({design:d.id})});
+    const j = await r.json();
+    if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return; }
+    toast("✅ PDF bot chatiga yuborildi");
+    try{ Telegram.WebApp.showAlert("📄 «"+d.title+"» katalogi PDF qilib bot chatiga yuborildi. Botni ochib yuklab oling."); }catch(e){}
+  }catch(e){ toast("⚠️ PDF tayyorlanmadi", true); }
 }
 function prodSheet(d, it){
   const ph = it.photo ? `<img class="pbig" src="${img(it.photo,1000)}">` : `<div class="pbig empty">${esc(it.name)}</div>`;
