@@ -7,6 +7,12 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps, ImageEnhance
 
 import config
 
+try:  # iPhone/Samsung HEIC rasmlarini ham o'qiy olish uchun
+    import pillow_heif
+    pillow_heif.register_heif_opener()
+except Exception:  # noqa
+    pass
+
 SIZE = 1280
 _logo_cache = None
 
@@ -90,11 +96,49 @@ def to_jpeg(im: Image.Image, quality=90) -> bytes:
     return buf.getvalue()
 
 
-def process(data: bytes, logo: bool = True) -> bytes:
-    """1 + 2-agent birga: format -> logo -> JPEG."""
+GOLD = (214, 163, 30)  # logo rangi
+
+
+def add_label(im: Image.Image, lines: list) -> Image.Image:
+    """Mahsulot ma'lumotini (o'lcham, nomi, kodi, narxi) rasmning chap-pastki burchagiga oltin rangda yozadi."""
+    lines = [str(x).strip() for x in lines if x and str(x).strip()]
+    if not lines:
+        return im
+    im = im.convert("RGBA")
+    W, H = im.size
+    size = int(W * 0.036)
+    font = None
+    for path in (config.ASSETS / "label.ttf", "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"):
+        try:
+            font = ImageFont.truetype(str(path), size)
+            break
+        except OSError:
+            pass
+    if font is None:
+        font = _font(size)
+    step = int(size * 1.32)
+    x = int(W * 0.02)
+    y = H - int(H * 0.06) - step * len(lines)
+    # yengil soya — har qanday fonda o'qilishi uchun
+    shadow = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    sd = ImageDraw.Draw(shadow)
+    for i, t in enumerate(lines):
+        sd.text((x + 2, y + i * step + 2), t, font=font, fill=(0, 0, 0, 170))
+    shadow = shadow.filter(ImageFilter.GaussianBlur(3))
+    im = Image.alpha_composite(im, shadow)
+    d = ImageDraw.Draw(im)
+    for i, t in enumerate(lines):
+        d.text((x, y + i * step), t, font=font, fill=GOLD + (255,))
+    return im.convert("RGB")
+
+
+def process(data: bytes, logo: bool = True, label: list | None = None) -> bytes:
+    """1 + 2-agent birga: format -> logo -> (mahsulot yozuvi) -> JPEG."""
     im = fix_format(data)
     if logo:
         im = add_logo(im)
+    if label:
+        im = add_label(im, label)
     return to_jpeg(im)
 
 

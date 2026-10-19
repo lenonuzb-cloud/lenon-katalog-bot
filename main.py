@@ -30,18 +30,30 @@ WEBHOOK_SECRET = hashlib.sha256(("lenon:" + config.BOT_TOKEN).encode()).hexdiges
 
 # ---------------- zaxira nusxa (egasining chatida, mahkamlangan fayl) ----------------
 async def backup_to_telegram(data: bytes):
+    """Zaxira faylini egasining chatidagi BITTA mahkamlangan xabarda yangilab boradi.
+    Har safar yangi xabar yuborib, qayta mahkamlamaydi — shuning uchun «xabarni qadadi» degan yozuvlar chiqmaydi."""
     owner = store.settings.get("owner_id")
     if not owner:
         return
     stamp = datetime.now(config.TZ).strftime("%d.%m.%Y %H:%M")
+    caption = f"💾 Katalog zaxirasi — {stamp}\n(o'chirmang, bot shundan tiklanadi)"
+    old = store.settings.get("backup_msg_id")
+    if old:
+        try:
+            await bot.call("editMessageMedia", files={"doc": ("lenon_baza.json", data, "application/json")},
+                           chat_id=str(owner), message_id=str(old),
+                           media={"type": "document", "media": "attach://doc", "caption": caption})
+            return
+        except TelegramError as e:
+            if "not modified" in e.description:
+                return
+            log.info("Zaxira xabarini yangilab bo'lmadi, yangisi yuboriladi: %s", e)
     m = await bot.call("sendDocument", files={"document": ("lenon_baza.json", data, "application/json")},
-                       chat_id=str(owner), caption=f"💾 Katalog zaxirasi — {stamp}\n(o'chirmang, bot shundan tiklanadi)",
-                       disable_notification="true")
+                       chat_id=str(owner), caption=caption, disable_notification="true")
     try:
         await bot.call("pinChatMessage", chat_id=owner, message_id=m["message_id"], disable_notification=True)
     except TelegramError:
         pass
-    old = store.settings.get("backup_msg_id")
     if old and old != m["message_id"]:
         await bot.safe_delete(owner, old)
     store.settings["backup_msg_id"] = m["message_id"]

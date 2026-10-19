@@ -324,7 +324,7 @@ class Store:
                     "link": self.post_link(d),
                     "categories": [
                         {"name": c["name"], "items": [
-                            {"id": it["id"], "name": it["name"], "code": it["code"], "price": it["price"],
+                            {"id": it["id"], "name": it["name"], "code": it["code"], "price": it["price"], "size": it.get("size", ""),
                              "photo": it.get("photo", ""),
                              "in_stock": it.get("in_stock", True),
                              "is_new": it.get("new_until", 0) > t,

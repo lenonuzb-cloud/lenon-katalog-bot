@@ -408,9 +408,11 @@ async def _album_done(key):
         sessions.pop(uid, None)
         try:
             data = await bot.download(alb["files"][0])
-            out = await asyncio.get_event_loop().run_in_executor(None, images.process, data, True)
             d = store.designs[pf[0]]
             _, it = store.find_item(d, pf[1])
+            _size_from_caption(it, alb.get("caption"))
+            out = await asyncio.get_event_loop().run_in_executor(None, images.process, data, True,
+                                                                 ops.item_label(d, it))
             r = await bot.call("sendPhoto", files={"photo": ("rasm.jpg", out, "image/jpeg")}, chat_id=str(uid),
                                caption=f"✅ {it['name']} ({d['title']}) — rasm qo'yildi")
             ops.set_item_photo(d["id"], it["id"], r["photo"][-1]["file_id"])
@@ -426,28 +428,10 @@ async def _album_done(key):
 
 
 async def process_and_ask(uid, raw_files, caption, logo=True):
-    note = await bot.send(uid, f"⏳ {len(raw_files)} ta rasm tayyorlanmoqda (format + logo)…")
-    processed = []
-    for fid in raw_files[:20]:
-        data = await bot.download(fid)
-        out = await asyncio.get_event_loop().run_in_executor(None, images.process, data, logo)
-        processed.append(out)
-    await bot.safe_delete(uid, note["message_id"])
-    # tayyor rasmlarni sizga ko'rsatamiz — shu bilan Telegram'da file_id paydo bo'ladi
-    fids = []
-    if len(processed) == 1:
-        r = await bot.call("sendPhoto", files={"photo": ("rasm.jpg", processed[0], "image/jpeg")},
-                           chat_id=str(uid), caption="Tayyor rasm ✅")
-        fids.append(r["photo"][-1]["file_id"])
-    else:
-        for i in range(0, len(processed), 10):
-            chunk = processed[i:i + 10]
-            files = {f"f{j}": (f"r{j}.jpg", b, "image/jpeg") for j, b in enumerate(chunk)}
-            media = [{"type": "photo", "media": f"attach://f{j}"} for j in range(len(chunk))]
-            media[0]["caption"] = "Tayyor rasmlar ✅"
-            rs = await bot.call("sendMediaGroup", files=files, chat_id=str(uid), media=media)
-            fids += [r["photo"][-1]["file_id"] for r in rs]
-    sessions[uid] = {"step": "photo_dest", "raw": raw_files, "photos": fids, "caption": caption or "", "logo": logo}
+    """Rasmni darhol formatlamaymiz: avval qaysi mahsulotniki ekanini so'raymiz,
+    keyin logo + mahsulot yozuvi (o'lcham, nomi, kodi, narxi) bilan tayyorlaymiz."""
+    sessions[uid] = {"step": "photo_dest", "raw": raw_files[:20], "photos": None, "caption": caption or "",
+                     "logo": logo}
     found = store.find_design(caption) if caption else None
     rows = []
     hit = find_item_by_caption(caption) if caption else None
@@ -460,7 +444,42 @@ async def process_and_ask(uid, raw_files, caption, logo=True):
              [btn("Nabor 44", "ph:sec:nabor44"), btn("Nabor 33", "ph:sec:nabor33"), btn("Nabor 39", "ph:sec:nabor39")],
              [btn("Rasmlar bo'limi", "ph:sec:rasmlar")],
              [btn("🚫 Logosiz" if logo else "👑 Logo bilan", "ph:logo"), btn("❌ Bekor", "cancel")]]
-    await bot.send(uid, "Bu rasm(lar) qayerga joylansin?", reply_markup=ikb(rows))
+    n = len(raw_files[:20])
+    await bot.send(uid, (f"📥 {n} ta rasm qabul qilindi.\n" if n > 1 else "📥 Rasm qabul qilindi.\n")
+                   + "Bu qaysi mahsulot? Avval bo'limni, keyin dizayn va mahsulotni tanlang — "
+                     "rasm logo va mahsulot nomi/kodi/narxi bilan tayyorlanadi.", reply_markup=ikb(rows))
+
+
+async def ensure_processed(uid, sess):
+    """Dizayn slayd-shou, nabor yoki «Rasmlar» uchun: rasmlarni faqat logo bilan tayyorlaydi."""
+    if sess.get("photos"):
+        return
+    note = await bot.send(uid, f"⏳ {len(sess['raw'])} ta rasm tayyorlanmoqda (format + logo)…")
+    processed = []
+    for fid in sess["raw"]:
+        data = await bot.download(fid)
+        processed.append(await asyncio.get_event_loop().run_in_executor(None, images.process, data, sess["logo"]))
+    await bot.safe_delete(uid, note["message_id"])
+    fids = []
+    for i in range(0, len(processed), 10):
+        chunk = processed[i:i + 10]
+        if len(chunk) == 1:
+            r = await bot.call("sendPhoto", files={"photo": ("rasm.jpg", chunk[0], "image/jpeg")}, chat_id=str(uid),
+                               caption="Tayyor rasm ✅")
+            fids.append(r["photo"][-1]["file_id"])
+            continue
+        files = {f"f{j}": (f"r{j}.jpg", b, "image/jpeg") for j, b in enumerate(chunk)}
+        media = [{"type": "photo", "media": f"attach://f{j}"} for j in range(len(chunk))]
+        media[0]["caption"] = "Tayyor rasmlar ✅"
+        rs = await bot.call("sendMediaGroup", files=files, chat_id=str(uid), media=media)
+        fids += [r["photo"][-1]["file_id"] for r in rs]
+    sess["photos"] = fids
+
+
+def _size_from_caption(it, caption):
+    m = re.search(r"(\d+(?:[.,]\d+)?)\s*sm\b", caption or "", re.I)
+    if m and it is not None and not it.get("size"):
+        it["size"] = m.group(1).replace(",", ".") + "sm"
 
 
 def find_item_by_caption(caption: str):
@@ -539,7 +558,8 @@ async def photo_callback(uid, data, cb):
     parts = data.split(":")
     if parts[1] == "logo":
         await bot.answer_cb(cb["id"])
-        await process_and_ask(uid, sess["raw"], sess["caption"], logo=not sess["logo"])
+        sess["logo"] = not sess["logo"]
+        await bot.send(uid, "👑 Logo qo'yiladi." if sess["logo"] else "🚫 Logo qo'yilmaydi.")
         return
     if parts[1] == "sec":
         key = parts[2]
@@ -568,6 +588,8 @@ async def photo_callback(uid, data, cb):
         return
     if parts[1] == "new":
         await bot.answer_cb(cb["id"])
+        if sess.get("raw"):
+            await ensure_processed(uid, sess)
         sess["await"] = "design_title"
         ex = "15-OL" if sess.get("section") == "lenon" else "008"
         await bot.send(uid, f"Yangi dizayn nomini yozing (masalan <code>{ex}</code>):")
@@ -628,25 +650,32 @@ async def photo_callback(uid, data, cb):
         if not it:
             return
         i = sess.get("idx", 0)
-        ops.set_item_photo(d["id"], it["id"], sess["photos"][i])
-        try:
-            await bot.call("editMessageCaption", chat_id=uid, message_id=cb["message"]["message_id"],
-                           caption=f"✅ {it['name']} ({d['title']}) — rasm qo'yildi")
-        except TelegramError:
-            pass
+        await bot.safe_delete(uid, cb["message"]["message_id"])
+        if sess.get("photos"):          # forward qilingan, allaqachon tayyor rasm
+            fid = sess["photos"][i]
+        else:
+            _size_from_caption(it, sess.get("caption"))
+            data = await bot.download(sess["raw"][i])
+            out = await asyncio.get_event_loop().run_in_executor(None, images.process, data, sess["logo"],
+                                                                 ops.item_label(d, it))
+            r = await bot.call("sendPhoto", files={"photo": ("rasm.jpg", out, "image/jpeg")}, chat_id=str(uid),
+                               caption=f"✅ {it['name']} ({d['title']}) — rasm qo'yildi")
+            fid = r["photo"][-1]["file_id"]
+        ops.set_item_photo(d["id"], it["id"], fid)
         sess["idx"] = i + 1
-        if sess["idx"] < len(sess["photos"]):
+        if sess["idx"] < len(sess["raw"]):
             await ask_item_for_photo(uid, sess, d, 0)
         else:
-            n = len(sess["photos"])
+            n = len(sess["raw"])
             sessions.pop(uid, None)
             await bot.send(uid, f"✅ Tayyor: {n} ta mahsulot rasmi katalogga qo'yildi.", reply_markup=main_menu())
         return
     if parts[1] == "skip":
         await bot.answer_cb(cb["id"])
         d = store.designs[sess["design"]]
+        await bot.safe_delete(uid, cb["message"]["message_id"])
         sess["idx"] = sess.get("idx", 0) + 1
-        if sess["idx"] < len(sess["photos"]):
+        if sess["idx"] < len(sess["raw"]):
             await ask_item_for_photo(uid, sess, d, 0)
         else:
             sessions.pop(uid, None)
@@ -671,14 +700,15 @@ def item_pick_markup(d, page):
 
 async def ask_item_for_photo(uid, sess, d, page):
     i = sess.get("idx", 0)
-    n = len(sess["photos"])
+    n = len(sess["raw"])
     head = f"{i + 1}/{n}-rasm. " if n > 1 else ""
-    await bot.call("sendPhoto", chat_id=uid, photo=sess["photos"][i],
+    await bot.call("sendPhoto", chat_id=uid, photo=(sess.get("photos") or sess["raw"])[i],
                    caption=f"{head}{d['title']}: bu qaysi mahsulot? (✅ — rasmi bor)",
                    reply_markup=item_pick_markup(d, page))
 
 
 async def apply_photos(uid, sess, replace):
+    await ensure_processed(uid, sess)
     d = store.designs[sess["design"]]
     ops.mark_design_photos(d["id"], sess["photos"], replace)
     sessions.pop(uid, None)
@@ -692,6 +722,7 @@ async def apply_photos(uid, sess, replace):
 
 
 async def create_rasm(uid, sess, caption):
+    await ensure_processed(uid, sess)
     did = store.add_design("rasmlar", caption.split("\n")[0][:60], note=caption, photos=sess["photos"][:1])
     for extra in sess["photos"][1:]:
         store.add_design("rasmlar", caption.split("\n")[0][:60], note=caption, photos=[extra], log_event=False)
@@ -782,7 +813,7 @@ async def new_design_callback(uid, data, cb):
 async def design_preview(uid, sess, warns):
     n = sum(len(c["items"]) for c in sess["categories"])
     lines = [f"<b>{esc(sess['title'])}</b>",
-             f"Rasmlar: {len(sess.get('photos', []))} ta",
+             f"Rasmlar: {len(sess.get('photos') or [])} ta",
              f"Guruhlar: {len(sess['categories'])} ta, mahsulotlar: {n} ta"]
     for c in sess["categories"][:12]:
         lines.append(f"• {esc(c['name'])}: {len(c['items'])} ta")
@@ -794,7 +825,7 @@ async def design_preview(uid, sess, warns):
 
 
 async def design_create(uid, sess):
-    did = store.add_design(sess["section"], sess["title"], photos=sess.get("photos", []))
+    did = store.add_design(sess["section"], sess["title"], photos=sess.get("photos") or [])
     d = store.designs[did]
     for c in sess.get("categories", []):
         d["categories"].append({"name": c["name"], "items": [
@@ -852,6 +883,7 @@ async def on_awaited_text(uid, sess, text):
             sess["await"] = None
             await apply_photos(uid, sess, replace=True)
             return
+        await ensure_processed(uid, sess)
         did = store.add_design(sess["section"], code, photos=sess["photos"])
         store.save()
         sessions.pop(uid, None)

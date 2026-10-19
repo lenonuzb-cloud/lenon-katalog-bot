@@ -58,7 +58,7 @@ def add_item(design_id, category, name, code, price) -> tuple[dict, list]:
     return it, warns
 
 
-def edit_item(design_id, item_id, name=None, code=None, price=None, category=None) -> list:
+def edit_item(design_id, item_id, name=None, code=None, price=None, category=None, size=None) -> list:
     d = _design(design_id)
     cat, it = _item(d, item_id)
     new_name = it["name"] if name is None else name
@@ -79,6 +79,13 @@ def edit_item(design_id, item_id, name=None, code=None, price=None, category=Non
     if dup:
         raise OpError(f"«{new_name}» bu dizaynda allaqachon bor — takrorlanmaydi")
     it.update(name=new_name, code=new_code, price=new_price)
+    if size is not None:
+        size = re.sub(r"\s+", "", str(size)).lower()
+        if size and size.replace(".", "").replace(",", "").isdigit():
+            size += "sm"
+        if size != it.get("size", ""):
+            changes.append(f"o'lchami: {it.get('size') or '—'} → {size or '—'}")
+            it["size"] = size
     if category and category.strip().lower() != cat["name"].lower():
         cat["items"].remove(it)
         target = next((c for c in d["categories"] if c["name"].lower() == category.strip().lower()), None)
@@ -212,3 +219,42 @@ def reorder(design_id, layout: list):
     store.event("edit", f"{d['title']}: mahsulotlar tartibi o'zgartirildi", design_id)
     store.save()
     publisher.queue_update(design_id)
+
+
+def item_size(d, it) -> str:
+    """Mahsulot o'lchami: mahsulotning o'zida yoki «Rasmlar» bo'limidagi izohlarda (masalan «Tar kv 6.5 — 16sm»)."""
+    if it.get("size"):
+        return str(it["size"])
+    import re as _re
+    name = it["name"].strip().lower()
+    # 1) olchamlar.json — bo'limlar bo'yicha o'lchamlar ro'yxati
+    try:
+        import json as _json
+        from config import BASE_DIR
+        table = _json.loads((BASE_DIR / "olchamlar.json").read_text("utf-8"))
+        sec = d.get("section", "") if isinstance(d, dict) else ""
+        for k, v in (table.get(sec) or {}).items():
+            if k.strip().lower() == name:
+                return v
+    except Exception:  # noqa
+        pass
+    notes = [x.get("note") or x.get("title") or "" for x in store.designs.values()
+             if x["section"] == "rasmlar" and not x.get("deleted")]
+    try:
+        import json as _json
+        from store import INITIAL_FILE
+        notes += [r.get("caption", "") for r in _json.loads(INITIAL_FILE.read_text("utf-8")).get("rasmlar", [])]
+    except Exception:  # noqa
+        pass
+    for note in notes:
+        for part in _re.split(r"[/\n]", note):
+            m = _re.match(r"\s*(.+?)\s*[—–-]\s*(\d+(?:[.,]\d+)?\s*sm)\s*$", part, _re.I)
+            if m and m.group(1).strip().lower() == name:
+                return m.group(2).replace(" ", "")
+    return ""
+
+
+def item_label(d, it) -> list:
+    """Rasm tagiga yoziladigan qatorlar: (23sm) / tar tosh 9 / YA4961 / 11.4$"""
+    size = item_size(d, it)
+    return [f"({size})" if size else "", it["name"].lower(), it.get("code", ""), it.get("price", "")]

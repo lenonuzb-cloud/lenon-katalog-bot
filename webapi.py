@@ -97,7 +97,8 @@ async def admin_action(request):
             ops.set_stock(body["design"], body.get("item"), bool(body["in_stock"]))
         elif a == "edit_item":
             warns = ops.edit_item(body["design"], body["item"], name=body.get("name"), code=body.get("code"),
-                                  price=body.get("price"), category=body.get("category"))
+                                  price=body.get("price"), category=body.get("category"),
+                                  size=body.get("size"))
         elif a == "add_item":
             _, warns = ops.add_item(body["design"], body.get("category", ""), body.get("name", ""),
                                     body.get("code", ""), body.get("price", ""))
@@ -137,9 +138,18 @@ async def admin_photo(request):
         return web.json_response({"ok": False, "error": "Rasm topilmadi"}, status=400)
     raw = f.file.read()
     try:
-        out = await asyncio.get_event_loop().run_in_executor(None, images.process, raw, True)
+        d = store.designs[design_id]
+        _, it = store.find_item(d, item_id)
+        label = ops.item_label(d, it) if it else None
     except Exception:  # noqa
-        return web.json_response({"ok": False, "error": "Rasmni o'qib bo'lmadi"}, status=400)
+        label = None
+    try:
+        out = await asyncio.get_event_loop().run_in_executor(None, images.process, raw, True, label)
+    except Exception as e:  # noqa
+        import checker
+        await checker.report_error(f"Mini ilova: rasm o'qilmadi ({len(raw)} bayt, {raw[:12]!r})", e)
+        return web.json_response({"ok": False, "error": "Rasmni o'qib bo'lmadi. Rasmni JPG/PNG qilib qayta yuboring "
+                                                        "yoki botning o'ziga yuboring."}, status=400)
     owner = store.settings.get("owner_id") or user["id"]
     m = await bot.call("sendPhoto", files={"photo": ("rasm.jpg", out, "image/jpeg")},
                        chat_id=str(owner), disable_notification="true")

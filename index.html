@@ -461,13 +461,19 @@ function prodSheet(d, it){
   $("#p_photo").onclick = () => $("#p_file").click();
   $("#p_file").onchange = async e => { const f = e.target.files[0]; if (f && await uploadPhoto(d, it, f)) closeSheet(); };
 }
+function loadImg(file){
+  return new Promise((ok, bad) => { const u = URL.createObjectURL(file); const im = new Image();
+    im.onload = () => { ok(im); setTimeout(()=>URL.revokeObjectURL(u), 1000); }; im.onerror = bad; im.src = u; });
+}
 async function shrink(file){
   try{
-    const bmp = await createImageBitmap(file);
+    let bmp;
+    try { bmp = await createImageBitmap(file); } catch(e) { bmp = await loadImg(file); }
     const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
     const c = document.createElement("canvas"); c.width = Math.round(bmp.width*k); c.height = Math.round(bmp.height*k);
     c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
-    return await new Promise(r => c.toBlob(r, "image/jpeg", 0.9));
+    const b = await new Promise(r => c.toBlob(r, "image/jpeg", 0.9));
+    return b && b.size > 1000 ? b : file;
   }catch(e){ return file; }
 }
 async function uploadPhoto(d, it, file){
@@ -646,12 +652,13 @@ function editSheet(d, it){
     <label>Nomi</label><input id="f_name" value="${esc(it?it.name:"")}" placeholder="masalan: Aval kv 15">
     <label>Kodi</label><input id="f_code" value="${esc(it?it.code:"")}" placeholder="masalan: YA5999" style="text-transform:uppercase">
     <label>Narxi</label><input id="f_price" value="${esc(it?it.price:"")}" placeholder="masalan: 17$" inputmode="decimal">
+    <label>O'lchami <small style="font-weight:400;color:#999">(rasm tagiga yoziladi, ixtiyoriy)</small></label><input id="f_size" value="${esc(it&&it.size?it.size:"")}" placeholder="masalan: 23sm">
     <label>Guruhi</label><input id="f_cat" list="cats" value="${esc(it?it.cat:(cats[cats.length-1]||""))}"><datalist id="cats">${cats.map(c=>`<option value="${esc(c)}">`).join("")}</datalist>
     <div class="acts"><button class="btn ghost" id="f_cancel">Bekor</button><button class="btn" id="f_save">Saqlash</button></div>
     ${isNew?"":`<button class="btn ghost addbtn" id="f_del" style="color:var(--red)">🗑 Jadvaldan o'chirish</button>`}`);
   $("#f_cancel").onclick = closeSheet;
   $("#f_save").onclick = async () => {
-    const body = {design:d.id, name:$("#f_name").value, code:$("#f_code").value, price:$("#f_price").value, category:$("#f_cat").value};
+    const body = {design:d.id, name:$("#f_name").value, code:$("#f_code").value, price:$("#f_price").value, category:$("#f_cat").value, size:$("#f_size").value};
     if (!body.name.trim() || !body.price.trim()){ toast("Nomi va narxini yozing", true); return; }
     if (isNew) body.action="add_item"; else { body.action="edit_item"; body.item=it.id; }
     if (await act(body, isNew?"Qo'shildi (NEW belgisi bilan)":"Saqlandi")) closeSheet();
