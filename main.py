@@ -196,9 +196,7 @@ async def on_startup(app):
     app["bg"] = asyncio.get_event_loop().create_task(background())
     # yozuvdan narx olib tashlangach — mahsulot rasmlarini bir marta avtomatik qayta tayyorlash
     owner_id = store.settings.get("owner_id")
-    if owner_id and store.settings.get("relabel_done") != 1:
-        store.settings["relabel_done"] = 1
-        store.save(backup=False)
+    if owner_id and store.settings.get("relabel_done") != 2:
 
         async def _relabel_later():
             await asyncio.sleep(40)

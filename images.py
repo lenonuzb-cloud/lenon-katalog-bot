@@ -209,3 +209,95 @@ def render_table(title: str, rows: list, note: str = "") -> bytes:
     if note:
         d.text((W // 2, y + 22), note, font=fb, fill=(200, 30, 30), anchor="mm")
     return to_jpeg(im, 92)
+
+
+# ---------------- mavjud rasmdagi yozuvni tekshirish / tuzatish ----------------
+def _label_geom(W, H, n):
+    size = int(W * 0.036)
+    font = None
+    for path in (config.ASSETS / "label.ttf", "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"):
+        try:
+            font = ImageFont.truetype(str(path), size)
+            break
+        except OSError:
+            pass
+    if font is None:
+        font = _font(size)
+    step = int(size * 1.32)
+    x = int(W * 0.02)
+    y = H - int(H * 0.06) - step * n
+    return font, step, x, y
+
+
+def label_match(im: Image.Image, lines: list) -> float:
+    """Rasmda aynan shu yozuv (shu joyda) bormi? 0..1 — oltin rangli harf piksellari ulushi."""
+    lines = [str(x).strip() for x in lines if x and str(x).strip()]
+    if not lines:
+        return 0.0
+    im = im.convert("RGB")
+    W, H = im.size
+    font, step, x, y = _label_geom(W, H, len(lines))
+    mask = Image.new("L", im.size, 0)
+    md = ImageDraw.Draw(mask)
+    for i, t in enumerate(lines):
+        md.text((x, y + i * step), t, font=font, fill=255)
+    # harflarning faqat ichki qismi (chetlari JPEG da xiralashadi)
+    mask = mask.filter(ImageFilter.MinFilter(3))
+    bbox = mask.getbbox()
+    if not bbox:
+        return 0.0
+    crop_m = mask.crop(bbox)
+    crop_i = im.crop(bbox)
+    total = hit = 0
+    for mv, (r, g, b) in zip(crop_m.getdata(), crop_i.getdata()):
+        if mv > 200:
+            total += 1
+            if abs(r - GOLD[0]) < 45 and abs(g - GOLD[1]) < 45 and abs(b - GOLD[2]) < 55:
+                hit += 1
+    return hit / total if total else 0.0
+
+
+def erase_label(im: Image.Image, lines: list) -> Image.Image:
+    """Eski yozuvni o'chiradi: har bir ustunni yozuvdan yuqoridagi va pastdagi fon orasida
+    tekis o'tish bilan to'ldiradi (fon gradienti saqlanadi)."""
+    lines = [str(x).strip() for x in lines if x and str(x).strip()]
+    im = im.convert("RGB")
+    W, H = im.size
+    font, step, x, y = _label_geom(W, H, len(lines))
+    d = ImageDraw.Draw(im)
+    wmax = max(d.textlength(t, font=font) for t in lines)
+    pad = 16
+    x0, y0 = max(0, x - pad), max(1, y - pad)
+    x1, y1 = min(W, int(x + wmax + pad + 6)), min(H - 1, y + step * len(lines) + pad)
+    px = im.load()
+    patch = Image.new("RGB", (x1 - x0, y1 - y0))
+    pp = patch.load()
+    hgt = y1 - y0
+    for cx in range(x0, x1):
+        a_ = [px[cx, max(0, y0 - k)] for k in range(1, 6)]
+        b_ = [px[cx, min(H - 1, y1 + k)] for k in range(1, 6)]
+        ta = tuple(sum(v[i] for v in a_) / 5 for i in range(3))
+        tb = tuple(sum(v[i] for v in b_) / 5 for i in range(3))
+        for yy in range(hgt):
+            t = yy / max(1, hgt - 1)
+            pp[cx - x0, yy] = tuple(int(ta[i] * (1 - t) + tb[i] * t) for i in range(3))
+    patch = patch.filter(ImageFilter.GaussianBlur(4))
+    m = Image.new("L", patch.size, 255)
+    edge = Image.new("L", patch.size, 0)
+    ImageDraw.Draw(edge).rectangle([4, 4, patch.width - 5, patch.height - 5], fill=255)
+    m = edge.filter(ImageFilter.GaussianBlur(3))
+    im.paste(patch, (x0, y0), m)
+    return im
+
+
+def relabel_image(data: bytes, old_lines: list, new_lines: list) -> tuple[bytes | None, str]:
+    """Tayyor rasmdagi yozuvni yangilaydi.
+    Qaytaradi: (yangi jpeg yoki None, holat): 'ok' — o'zgartirish kerak emas, 'added' — yozuv qo'shildi,
+    'fixed' — eski yozuv almashtirildi."""
+    im = Image.open(io.BytesIO(data)).convert("RGB")
+    if label_match(im, new_lines) > 0.6:
+        return None, "ok"
+    if label_match(im, old_lines) > 0.6:
+        im = erase_label(im, old_lines)
+        return to_jpeg(add_label(im, new_lines)), "fixed"
+    return to_jpeg(add_label(im, new_lines)), "added"
