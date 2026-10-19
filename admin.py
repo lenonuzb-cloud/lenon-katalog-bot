@@ -315,7 +315,41 @@ async def cmd_start(m, user):
     await send_public_welcome(uid)
 
 
+_member_cache: dict = {}
+
+
+async def is_member(uid) -> bool:
+    """Adminlar va Lenon 55 guruhi a'zolari — True. Natija 10 daqiqa eslab qolinadi."""
+    if store.is_admin(uid):
+        return True
+    gid = store.settings.get("group_id")
+    if not gid:
+        return False
+    import time as _t
+    hit = _member_cache.get(uid)
+    if hit and _t.time() - hit[1] < 600:
+        return hit[0]
+    try:
+        cm = await bot.call("getChatMember", chat_id=gid, user_id=uid)
+        ok = cm.get("status") in ("creator", "administrator", "member") or (
+            cm.get("status") == "restricted" and cm.get("is_member"))
+    except TelegramError:
+        ok = False
+    _member_cache[uid] = (ok, _t.time())
+    return ok
+
+
 async def send_public_welcome(uid):
+    if store.settings.get("private", True):
+        if not await is_member(uid):
+            await bot.send(uid, "🔒 Bu bot yopiq — faqat Lenon 55 guruhi a'zolari uchun.")
+            return
+        if webapp_url():
+            try:
+                await bot.call("setChatMenuButton", chat_id=uid, menu_button={
+                    "type": "web_app", "text": "📒 Katalog", "web_app": {"url": webapp_url()}})
+            except TelegramError:
+                pass
     rows = []
     if webapp_url():
         rows.append([{"text": "📒 Katalogni ochish", "web_app": {"url": webapp_url()}}])
@@ -1361,6 +1395,8 @@ async def settings_menu(uid):
             [btn("👥 Agent username", "se:ag")],
             [btn("📤 Katalogni guruhga joylash", "se:pub")],
             [btn("🔁 Hamma postlarni qayta joylash", "se:rep")],
+            [btn("🔒 Katalog: faqat guruh a'zolari (ochish)" if st.get("private", True)
+                 else "🔓 Katalog: hamma uchun (yopish)", "se:priv")],
             [btn("📌 Katalog havolasini tepaga qo'yish", "se:pin")],
             [btn("🖼 Mahsulot rasmlarini qayta tayyorlash", "se:relabel")],
             [btn("💾 Zaxira faylini olish", "se:bk")]]
@@ -1385,6 +1421,11 @@ async def settings_callback(uid, data, cb):
         if a in store.settings["admins"]:
             store.settings["admins"].remove(a)
             store.save()
+            try:
+                await bot.call("setChatMenuButton", chat_id=a, menu_button={"type": "default"})
+                await bot.call("deleteMyCommands", scope={"type": "chat", "chat_id": a})
+            except TelegramError:
+                pass
         await bot.send(uid, "✅ Olib tashlandi.")
     elif p[1] == "ag":
         rows = [[btn(n, f"se:agn:{n}")] for n in store.settings["agents"]]
@@ -1406,6 +1447,10 @@ async def settings_callback(uid, data, cb):
         await bot.send(uid, txt, reply_markup=ikb([[btn("📤 Ha, joylash", "se:puby")], [btn("❌ Bekor", "cancel")]]))
     elif p[1] == "puby":
         asyncio.get_event_loop().create_task(publish_all(uid))
+    elif p[1] == "priv":
+        store.settings["private"] = not store.settings.get("private", True)
+        store.save()
+        asyncio.get_event_loop().create_task(apply_privacy(uid))
     elif p[1] == "relabel":
         import relabel
         asyncio.get_event_loop().create_task(relabel.run(uid))
@@ -1433,6 +1478,48 @@ async def pdf_command(uid, q):
         await checker.report_error("PDF tayyorlanmadi", e)
         await bot.send(uid, "⚠️ PDF tayyorlab bo'lmadi.")
     await bot.safe_delete(uid, note["message_id"])
+
+
+async def sync_menu_buttons():
+    """Pastki «📒 Katalog» tugmasi va buyruqlar: maxfiy rejimda faqat adminlarga ko'rinadi."""
+    st = store.settings
+    url = webapp_url()
+    admin_cmds = [{"command": "start", "description": "Asosiy menyu"},
+                  {"command": "hisobot", "description": "Hisobot"},
+                  {"command": "tekshir", "description": "Nazoratchi tekshiruvi"},
+                  {"command": "qolmadi", "description": "Qolmadi / Keldi belgilash"},
+                  {"command": "pdf", "description": "Dizayn katalogini PDF qilish (/pdf 01-AL)"}]
+    private = st.get("private", True)
+    try:
+        if private:
+            await bot.call("setChatMenuButton", menu_button={"type": "default"})
+            await bot.call("setMyCommands", commands=[{"command": "start", "description": "Boshlash"}])
+        elif url:
+            await bot.call("setChatMenuButton", menu_button={"type": "web_app", "text": "📒 Katalog",
+                                                             "web_app": {"url": url}})
+            await bot.call("setMyCommands", commands=admin_cmds[:1])
+    except TelegramError:
+        pass
+    for a in set(st.get("admins", []) + ([st["owner_id"]] if st.get("owner_id") else [])):
+        try:
+            if url:
+                await bot.call("setChatMenuButton", chat_id=a, menu_button={
+                    "type": "web_app", "text": "📒 Katalog", "web_app": {"url": url}})
+            await bot.call("setMyCommands", commands=admin_cmds, scope={"type": "chat", "chat_id": a})
+        except TelegramError:
+            pass
+
+
+async def apply_privacy(uid=None):
+    """Maxfiylik o'zgarganda: tugmalar, guruhdagi havolalar va mahkamlangan xabarlarni moslaydi."""
+    st = store.settings
+    private = st.get("private", True)
+    await sync_menu_buttons()
+    st["privacy_applied"] = private
+    store.save()
+    if uid:
+        await bot.send(uid, "🔒 Katalog endi faqat Lenon 55 guruhi a'zolari va adminlar uchun. Begonalar ocha olmaydi."
+                       if private else "🔓 Katalog hamma uchun ochildi.")
 
 
 async def pin_catalog(uid):
@@ -1522,6 +1609,7 @@ async def admin_add_text(uid, text):
     if tid not in store.settings["admins"]:
         store.settings["admins"].append(tid)
         store.save()
+        asyncio.get_event_loop().create_task(sync_menu_buttons())
     await bot.send(uid, f"✅ @{esc(uname)} admin qilindi.", reply_markup=main_menu())
     try:
         await bot.send(tid, "Sizga LENON katalog botida admin huquqi berildi ✅", reply_markup=main_menu())

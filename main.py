@@ -179,13 +179,8 @@ async def on_startup(app):
         store.settings["owner_id"] = OWNER_ID
     store.save(backup=False)
 
-    # pastki "Katalog" tugmasi (shaxsiy chatlarda)
+    # webhook
     if config.PUBLIC_URL:
-        try:
-            await bot.call("setChatMenuButton", menu_button={"type": "web_app", "text": "📒 Katalog",
-                                                             "web_app": {"url": config.PUBLIC_URL + "/app"}})
-        except TelegramError as e:
-            log.warning("Menyu tugmasi qo'yilmadi: %s", e)
         await bot.call("setWebhook", url=f"{config.PUBLIC_URL}/tg/{WEBHOOK_SECRET}",
                        secret_token=WEBHOOK_SECRET,
                        allowed_updates=["message", "callback_query", "my_chat_member"])
@@ -193,17 +188,26 @@ async def on_startup(app):
     else:
         app["polling"] = asyncio.get_event_loop().create_task(polling())
 
-    try:
-        await bot.call("setMyCommands", commands=[
-            {"command": "start", "description": "Asosiy menyu / katalog"},
-            {"command": "hisobot", "description": "Hisobot"},
-            {"command": "tekshir", "description": "Nazoratchi tekshiruvi"},
-            {"command": "qolmadi", "description": "Qolmadi / Keldi belgilash"},
-        ])
-    except TelegramError:
-        pass
+    # pastki «📒 Katalog» tugmasi va buyruqlar (maxfiy rejimda faqat adminlarga)
+    await admin.sync_menu_buttons()
+    if store.settings.get("privacy_applied") != store.settings.get("private", True):
+        asyncio.get_event_loop().create_task(admin.apply_privacy())
 
     app["bg"] = asyncio.get_event_loop().create_task(background())
+    # yozuvdan narx olib tashlangach — mahsulot rasmlarini bir marta avtomatik qayta tayyorlash
+    owner_id = store.settings.get("owner_id")
+    if owner_id and store.settings.get("relabel_done") != 1:
+        store.settings["relabel_done"] = 1
+        store.save(backup=False)
+
+        async def _relabel_later():
+            await asyncio.sleep(40)
+            import relabel
+            try:
+                await relabel.run(owner_id)
+            except Exception as e:  # noqa
+                await checker.report_error("Rasmlarni qayta tayyorlashda xato", e)
+        asyncio.get_event_loop().create_task(_relabel_later())
     owner = store.settings.get("owner_id")
     if owner:
         try:

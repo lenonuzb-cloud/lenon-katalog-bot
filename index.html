@@ -238,7 +238,9 @@ function toast(msg, warn=false){
 function haptic(){ try{ tg && tg.HapticFeedback.impactOccurred("light"); }catch(e){} }
 
 async function load(){
-  const r = await fetch("/api/catalog"); CAT = await r.json(); BOT = CAT.bot || "";
+  const r = await fetch("/api/catalog", {headers:{"X-Init-Data":initData}});
+  if (r.status === 403){ lockedScreen(); return; }
+  CAT = await r.json(); BOT = CAT.bot || "";
   if (initData){
     try{ const m = await (await fetch("/api/me",{headers:{"X-Init-Data":initData}})).json(); ADMIN = !!m.admin; }catch(e){}
   }
@@ -250,6 +252,13 @@ async function load(){
   renderTabs(); render();
 }
 
+function lockedScreen(){
+  document.body.innerHTML = `<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;font-family:var(--sans,sans-serif);background:#fff">
+    <img src="/static/logo.png" style="width:180px;margin-bottom:28px">
+    <div style="font-size:44px;margin-bottom:12px">🔒</div>
+    <div style="font:600 20px var(--serif,serif);color:#222;margin-bottom:8px">Katalog yopiq</div>
+    <div style="color:#888;font-size:14px;line-height:1.5">Bu katalog faqat <b>Lenon 55</b> guruhi a'zolari uchun.</div></div>`;
+}
 function sections(){
   const s = CAT.sections;
   const nab = s.filter(x=>x.kind==="nabor");
@@ -427,7 +436,7 @@ function renderDesign(){
   }
   const out = q ? 0 : d.categories.reduce((a,c)=>a+c.items.filter(i=>!i.in_stock).length,0);
   h += `<div class="toolbar"><span>${q ? `${esc(d.title)}: ${found} ta topildi` : `${total} ta mahsulot${out?` · <b class="red">${out} tasi qolmagan</b>`:""}`}</span>
-        <span class="tbs">${ADMIN?`<button class="tbtn" id="addprod">➕</button><button class="tbtn" id="reord2" title="Tartib">↕️</button>`:""}<button class="tbtn" id="topdf" title="PDF qilib yuklab olish">📄 PDF</button><button class="tbtn" id="totable">${ADMIN?"✏️ Jadval":"📋 Jadval"}</button></span></div>`;
+        <span class="tbs">${ADMIN?`<button class="tbtn" id="addprod">➕</button><button class="tbtn" id="reord2" title="Tartib">↕️</button>`:""}${ADMIN?`<button class="tbtn" id="topdf" title="PDF qilib yuklab olish">📄 PDF</button>`:""}<button class="tbtn" id="totable">${ADMIN?"✏️ Jadval":"📋 Jadval"}</button></span></div>`;
   h += body || (q ? `<div class="empty-msg">«${esc(q)}» — bu dizaynda topilmadi</div>` : '<div class="empty-msg">Hozircha mahsulot yo\'q</div>');
   if (d.link) h += `<button class="btn ghost addbtn" id="openpost">↗️ Guruhdagi postni ochish</button>`;
   m.innerHTML = h;
@@ -436,7 +445,7 @@ function renderDesign(){
   document.querySelectorAll(".agents button").forEach(b => b.onclick = () => openTg("https://t.me/"+b.dataset.u));
   const op = $("#openpost"); if (op) op.onclick = () => openTg(d.link);
   $("#totable").onclick = () => go({name:"table", id:d.id});
-  $("#topdf").onclick = () => exportPdf(d);
+  const pdfb = $("#topdf"); if (pdfb) pdfb.onclick = () => exportPdf(d);
   const ap = $("#addprod"); if (ap) ap.onclick = () => addChooser(d);
   const r2 = $("#reord2"); if (r2) r2.onclick = () => go({name:"reorder", id:d.id});
   document.querySelectorAll(".pcard").forEach(b => b.onclick = () => prodSheet(d, findItem(d, b.dataset.item)));
@@ -768,7 +777,7 @@ function bindSearch(){ document.querySelectorAll(".res").forEach(b => b.onclick 
 $("#q").oninput = () => render();
 
 load().catch(() => { $("#main").innerHTML = '<div class="empty-msg">Katalogni yuklab bo\'lmadi. Internetni tekshiring.</div>'; });
-setInterval(async () => { if (document.hidden || $("#sheetbg").style.display==="flex") return; try{ const r = await fetch("/api/catalog"); const j = await r.json(); if (j.updated !== CAT.updated){ CAT = j; render(); } }catch(e){} }, 30000);
+setInterval(async () => { if (document.hidden || $("#sheetbg").style.display==="flex") return; try{ const r = await fetch("/api/catalog", {headers:{"X-Init-Data":initData}}); if (!r.ok) return; const j = await r.json(); if (j.updated !== CAT.updated){ CAT = j; render(); } }catch(e){} }, 30000);
 </script>
 </body>
 </html>

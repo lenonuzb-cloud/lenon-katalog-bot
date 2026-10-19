@@ -63,6 +63,11 @@ def catalog_url(design_id=None) -> str:
     return f"{config.PUBLIC_URL}/app" + (f"?d={design_id}" if design_id else "")
 
 
+def public_links() -> bool:
+    """Katalog hamma uchun ochiq bo'lsa True. Maxfiy rejimda guruhga katalog havolalari qo'yilmaydi."""
+    return bool(bot.username)  # guruh a'zolari katalogni ochishi mumkin — havolalar doim turadi
+
+
 def keyboard(d) -> dict | None:
     rows = []
     agents = []
@@ -72,7 +77,7 @@ def keyboard(d) -> dict | None:
             agents.append({"text": a, "url": f"https://t.me/{user}"})
     if agents:
         rows.append(agents)
-    if bot.username:
+    if public_links():
         rows.append([{"text": f"📒 {d['title']} — katalogda ochish", "url": catalog_url(d["id"])}])
     return {"inline_keyboard": rows} if rows else None
 
@@ -269,7 +274,7 @@ async def publish(design_id: str, repost: bool = False):
 
 async def _post_new(d, kind, gid, thread):
     markup = keyboard(d) if kind == "design" else (
-        {"inline_keyboard": [[{"text": "📒 Katalog", "url": catalog_url(d["id"])}]]} if bot.username else None)
+        {"inline_keyboard": [[{"text": "📒 Katalog", "url": catalog_url(d["id"])}]]} if public_links() else None)
     if kind == "photos":
         if not d.get("photos"):
             return
@@ -319,7 +324,7 @@ async def _update(d, kind) -> bool:
     """Mavjud postni tahrirlaydi. Muvaffaqiyatli bo'lsa True."""
     m = d["msg"]
     markup = keyboard(d) if kind == "design" else (
-        {"inline_keyboard": [[{"text": "📒 Katalog", "url": catalog_url(d["id"])}]]} if bot.username else None)
+        {"inline_keyboard": [[{"text": "📒 Katalog", "url": catalog_url(d["id"])}]]} if public_links() else None)
     try:
         if kind == "photos":
             await bot.call("editMessageCaption", chat_id=m["chat_id"], message_id=m["message_id"],
@@ -355,7 +360,7 @@ async def publish_index(section_key):
     async with _lock("index:" + section_key):
         gid, thread = _target(section_key)
         info = store.s["index_msgs"].get(section_key)
-        markup = {"inline_keyboard": [[{"text": "📒 Katalog", "url": catalog_url()}]]} if bot.username else None
+        markup = {"inline_keyboard": [[{"text": "📒 Katalog", "url": catalog_url()}]]} if public_links() else None
         if section_key == "boden":
             btns = []
             for d in store.designs_in("boden"):
@@ -363,7 +368,7 @@ async def publish_index(section_key):
                 if link:
                     btns.append({"text": d["title"], "url": link})
             rows = [btns[i:i + 3] for i in range(0, len(btns), 3)]
-            if bot.username:
+            if public_links():
                 rows.append([{"text": "📒 Katalog", "url": catalog_url()}])
             markup = {"inline_keyboard": rows} if rows else None
         text_rich = index_html(section_key)

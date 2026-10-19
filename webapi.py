@@ -45,7 +45,16 @@ async def page(request):
     return resp
 
 
+def is_private() -> bool:
+    return store.settings.get("private", True)
+
+
 async def catalog(request):
+    if is_private():
+        user = verify_init_data(request.headers.get("X-Init-Data", ""))
+        import admin as _admin
+        if not user or not await _admin.is_member(user.get("id")):
+            return web.json_response({"private": True}, status=403)
     data = store.public_catalog()
     data["bot"] = bot.username
     return web.json_response(data, headers={"Cache-Control": "no-cache"})
@@ -227,8 +236,8 @@ async def make_pdf(design_id: str) -> tuple[bytes, str]:
 async def pdf_export(request):
     """Mini ilovadagi «PDF» tugmasi: dizayn katalogini PDF qilib, foydalanuvchining Telegram chatiga yuboradi."""
     user = verify_init_data(request.headers.get("X-Init-Data", ""))
-    if not user:
-        return web.json_response({"ok": False, "error": "Telegram orqali oching"}, status=403)
+    if not user or not store.is_admin(user.get("id")):
+        return web.json_response({"ok": False, "error": "Ruxsat yo'q"}, status=403)
     body = await request.json()
     did = body.get("design")
     if did not in store.designs:
