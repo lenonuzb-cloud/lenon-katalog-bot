@@ -16,6 +16,11 @@ def _norm(t):
     return re.sub(r"\s+", " ", str(t or "").strip().lower())
 
 
+def hkey(name, code):
+    """Ro'yxatdan yashirish uchun kalit: nomi|kodi."""
+    return _norm(name) + "|" + str(code or "").strip().upper()
+
+
 def key(name, code, category):
     return (_norm(name), str(code or "").strip().upper(), _norm(category))
 
@@ -47,8 +52,11 @@ def products(section_key) -> list:
                 prices[k][it["price"]] += 1
                 if not e["photo"] and it.get("photo"):
                     e["photo"] = it["photo"]
+    hidden = set(store.settings.get("registry_hidden", {}).get(section_key, []))
     out = []
     for k, e in entries.items():
+        if hkey(e["name"], e["code"]) in hidden:
+            continue
         pc = prices[k].most_common()
         e["price"] = pc[0][0] if pc else ""
         e["prices"] = [p for p, _ in pc]

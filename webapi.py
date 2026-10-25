@@ -108,6 +108,9 @@ async def admin_action(request):
             warns = ops.edit_item(body["design"], body["item"], name=body.get("name"), code=body.get("code"),
                                   price=body.get("price"), category=body.get("category"),
                                   size=body.get("size"))
+        elif a == "remove_product":
+            ops.remove_product(body["section"], body.get("name", ""), body.get("code", ""),
+                               "hide" if body.get("mode") == "hide" else "all")
         elif a == "add_item":
             _, warns = ops.add_item(body["design"], body.get("category", ""), body.get("name", ""),
                                     body.get("code", ""), body.get("price", ""))

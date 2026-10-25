@@ -247,8 +247,10 @@ async function load(){
   $("#adm").style.display = ADMIN ? "inline-block" : "none";
   $("#adm").onclick = adminPanel;
   let sp = tg && tg.initDataUnsafe ? tg.initDataUnsafe.start_param : null;
-  if (!sp){ const u = new URLSearchParams(location.search); if (u.get("d")) sp = "d_" + u.get("d"); }
-  if (sp && sp.startsWith("d_")){ const d = findDesign(sp.slice(2)); if (d){ if (d.sec.kind==="nabor"){ view = {name:"section", key:"naborlar"}; stack.push(view); view = {name:"nabor", key:d.sec.key}; } else view = {name:"section", key:d.sec.key}; renderTabs(); go({name:"design", id:d.d.id}); return; } }
+  if (!sp){ const u = new URLSearchParams(location.search); if (u.get("d")) sp = (u.get("i") ? "i_"+u.get("d")+"_"+u.get("i") : "d_" + u.get("d")); }
+  let openItem = null;
+  if (sp && sp.startsWith("i_")){ const p = sp.slice(2).split("_"); sp = "d_" + p[0]; openItem = p[1] || null; }
+  if (sp && sp.startsWith("d_")){ const d = findDesign(sp.slice(2)); if (d){ if (d.sec.kind==="nabor"){ view = {name:"section", key:"naborlar"}; stack.push(view); view = {name:"nabor", key:d.sec.key}; } else view = {name:"section", key:d.sec.key}; renderTabs(); go({name:"design", id:d.d.id, openItem}); return; } }
   renderTabs(); render();
 }
 
@@ -623,9 +625,11 @@ async function adminInfo(q){
 function adminPanel(){
   openSheet(`<h3>⚙️ Boshqaruv</h3>
     <button class="choice" id="ap_rep"><span>📊</span><div><b>Hisobot</b><small>Qo'shilgan, qolmadi/keldi bo'lgan, tahrirlangan mahsulotlar va hozir qolmaganlar</small></div></button>
+    <button class="choice" id="ap_prod"><span>📚</span><div><b>Mahsulotlar ro'yxati</b><small>Barcha mahsulotlar — keraksizini butunlay o'chirish</small></div></button>
     <button class="choice" id="ap_chk"><span>🛠</span><div><b>Tekshirish (nazoratchi)</b><small>Bot holati va jadvallardagi xatolar: narx, kod, takrorlar</small></div></button>
     <div class="pinfo2">Adminlar va agentlar sozlamalari — botdagi ⚙️ Sozlamalar menyusida (faqat egasi uchun).</div>`);
   $("#ap_rep").onclick = () => reportSheet(24);
+  $("#ap_prod").onclick = () => productsSheet("lenon");
   $("#ap_chk").onclick = async () => {
     openSheet(`<h3>🛠 Tekshiruv</h3><div class="loading">Tekshirilmoqda…</div>`);
     try{
@@ -635,6 +639,46 @@ function adminPanel(){
       openSheet(`<h3>🛠 Tekshiruv</h3><div class="rep"><b>Bot holati</b><ul>${bot}</ul><b>Jadvallar (${j.problems.length})</b><ul>${pr}</ul></div>`);
     }catch(e){ toast("⚠️ Internet bilan muammo", true); }
   };
+}
+function productsSheet(secKey, q0){
+  const secs = CAT.sections.filter(s=>s.kind==="design");
+  const list = (CAT.registry && CAT.registry[secKey]) || [];
+  openSheet(`<h3>📚 Mahsulotlar ro'yxati</h3>
+    <div class="seg">${secs.map(s=>`<button data-k="${s.key}" class="${s.key===secKey?"on":""}">${esc(s.title)}</button>`).join("")}</div>
+    <div class="pinfo2" style="margin:6px 0 10px">${list.length} ta mahsulot. Keraksizini 🗑 bilan o'chiring.</div>
+    <div class="search pk"><span>🔍</span><input id="pr_q" type="search" placeholder="Qidirish: masalan «ta to 9»" value="${esc(q0||"")}"></div>
+    <div id="pr_list" class="pk-list"></div>`);
+  document.querySelectorAll(".seg button").forEach(b => b.onclick = () => productsSheet(b.dataset.k));
+  const draw = () => {
+    const q = $("#pr_q").value.trim();
+    const rows = q ? list.map(x=>({x,sc:matchQ(q,x.name,x.code)})).filter(r=>r.sc).sort((a,b)=>b.sc-a.sc).map(r=>r.x) : list;
+    let last = null, h = "";
+    rows.forEach(x => {
+      if (!q && x.category !== last){ h += `<div class="pk-cat">${esc(x.category)}</div>`; last = x.category; }
+      const i = list.indexOf(x);
+      h += `<div class="pk-row" style="display:flex"><span class="rt"><b>${esc(x.name)}</b><small>${esc(x.code||"—")} · ${x.designs} ta dizaynda</small></span><b class="rp">${esc(x.price)}</b>${thumbHtml(x.photo)}<button class="tbtn pr-del" data-i="${i}" style="margin-left:8px;padding:6px 10px">🗑</button></div>`;
+    });
+    $("#pr_list").innerHTML = h || `<div class="empty-msg">Topilmadi</div>`;
+    $("#pr_list").querySelectorAll(".pr-del").forEach(b => b.onclick = () => removeProductSheet(secKey, list[+b.dataset.i], $("#pr_q").value));
+  };
+  $("#pr_q").oninput = draw;
+  draw();
+}
+function removeProductSheet(secKey, x, q){
+  const sec = CAT.sections.find(s=>s.key===secKey);
+  openSheet(`<h3>🗑 «${esc(x.name)}»</h3>
+    <div class="pinfo2" style="margin:-6px 0 14px">${esc(x.code||"—")} · ${esc(sec.title)} bo'limida <b>${x.designs} ta dizayn</b> jadvalida bor</div>
+    <button class="choice" id="rm_all"><span>🗑</span><div><b>Hamma jadvallardan o'chirish</b><small>${x.designs} ta dizayn jadvalidan butunlay o'chadi, guruhdagi jadvallar ham yangilanadi</small></div></button>
+    <button class="choice" id="rm_hide"><span>📚</span><div><b>Faqat ro'yxatdan olib tashlash</b><small>Jadvallarda qoladi, faqat «Mavjud mahsulotlar» ro'yxatida ko'rinmaydi</small></div></button>
+    <button class="btn ghost addbtn" id="rm_back">‹ Ortga</button>`);
+  $("#rm_back").onclick = () => productsSheet(secKey, q);
+  const go = async mode => {
+    const ok = await act({action:"remove_product", section:secKey, name:x.name, code:x.code, mode},
+      mode==="hide" ? "Ro'yxatdan olib tashlandi" : `${x.designs} ta dizayn jadvalidan o'chirildi`);
+    if (ok) productsSheet(secKey, q);
+  };
+  $("#rm_all").onclick = () => confirmDo(`«${x.name}» ${x.designs} ta dizayn jadvalidan butunlay o'chirilsinmi? Buni qaytarib bo'lmaydi.`, () => go("all"));
+  $("#rm_hide").onclick = () => go("hide");
 }
 async function reportSheet(h){
   openSheet(`<h3>📊 Hisobot</h3><div class="loading">Tayyorlanmoqda…</div>`);

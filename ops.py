@@ -47,6 +47,7 @@ def add_item(design_id, category, name, code, price) -> tuple[dict, list]:
     category = (category or "Aralash").strip()
     if registry.find_duplicate(d, name, code, category):
         raise OpError(f"«{name}» bu dizaynda ({category}) allaqachon bor — takrorlanmaydi")
+    _unhide(d["section"], name, code)
     is_new = not registry.known(d["section"], name, code, category)
     it = store.add_item(d, category, name, code, price)
     if is_new:
@@ -175,6 +176,7 @@ def add_items(design_id, items: list) -> tuple[int, list]:
         if registry.find_duplicate(d, name, code, x.get("category") or "Aralash"):
             warns.append(f"{name} bu dizaynda allaqachon bor")
             continue
+        _unhide(d["section"], name, code)
         store.add_item(d, x.get("category") or "Aralash", name, code, price)
         notify.add("new", f"{name} ({d['title']})")
         warns += [f"{name}: {w}" for w in warns1]
@@ -260,3 +262,42 @@ def item_label(d, it) -> list:
     """Rasm tagiga yoziladigan qatorlar: (23sm) / tar tosh 9 / YA4961  (narx yozilmaydi)"""
     size = item_size(d, it)
     return [f"({size})" if size else "", it["name"].lower(), it.get("code", "")]
+
+
+def remove_product(section_key, name, code, mode="all") -> int:
+    """Mahsulotni butunlay o'chiradi.
+    mode="all"  — bo'limdagi HAMMA dizayn jadvallaridan o'chiradi (guruhdagi postlar ham yangilanadi);
+    mode="hide" — jadvallarga tegmaydi, faqat «Mavjud mahsulotlar» ro'yxatidan olib tashlaydi.
+    Qaytaradi: nechta dizayndan o'chirildi."""
+    hk = registry.hkey(name, code)
+    hidden = store.settings.setdefault("registry_hidden", {}).setdefault(section_key, [])
+    if hk not in hidden:
+        hidden.append(hk)
+    n = 0
+    if mode == "all":
+        for d in store.designs.values():
+            if d["section"] != section_key:
+                continue
+            changed = False
+            for c in d.get("categories", []):
+                keep = [it for it in c["items"] if registry.hkey(it["name"], it.get("code", "")) != hk]
+                if len(keep) != len(c["items"]):
+                    c["items"] = keep
+                    changed = True
+            if changed:
+                d["categories"] = [c for c in d["categories"] if c["items"]]
+                if not d.get("deleted"):
+                    n += 1
+                    publisher.queue_update(d["id"], delay=4 + n * 3)
+        store.event("edit", f"«{name}» ({code or '—'}) {n} ta dizayndan butunlay o'chirildi")
+    else:
+        store.event("edit", f"«{name}» ({code or '—'}) mavjud mahsulotlar ro'yxatidan olib tashlandi")
+    store.save()
+    return n
+
+
+def _unhide(section_key, name, code):
+    hidden = store.settings.get("registry_hidden", {}).get(section_key)
+    hk = registry.hkey(name, code)
+    if hidden and hk in hidden:
+        hidden.remove(hk)

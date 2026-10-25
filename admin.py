@@ -901,6 +901,26 @@ async def on_awaited_text(uid, sess, text):
     if w == "reorder":
         await botextra.reorder_text(uid, sess, text, sessions)
         return
+    if w == "prod_remove":
+        import registry
+        hits = []
+        for s_ in design_sections():
+            for e in registry.products(s_["key"]):
+                sc = botextra.match_q(text, e["name"], e.get("code", ""))
+                if sc:
+                    hits.append((sc, dict(e, sec=s_["key"])))
+        hits = [e for _, e in sorted(hits, key=lambda x: -x[0])[:12]]
+        if not hits:
+            await bot.send(uid, "Topilmadi. Boshqacha yozib ko'ring yoki ❌ Bekor qiling.",
+                           reply_markup=ikb([[btn("❌ Bekor", "cancel")]]))
+            return
+        sess["px_hits"] = hits
+        sess["await"] = None
+        rows = [[btn(f"{e['name']} · {e['code'] or '—'} · {store.section(e['sec'])['title']} ({e['designs']})",
+                     f"ed:pxs:{i}")] for i, e in enumerate(hits)]
+        rows.append([btn("❌ Bekor", "cancel")])
+        await bot.send(uid, "Qaysi biri? (qavsda — nechta dizaynda borligi)", reply_markup=ikb(rows))
+        return
     if w == "design_title":
         title = text.strip()
         exists = store.find_design(title, sess["section"])
@@ -1201,6 +1221,7 @@ async def edit_start(uid):
         rows.append([{"text": "📒 Katalogda tahrirlash (qulay)", "web_app": {"url": webapp_url("?admin=1")}}])
     rows.append([btn(s["title"], f"ed:sec:{s['key']}") for s in design_sections()])
     rows.append([btn(s["title"].replace("LENON ", ""), f"ed:sec:{s['key']}") for s in nabor_sections()])
+    rows.append([btn("🗑 Mahsulotni butunlay o'chirish", "ed:px")])
     await bot.send(uid, "✏️ <b>Tahrirlash</b>\nKatalog ilovasida mahsulotni bosib, narx/nom/kodni o'zgartirish eng qulay. "
                         "Yoki shu yerda bo'limni tanlang:", reply_markup=ikb(rows))
 
@@ -1209,6 +1230,37 @@ async def edit_callback(uid, data, cb):
     p = data.split(":")
     act = p[1]
     await bot.answer_cb(cb["id"])
+    if act == "px":       # mahsulotni butunlay o'chirish — qidirish
+        sessions[uid] = {"await": "prod_remove"}
+        await bot.send(uid, "🗑 Qaysi mahsulotni butunlay o'chiramiz? Nomini yoki kodini yozing "
+                            "(masalan <code>ta to 9</code> yoki <code>YA4961</code>):")
+        return
+    if act == "pxs":      # tanlandi — qanday o'chirish
+        e = (sessions.get(uid) or {}).get("px_hits", [])[int(p[2])]
+        await bot.send(uid, f"🗑 <b>{esc(e['name'])}</b> · {esc(e['code'] or '—')}\n"
+                            f"{esc(store.section(e['sec'])['title'])} bo'limida <b>{e['designs']} ta dizayn</b> jadvalida bor.",
+                       reply_markup=ikb([[btn(f"🗑 Hamma jadvallardan o'chirish ({e['designs']})", f"ed:pxa:{p[2]}")],
+                                         [btn("📚 Faqat ro'yxatdan olib tashlash", f"ed:pxh:{p[2]}")],
+                                         [btn("❌ Bekor", "cancel")]]))
+        return
+    if act == "pxa":      # tasdiqlash
+        e = (sessions.get(uid) or {}).get("px_hits", [])[int(p[2])]
+        await bot.send(uid, f"«{esc(e['name'])}» {e['designs']} ta dizayn jadvalidan butunlay o'chirilsinmi? "
+                            "Buni qaytarib bo'lmaydi.",
+                       reply_markup=ikb([[btn("Ha, o'chirish", f"ed:pxy:{p[2]}"), btn("Yo'q", "cancel")]]))
+        return
+    if act in ("pxy", "pxh"):
+        sess = sessions.pop(uid, None) or {}
+        hits = sess.get("px_hits", [])
+        if int(p[2]) >= len(hits):
+            await bot.send(uid, "Sessiya eskirgan, qaytadan boshlang.")
+            return
+        e = hits[int(p[2])]
+        n = ops.remove_product(e["sec"], e["name"], e["code"], "hide" if act == "pxh" else "all")
+        await bot.send(uid, (f"✅ «{esc(e['name'])}» {n} ta dizayn jadvalidan o'chirildi. Guruhdagi jadvallar yangilanadi."
+                             if act == "pxy" else f"✅ «{esc(e['name'])}» mavjud mahsulotlar ro'yxatidan olib tashlandi."),
+                       reply_markup=main_menu())
+        return
     if act == "sec":
         ds = store.designs_in(p[2])
         rows = grid([btn(short(d), f"ed:d:{d['id']}") for d in ds], 3)

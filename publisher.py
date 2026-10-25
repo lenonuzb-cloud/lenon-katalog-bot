@@ -96,9 +96,23 @@ def _slideshow(d, caption) -> tuple[str, list]:
     return f"<{tag}>{imgs}<figcaption>{esc(caption)}</figcaption></{tag}>", media
 
 
-def _name_cell(it) -> str:
+def item_url(d, it) -> str:
+    """Jadvaldagi mahsulot nomi havolasi — mini ilovada aynan shu mahsulotni ochadi."""
+    if bot.me.get("has_main_web_app") or not config.PUBLIC_URL:
+        return f"https://t.me/{bot.username}?startapp=i_{d['id']}_{it['id']}"
+    return f"{config.PUBLIC_URL}/app?d={d['id']}&i={it['id']}"
+
+
+def _links_on() -> bool:
+    return bool(bot.username) and store.settings.get("item_links", True)
+
+
+def _name_cell(it, d=None) -> str:
     s = item_state(it)
     n = esc(it["name"])
+    if d is not None and _links_on():
+        n = f'<a href="{esc(item_url(d, it))}">{n}</a>'
+
     if s == "qolmadi":
         return f"<s>{n}</s> ❌ <b>Qolmadi</b>"
     if s == "new":
@@ -126,7 +140,7 @@ def design_html(d) -> tuple[str, list]:
         for it in c["items"]:
             no += 1
             code = f"<td>{esc(it['code'])}</td>" if has_code else ""
-            rows.append(f'<tr><td align="center">{no}</td><td>{_name_cell(it)}</td>{code}<td>{esc(it["price"])}</td></tr>')
+            rows.append(f'<tr><td align="center">{no}</td><td>{_name_cell(it, d)}</td>{code}<td>{esc(it["price"])}</td></tr>')
     parts.append("<table bordered striped compact>" + "".join(rows) + "</table>")
     if d.get("note"):
         parts.append(f"<p><b>{esc(d['note'])}</b></p>")
@@ -207,7 +221,42 @@ def _rich_allowed() -> bool:
     return config.RICH_MODE != "off" and store.settings.get("rich_ok") is not False
 
 
+def _links_rejected(e) -> bool:
+    desc = str(getattr(e, "description", e)).lower()
+    return store.settings.get("item_links", True) and any(
+        w in desc for w in ("parse", "tag", "href", "url", "entity", "unsupported", "can't find end"))
+
+
+def _strip_links(html_text: str) -> str:
+    import re
+    return re.sub(r'<a href="[^"]*">(.*?)</a>', r"\1", html_text)
+
+
 async def _send_rich(chat_id, thread, html_text, media, markup):
+    try:
+        return await _send_rich0(chat_id, thread, html_text, media, markup)
+    except TelegramError as e:
+        if "<a href" in html_text and _links_rejected(e):
+            store.settings["item_links"] = False
+            store.save()
+            log.warning("Jadvaldagi havolalar qabul qilinmadi, havolasiz yuboriladi: %s", e)
+            return await _send_rich0(chat_id, thread, _strip_links(html_text), media, markup)
+        raise
+
+
+async def _edit_rich(chat_id, message_id, html_text, media, markup):
+    try:
+        return await _edit_rich0(chat_id, message_id, html_text, media, markup)
+    except TelegramError as e:
+        if "<a href" in html_text and _links_rejected(e):
+            store.settings["item_links"] = False
+            store.save()
+            log.warning("Jadvaldagi havolalar qabul qilinmadi, havolasiz tahrirlanadi: %s", e)
+            return await _edit_rich0(chat_id, message_id, _strip_links(html_text), media, markup)
+        raise
+
+
+async def _send_rich0(chat_id, thread, html_text, media, markup):
     rm = {"html": html_text}
     if media:
         rm["media"] = media
@@ -215,7 +264,7 @@ async def _send_rich(chat_id, thread, html_text, media, markup):
                           rich_message=rm, reply_markup=markup)
 
 
-async def _edit_rich(chat_id, message_id, html_text, media, markup):
+async def _edit_rich0(chat_id, message_id, html_text, media, markup):
     rm = {"html": html_text}
     if media:
         rm["media"] = media

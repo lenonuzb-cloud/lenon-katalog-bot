@@ -194,6 +194,14 @@ async def on_startup(app):
         asyncio.get_event_loop().create_task(admin.apply_privacy())
 
     app["bg"] = asyncio.get_event_loop().create_task(background())
+    # jadvaldagi mahsulot nomlariga mini ilova havolalarini qo'shish (bir marta)
+    if store.settings.get("links_v") != 1:
+        store.settings["links_v"] = 1
+        store.save()
+        posted = [d["id"] for d in store.designs.values()
+                  if d.get("msg") and not d.get("deleted") and store.section(d["section"])["kind"] == "design"]
+        for i, did in enumerate(posted):
+            publisher.queue_update(did, delay=30 + i * 4)
     # yozuvdan narx olib tashlangach — mahsulot rasmlarini bir marta avtomatik qayta tayyorlash
     owner_id = store.settings.get("owner_id")
     if owner_id and store.settings.get("relabel_done") != 2:
