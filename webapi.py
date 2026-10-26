@@ -40,8 +40,9 @@ def verify_init_data(init_data: str) -> dict | None:
 
 
 async def page(request):
-    resp = web.FileResponse(config.WEBAPP_DIR / "index.html")
-    resp.headers["Cache-Control"] = "no-cache"
+    resp = web.Response(body=(config.WEBAPP_DIR / "index.html").read_bytes(), content_type="text/html",
+                        headers={"Cache-Control": "no-cache"})
+    resp.enable_compression()  # sekin internetda tezroq
     return resp
 
 
@@ -57,7 +58,9 @@ async def catalog(request):
             return web.json_response({"private": True}, status=403)
     data = store.public_catalog()
     data["bot"] = bot.username
-    return web.json_response(data, headers={"Cache-Control": "no-cache"})
+    resp = web.json_response(data, headers={"Cache-Control": "no-cache"})
+    resp.enable_compression()  # ~200 KB -> ~25 KB
+    return resp
 
 
 async def me(request):
@@ -267,6 +270,41 @@ async def pdf_export(request):
     return web.json_response({"ok": True})
 
 
+async def product_page(request):
+    """Jadvaldagi mahsulot nomi bosilganda — faqat shu mahsulot rasmi (internet sekin joyda ham tez ochiladi)."""
+    import html as _h
+    import publisher
+    d = store.designs.get(request.match_info["did"])
+    it = None
+    if d and not d.get("deleted"):
+        _, it = store.find_item(d, request.match_info["iid"])
+    if not it:
+        raise web.HTTPNotFound(text="Mahsulot topilmadi")
+    e = _h.escape
+    st = publisher.item_state(it)
+    badge = {"qolmadi": '<span class="b r">QOLMADI</span>', "keldi": '<span class="b g">KELDI</span>',
+             "new": '<span class="b r">NEW</span>'}.get(st, "")
+    size = ops.item_size(d, it)
+    meta = " · ".join(x for x in (it.get("code", ""), size) if x)
+    photo = (f'<img src="/img/{e(it["photo"])}?w=1080" alt="{e(it["name"])}">' if it.get("photo")
+             else '<div class="no">Rasm hali qo\'yilmagan</div>')
+    cat = f"https://t.me/{bot.username}?startapp=i_{d['id']}_{it['id']}" if bot.username else ""
+    page_html = f"""<!doctype html><html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>{e(it["name"])} — LENON</title>
+<style>body{{margin:0;background:#111;color:#eee;font:16px/1.4 system-ui,sans-serif}}
+.w{{max-width:720px;margin:0 auto}}img{{width:100%;display:block}}
+.no{{aspect-ratio:1;display:flex;align-items:center;justify-content:center;color:#888;background:#1c1c1c}}
+.i{{padding:14px 16px 24px}}h1{{margin:0 0 4px;font-size:22px;color:#fff}}.m{{color:#aaa;font-size:14px}}
+.p{{color:#d6a31e;font-size:24px;font-weight:700;margin-top:8px}}.d{{color:#888;font-size:13px;margin-top:4px}}
+.b{{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;margin-left:8px;vertical-align:middle}}
+.r{{background:#cd2828;color:#fff}}.g{{background:#1e9646;color:#fff}}
+a{{display:inline-block;margin-top:16px;color:#d6a31e;text-decoration:none;border:1px solid #d6a31e;border-radius:20px;padding:8px 16px;font-size:14px}}</style>
+</head><body><div class="w">{photo}<div class="i"><h1>{e(it["name"])}{badge}</h1>
+<div class="m">{e(meta)}</div><div class="p">{e(it.get("price", ""))}</div><div class="d">{e(d["title"])}</div>
+{f'<a href="{e(cat)}">📒 Katalogda ochish</a>' if cat else ""}</div></div></body></html>"""
+    return web.Response(text=page_html, content_type="text/html", headers={"Cache-Control": "no-cache"})
+
+
 def routes(app: web.Application):
     app.router.add_get("/app", page)
     app.router.add_get("/app/", page)
@@ -275,6 +313,7 @@ def routes(app: web.Application):
     app.router.add_post("/api/admin", admin_action)
     app.router.add_post("/api/admin/photo", admin_photo)
     app.router.add_post("/api/pdf", pdf_export)
+    app.router.add_get("/p/{did}/{iid}", product_page)
     app.router.add_get("/api/admin/info", admin_info)
     app.router.add_get("/img/{fid}", img)
     app.router.add_get("/static/logo.png", lambda r: web.FileResponse(

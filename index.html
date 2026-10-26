@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>LENON Katalog</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600&display=swap">
 <style>
 :root{
   --bg:#ffffff; --bg2:#faf7f0; --ivory:#f4efe3;
@@ -238,9 +238,24 @@ function toast(msg, warn=false){
 function haptic(){ try{ tg && tg.HapticFeedback.impactOccurred("light"); }catch(e){} }
 
 async function load(){
-  const r = await fetch("/api/catalog", {headers:{"X-Init-Data":initData}});
-  if (r.status === 403){ lockedScreen(); return; }
-  CAT = await r.json(); BOT = CAT.bot || "";
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem("lenon_cat") || "null"); } catch(e){}
+  let r;
+  if (cached){
+    // internet sekin bo'lsa ham katalog darhol ochiladi; yangi ma'lumot fonda olinadi
+    CAT = cached; BOT = CAT.bot || "";
+    fetch("/api/catalog", {headers:{"X-Init-Data":initData}}).then(async rr => {
+      if (rr.status === 403){ try{ localStorage.removeItem("lenon_cat"); }catch(e){} lockedScreen(); return; }
+      const j = await rr.json();
+      try{ localStorage.setItem("lenon_cat", JSON.stringify(j)); }catch(e){}
+      if (j.updated !== CAT.updated){ Object.assign(CAT, j); render(); }
+    }).catch(()=>{});
+  } else {
+    r = await fetch("/api/catalog", {headers:{"X-Init-Data":initData}});
+    if (r.status === 403){ lockedScreen(); return; }
+    CAT = await r.json(); BOT = CAT.bot || "";
+    try{ localStorage.setItem("lenon_cat", JSON.stringify(CAT)); }catch(e){}
+  }
   if (initData){
     try{ const m = await (await fetch("/api/me",{headers:{"X-Init-Data":initData}})).json(); ADMIN = !!m.admin; }catch(e){}
   }
@@ -254,6 +269,15 @@ async function load(){
   renderTabs(); render();
 }
 
+const _lazyIO = ("IntersectionObserver" in window) ? new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting){ const el = e.target; el.style.backgroundImage = `url('${el.dataset.bg}')`; el.removeAttribute("data-bg"); _lazyIO.unobserve(el); }
+}), {rootMargin: "300px"}) : null;
+function lazyScan(root){
+  (root||document).querySelectorAll("[data-bg]").forEach(el => {
+    if (_lazyIO) _lazyIO.observe(el); else { el.style.backgroundImage = `url('${el.dataset.bg}')`; el.removeAttribute("data-bg"); }
+  });
+}
+new MutationObserver(() => lazyScan()).observe(document.documentElement, {childList:true, subtree:true});
 function lockedScreen(){
   document.body.innerHTML = `<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;font-family:var(--sans,sans-serif);background:#fff">
     <img src="/static/logo.png" style="width:180px;margin-bottom:28px">
@@ -391,7 +415,7 @@ function naborView(key){
 function cardHtml(d, small){
   const st = designBadgeState(d);
   const n = d.categories.reduce((a,c)=>a+c.items.length,0);
-  const ph = d.photos.length ? `<div class="ph" style="background-image:url('${img(d.photos[0], small?500:900)}')">${badges(st)}</div>`
+  const ph = d.photos.length ? `<div class="ph" data-bg="${img(d.photos[0], small?400:900)}">${badges(st)}</div>`
                              : `<div class="ph empty">${esc(d.title.split(" ").pop())}${badges(st)}</div>`;
   const sub = n ? `${n} ta mahsulot` : (d.note ? esc(d.note.split("\n")[0]).slice(0,40) : (d.in_stock ? "Mavjud" : "Qolmadi"));
   if (small) return `<button class="card sm ${d.in_stock?"":"out"}" data-id="${d.id}">${ph}<div class="info"><div class="t">${esc(d.title)}</div><div class="s">${sub}</div></div></button>`;
@@ -409,7 +433,7 @@ function heroHtml(d, sec){
     ${d.photos.length>1?`<div class="dots">${d.photos.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`:""}</div>`;
 }
 function prodCardHtml(it){
-  const ph = it.photo ? `<div class="ph" style="background-image:url('${img(it.photo,500)}')">${badges(it)}</div>`
+  const ph = it.photo ? `<div class="ph" data-bg="${img(it.photo,400)}">${badges(it)}</div>`
                       : `<div class="ph empty"><span>${esc(it.name)}</span>${badges(it)}</div>`;
   return `<button class="pcard ${it.in_stock?"":"out"}" data-item="${it.id}">${ph}<div class="pi">
     <div class="pn">${esc(it.name)}</div><div class="pm"><span>${esc(it.code||"")}</span><b>${esc(it.price)}</b></div></div></button>`;
@@ -799,7 +823,7 @@ function confirmDo(text, fn){
   else if (confirm(text)) fn();
 }
 
-function thumbHtml(fid){ return fid ? `<i class="th" style="background-image:url('${img(fid,160)}')"></i>` : `<i class="th empty">L</i>`; }
+function thumbHtml(fid){ return fid ? `<i class="th" data-bg="${img(fid,160)}"></i>` : `<i class="th empty">L</i>`; }
 function searchView(q){
   const out = [];
   for (const sec of scopeSections()) for (const d of sec.designs){

@@ -195,8 +195,8 @@ async def on_startup(app):
 
     app["bg"] = asyncio.get_event_loop().create_task(background())
     # jadvaldagi mahsulot nomlariga mini ilova havolalarini qo'shish (bir marta)
-    if store.settings.get("links_v") != 1:
-        store.settings["links_v"] = 1
+    if store.settings.get("links_v") != 2:
+        store.settings["links_v"] = 2
         store.save()
         posted = [d["id"] for d in store.designs.values()
                   if d.get("msg") and not d.get("deleted") and store.section(d["section"])["kind"] == "design"]

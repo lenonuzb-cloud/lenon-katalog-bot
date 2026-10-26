@@ -97,8 +97,10 @@ def _slideshow(d, caption) -> tuple[str, list]:
 
 
 def item_url(d, it) -> str:
-    """Jadvaldagi mahsulot nomi havolasi — mini ilovada aynan shu mahsulotni ochadi."""
-    if bot.me.get("has_main_web_app") or not config.PUBLIC_URL:
+    """Jadvaldagi mahsulot nomi havolasi — mahsulot rasmini yengil sahifada tez ochadi."""
+    if config.PUBLIC_URL:
+        return f"{config.PUBLIC_URL}/p/{d['id']}/{it['id']}"
+    if bot.me.get("has_main_web_app"):
         return f"https://t.me/{bot.username}?startapp=i_{d['id']}_{it['id']}"
     return f"{config.PUBLIC_URL}/app?d={d['id']}&i={it['id']}"
 
