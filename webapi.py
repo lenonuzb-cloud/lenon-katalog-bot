@@ -239,6 +239,47 @@ async def make_pdf(design_id: str) -> tuple[bytes, str]:
     return pdf, name
 
 
+async def send_design_photos(chat_id, design_id) -> int:
+    """Dizayndagi barcha rasmlarni (dizayn rasmlari + mahsulot rasmlari) oddiy rasm qilib albomlarda yuboradi."""
+    d = store.designs[design_id]
+    media = [{"type": "photo", "media": f, "caption": d["title"]} for f in d.get("photos", [])]
+    for c in d.get("categories", []):
+        for it in c["items"]:
+            if it.get("photo"):
+                cap = " · ".join(x for x in (it["name"], it.get("code", ""), it.get("price", "")) if x)
+                media.append({"type": "photo", "media": it["photo"], "caption": cap})
+    if not media:
+        return 0
+    for i in range(0, len(media), 10):
+        chunk = media[i:i + 10]
+        if len(chunk) == 1:
+            m = chunk[0]
+            await bot.call("sendPhoto", chat_id=chat_id, photo=m["media"], caption=m["caption"])
+        else:
+            await bot.call("sendMediaGroup", chat_id=chat_id, media=chunk)
+        await asyncio.sleep(1.2)
+    return len(media)
+
+
+async def photos_export(request):
+    """Mini ilovadagi «🖼 Rasmlar» tugmasi: dizayn rasmlarini bot chatiga oddiy rasm qilib yuboradi."""
+    user = verify_init_data(request.headers.get("X-Init-Data", ""))
+    if not user or not store.is_admin(user.get("id")):
+        return web.json_response({"ok": False, "error": "Ruxsat yo'q"}, status=403)
+    did = (await request.json()).get("design")
+    if did not in store.designs:
+        return web.json_response({"ok": False, "error": "Dizayn topilmadi"}, status=404)
+    try:
+        n = await send_design_photos(user["id"], did)
+    except Exception as e:  # noqa
+        import checker
+        await checker.report_error("Rasmlar yuborilmadi", e)
+        return web.json_response({"ok": False, "error": "Rasmlarni yuborib bo'lmadi"}, status=500)
+    if not n:
+        return web.json_response({"ok": False, "error": "Bu dizaynda hali rasm yo'q"}, status=400)
+    return web.json_response({"ok": True, "count": n})
+
+
 async def pdf_export(request):
     """Mini ilovadagi «PDF» tugmasi: dizayn katalogini PDF qilib, foydalanuvchining Telegram chatiga yuboradi."""
     user = verify_init_data(request.headers.get("X-Init-Data", ""))
@@ -313,6 +354,7 @@ def routes(app: web.Application):
     app.router.add_post("/api/admin", admin_action)
     app.router.add_post("/api/admin/photo", admin_photo)
     app.router.add_post("/api/pdf", pdf_export)
+    app.router.add_post("/api/photos", photos_export)
     app.router.add_get("/p/{did}/{iid}", product_page)
     app.router.add_get("/api/admin/info", admin_info)
     app.router.add_get("/img/{fid}", img)

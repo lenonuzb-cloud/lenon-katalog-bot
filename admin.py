@@ -382,6 +382,16 @@ async def on_menu(uid, text):
         await do_check(uid)
     elif cmd in (BTN_SETTINGS, "/sozlamalar"):
         await settings_menu(uid)
+    elif cmd == "/rasm":
+        q = text.partition(" ")[2].strip()
+        d = store.find_design(q) if q else None
+        if not d:
+            await bot.send(uid, "Qaysi dizayn? Masalan: <code>/rasm 01-AL</code> yoki <code>/rasm BODEN 003</code>")
+        else:
+            import webapi
+            n = await webapi.send_design_photos(uid, d["id"])
+            if not n:
+                await bot.send(uid, f"«{esc(d['title'])}» da hali rasm yo'q.")
     elif cmd == "/pdf":
         q = text.partition(" ")[2].strip()
         await pdf_command(uid, q)
@@ -1540,7 +1550,8 @@ async def sync_menu_buttons():
                   {"command": "hisobot", "description": "Hisobot"},
                   {"command": "tekshir", "description": "Nazoratchi tekshiruvi"},
                   {"command": "qolmadi", "description": "Qolmadi / Keldi belgilash"},
-                  {"command": "pdf", "description": "Dizayn katalogini PDF qilish (/pdf 01-AL)"}]
+                  {"command": "pdf", "description": "Dizayn katalogini PDF qilish (/pdf 01-AL)"},
+                  {"command": "rasm", "description": "Dizayn rasmlarini yuborish (/rasm 01-AL)"}]
     private = st.get("private", True)
     try:
         if private:

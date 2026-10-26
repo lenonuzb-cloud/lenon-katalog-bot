@@ -462,7 +462,7 @@ function renderDesign(){
   }
   const out = q ? 0 : d.categories.reduce((a,c)=>a+c.items.filter(i=>!i.in_stock).length,0);
   h += `<div class="toolbar"><span>${q ? `${esc(d.title)}: ${found} ta topildi` : `${total} ta mahsulot${out?` · <b class="red">${out} tasi qolmagan</b>`:""}`}</span>
-        <span class="tbs">${ADMIN?`<button class="tbtn" id="addprod">➕</button><button class="tbtn" id="reord2" title="Tartib">↕️</button>`:""}${ADMIN?`<button class="tbtn" id="topdf" title="PDF qilib yuklab olish">📄 PDF</button>`:""}<button class="tbtn" id="totable">${ADMIN?"✏️ Jadval":"📋 Jadval"}</button></span></div>`;
+        <span class="tbs">${ADMIN?`<button class="tbtn" id="addprod">➕</button><button class="tbtn" id="reord2" title="Tartib">↕️</button>`:""}${ADMIN?`<button class="tbtn" id="tophotos" title="Rasmlarni bot chatiga yuborish">🖼 Rasmlar</button><button class="tbtn" id="topdf" title="PDF qilib yuklab olish">📄 PDF</button>`:""}<button class="tbtn" id="totable">${ADMIN?"✏️ Jadval":"📋 Jadval"}</button></span></div>`;
   h += body || (q ? `<div class="empty-msg">«${esc(q)}» — bu dizaynda topilmadi</div>` : '<div class="empty-msg">Hozircha mahsulot yo\'q</div>');
   if (d.link) h += `<button class="btn ghost addbtn" id="openpost">↗️ Guruhdagi postni ochish</button>`;
   m.innerHTML = h;
@@ -472,10 +472,20 @@ function renderDesign(){
   const op = $("#openpost"); if (op) op.onclick = () => openTg(d.link);
   $("#totable").onclick = () => go({name:"table", id:d.id});
   const pdfb = $("#topdf"); if (pdfb) pdfb.onclick = () => exportPdf(d);
+  const phb = $("#tophotos"); if (phb) phb.onclick = () => exportPhotos(d);
   const ap = $("#addprod"); if (ap) ap.onclick = () => addChooser(d);
   const r2 = $("#reord2"); if (r2) r2.onclick = () => go({name:"reorder", id:d.id});
   document.querySelectorAll(".pcard").forEach(b => b.onclick = () => prodSheet(d, findItem(d, b.dataset.item)));
   if (view.openItem){ const it = findItem(d, view.openItem); view.openItem = null; if (it) prodSheet(d, it); }
+}
+async function exportPhotos(d){
+  toast("⏳ Rasmlar bot chatiga yuborilmoqda…");
+  try{
+    const r = await fetch("/api/photos", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify({design:d.id})});
+    const j = await r.json();
+    if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return; }
+    toast(`✅ ${j.count} ta rasm bot chatiga yuborildi`);
+  }catch(e){ toast("⚠️ Rasmlar yuborilmadi", true); }
 }
 async function exportPdf(d){
   toast("⏳ PDF tayyorlanmoqda… bir oz kuting");
