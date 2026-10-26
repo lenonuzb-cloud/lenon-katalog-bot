@@ -79,6 +79,8 @@ def keyboard(d) -> dict | None:
         rows.append(agents)
     if public_links():
         rows.append([{"text": f"📒 {d['title']} — katalogda ochish", "url": catalog_url(d["id"])}])
+    if config.PUBLIC_URL:
+        rows.append([{"text": f"📄 {d['title']} — PDF katalog", "url": f"{config.PUBLIC_URL}/pdf/{d['id']}.pdf"}])
     return {"inline_keyboard": rows} if rows else None
 
 
@@ -321,6 +323,12 @@ async def publish(design_id: str, repost: bool = False):
         store.save()
     if kind in ("design", "nabor") and d["section"] != "lenon":
         queue_index(d["section"])
+    if kind == "design" and config.PUBLIC_URL:
+        try:
+            import webapi
+            webapi.warm_pdf(design_id)
+        except Exception:  # noqa
+            pass
 
 
 async def _post_new(d, kind, gid, thread):

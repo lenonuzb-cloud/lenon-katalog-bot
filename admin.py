@@ -1533,7 +1533,7 @@ async def pdf_command(uid, q):
     import webapi
     note = await bot.send(uid, f"⏳ «{esc(d['title'])}» PDF tayyorlanmoqda…")
     try:
-        pdf, name = await webapi.make_pdf(d["id"])
+        pdf, name = await webapi.cached_pdf(d["id"])
         await bot.call("sendDocument", files={"document": (name, pdf, "application/pdf")}, chat_id=str(uid),
                        caption=f"📄 {d['title']} — katalog (PDF)")
     except Exception as e:  # noqa

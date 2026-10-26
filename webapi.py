@@ -232,7 +232,8 @@ async def make_pdf(design_id: str) -> tuple[bytes, str]:
             pass
     view = {"title": d["title"], "categories": [
         {"name": c["name"], "items": [dict(it, size=ops.item_size(d, it)) for it in c["items"]]}
-        for c in d.get("categories", [])]}
+        for c in d.get("categories", [])],
+        "agents": [(a, store.settings["agents"].get(a, "")) for a in d.get("agents", [])]}
     pdf = await asyncio.get_event_loop().run_in_executor(
         None, lambda: pdfgen.build(view, sec["title"], photos, cover, publisher.item_state))
     name = "" + "".join(ch if ch.isalnum() or ch in "-_" else "_" for ch in d["title"]) + ".pdf"
@@ -294,7 +295,7 @@ async def pdf_export(request):
         return web.json_response({"ok": False, "error": "PDF tayyorlanmoqda, biroz kuting"}, status=429)
     _pdf_busy.add(key)
     try:
-        pdf, name = await make_pdf(did)
+        pdf, name = await cached_pdf(did)
         d = store.designs[did]
         await bot.call("sendDocument", files={"document": (name, pdf, "application/pdf")}, chat_id=str(user["id"]),
                        caption=f"📄 {d['title']} — katalog (PDF)")
@@ -346,6 +347,63 @@ a{{display:inline-block;margin-top:16px;color:#d6a31e;text-decoration:none;borde
     return web.Response(text=page_html, content_type="text/html", headers={"Cache-Control": "no-cache"})
 
 
+_pdf_lock = asyncio.Lock()   # bir vaqtda bitta PDF (bepul serverda xotira kam)
+
+
+def _pdf_sig(d) -> str:
+    agents = [(a, store.settings["agents"].get(a, "")) for a in d.get("agents", [])]
+    return hashlib.md5(json.dumps({"c": d.get("categories"), "p": d.get("photos"), "t": d["title"], "a": agents,
+                                   "v": 3}, sort_keys=True, default=str).encode()).hexdigest()[:16]
+
+
+async def cached_pdf(did) -> tuple[bytes, str]:
+    """Dizayn PDF i — jadval o'zgarmagan bo'lsa diskdagi tayyor nusxa, o'zgargan bo'lsa yangisi."""
+    d = store.designs[did]
+    path = config.CACHE_DIR / f"pdf_{did}_{_pdf_sig(d)}.pdf"
+    name = "LENON_" + "".join(ch if ch.isalnum() or ch in "-_" else "_"
+                              for ch in d["title"].replace("LENON ", "")) + ".pdf"
+    if path.exists():
+        return path.read_bytes(), name
+    async with _pdf_lock:
+        if not path.exists():
+            pdf, name = await make_pdf(did)
+            for old in config.CACHE_DIR.glob(f"pdf_{did}_*.pdf"):
+                old.unlink(missing_ok=True)
+            path.write_bytes(pdf)
+    return path.read_bytes(), name
+
+
+_warm_tasks: dict = {}
+
+
+def warm_pdf(did, delay=90):
+    """Jadval o'zgarganda PDF ni oldindan tayyorlab qo'yadi (tugma bosilganda darrov ochilsin)."""
+    t = _warm_tasks.get(did)
+    if t and not t.done():
+        t.cancel()
+
+    async def later():
+        try:
+            await asyncio.sleep(delay)
+            await cached_pdf(did)
+        except asyncio.CancelledError:
+            pass
+        except Exception as e:  # noqa
+            log.warning("PDF oldindan tayyorlanmadi: %s", e)
+    _warm_tasks[did] = asyncio.get_event_loop().create_task(later())
+
+
+async def pdf_public(request):
+    """Guruhdagi jadval tagidagi «📄 PDF katalog» tugmasi — har doim jadvalning eng so'nggi holati."""
+    did = request.match_info["did"].removesuffix(".pdf")
+    d = store.designs.get(did)
+    if not d or d.get("deleted"):
+        raise web.HTTPNotFound(text="Topilmadi")
+    pdf, name = await cached_pdf(did)
+    return web.Response(body=pdf, content_type="application/pdf",
+                        headers={"Content-Disposition": f'inline; filename="{name}"', "Cache-Control": "no-cache"})
+
+
 def routes(app: web.Application):
     app.router.add_get("/app", page)
     app.router.add_get("/app/", page)
@@ -355,6 +413,7 @@ def routes(app: web.Application):
     app.router.add_post("/api/admin/photo", admin_photo)
     app.router.add_post("/api/pdf", pdf_export)
     app.router.add_post("/api/photos", photos_export)
+    app.router.add_get("/pdf/{did}", pdf_public)
     app.router.add_get("/p/{did}/{iid}", product_page)
     app.router.add_get("/api/admin/info", admin_info)
     app.router.add_get("/img/{fid}", img)
