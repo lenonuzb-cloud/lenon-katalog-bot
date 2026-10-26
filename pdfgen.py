@@ -117,78 +117,108 @@ def _badge(d, x, y, text, color, font, right=False):
     d.text((x + 13, y + 17), text, font=font, fill="white", anchor="lm")
 
 
-# ---------------------------------------------------------------- muqova
-def _cover(design, section_title, cover, cats, total, toc, stamp):
-    im = Image.new("RGB", (W, H), INK)
-    d = ImageDraw.Draw(im)
-    # nozik oltin ramka
-    d.rectangle([40, 40, W - 40, H - 40], outline=GOLD_D, width=2)
-    d.rectangle([52, 52, W - 52, H - 52], outline=(70, 56, 25), width=1)
-    lg = _logo(330)
-    im.paste(lg, ((W - lg.width) // 2, 110), lg)
-    y = 110 + lg.height + 26
-    _spaced(d, (W // 2, y), f"{section_title.upper()}  KOLLEKSIYASI", _f("sans-m", 22), GOLD_L, 8, "m")
-    y += 70
+# ---------------------------------------------------------------- to'lqin shakllar
+YEL = (232, 172, 30)      # yorqin oltin-sariq (asosiy rang)
+YEL2 = (246, 205, 96)     # och sariq (ikkinchi to'lqin)
+DARK = (33, 33, 36)       # to'q kulrang-qora
 
-    # dizayn rasmi
+
+def _bez(p0, p1, p2, p3, n=60):
+    pts = []
+    for i in range(n + 1):
+        t = i / n
+        u = 1 - t
+        pts.append((u ** 3 * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t ** 3 * p3[0],
+                    u ** 3 * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t ** 3 * p3[1]))
+    return pts
+
+
+def _shape(im, segments, close_pts, color, alpha=255):
+    """Silliq (2x katta chizilib kichraytirilgan) to'lqin shakl. segments — bezye egri chiziqlar ro'yxati."""
+    S = 2
+    mask = Image.new("L", (W * S, H * S), 0)
+    pts = []
+    for seg in segments:
+        pts += _bez(*seg)
+    pts += close_pts
+    ImageDraw.Draw(mask).polygon([(x * S, y * S) for x, y in pts], fill=alpha)
+    mask = mask.resize((W, H), Image.LANCZOS)
+    im.paste(color, (0, 0), mask)
+
+
+def _cover(design, section_title, cover, cats, total, toc, stamp):
+    im = Image.new("RGB", (W, H), "white")
+    # pastdan ko'tarilgan katta oltin to'lqin
+    _shape(im, [((0, 1040), (380, 900), (700, 1250), (W, 1080))], [(W, H), (0, H)], YEL2)
+    _shape(im, [((0, 1130), (420, 1000), (760, 1330), (W, 1190))], [(W, H), (0, H)], YEL)
+    # tepada o'ng burchakdagi to'lqin
+    _shape(im, [((620, 0), (760, 160), (1000, 60), (W, 250))], [(W, 0)], YEL)
+    _shape(im, [((820, 0), (930, 110), (1100, 40), (W, 140))], [(W, 0)], DARK)
+    d = ImageDraw.Draw(im)
+    lg = _logo(260)
+    im.paste(lg, (M, 90), lg)
+    # sarlavha
+    y = 300
+    d.text((M, y), section_title.capitalize() + " kolleksiyasi", font=_f("sans-m", 40), fill=DARK)
+    y += 60
+    d.text((M - 4, y), "Katalog", font=_f("sans-b", 150), fill=YEL)
+    y += 190
+    d.text((M, y), f"{total} ta mahsulot  ·  {len(cats)} ta guruh  ·  {stamp}", font=_f("sans", 26), fill=MUTED)
+
+    # dizayn rasmi — oq ramkali dumaloq burchakli kartochka, to'lqin ustida
     if cover:
         try:
             c = Image.open(io.BytesIO(cover)).convert("RGB")
-            c.thumbnail((W - 2 * M - 40, 640), Image.LANCZOS)
-            x = (W - c.width) // 2
-            _shadow(im, (x, y, x + c.width, y + c.height), radius=30, blur=26, opacity=160, offset=14)
-            im.paste(c, (x, y), _rounded(c, 30))
-            y += c.height + 60
+            side = 640
+            c = ImageOps.fit(c, (side, side), Image.LANCZOS)
+            x, yy = W - M - side + 20, 620
+            _shadow(im, (x - 14, yy - 14, x + side + 14, yy + side + 14), radius=44, blur=30, opacity=120, offset=18)
+            d.rounded_rectangle([x - 14, yy - 14, x + side + 14, yy + side + 14], radius=44, fill="white")
+            im.paste(c, (x, yy), _rounded(c, 34))
         except Exception:  # noqa
-            y += 40
-    else:
-        y += 120
-
-    # nomi
+            pass
+    # dizayn nomi to'lqin ustida, oq rangda
     name = design["title"].replace("LENON ", "").replace("BODEN ", "")
-    d.text((W // 2, y), name, font=_f("serif-b", 120), fill=GOLD, anchor="mt")
-    y += 150
-    d.line([(W // 2 - 90, y), (W // 2 + 90, y)], fill=GOLD, width=3)
-    y += 30
-    d.text((W // 2, y), f"{total} ta mahsulot   ·   {len(cats)} ta guruh   ·   {stamp}",
-           font=_f("sans-l", 26), fill=(214, 204, 186), anchor="mt")
-    y += 80
-
-    # guruhlar (mundarija) — ikki ustunda
-    f_n, f_p = _f("sans-m", 24), _f("sans-l", 22)
-    colw = (W - 2 * M - 60) // 2
-    rows = -(-len(toc) // 2)
-    for i, (nm, n, pg) in enumerate(toc):
-        col, r = divmod(i, rows)
-        if y + r * 42 > H - 130:
-            continue
-        x = M + 30 + col * (colw + 60)
-        yy = y + r * 42
-        d.text((x, yy), _fit(d, nm, f_n, colw - 150), font=f_n, fill=(238, 230, 214))
-        d.text((x + colw, yy + 2), f"{n} ta  ·  {pg}", font=f_p, fill=GOLD_L, anchor="ra")
-        d.line([(x, yy + 35), (x + colw, yy + 35)], fill=(60, 50, 32), width=1)
-    _spaced(d, (W // 2, H - 100), "@LENONDOKON", _f("sans-m", 20), GOLD_D, 6, "m")
+    d.text((M, 1340), name, font=_f("sans-b", 130), fill="white")
+    d.text((M + 4, 1490), "Dizayn", font=_f("sans-m", 34), fill=DARK)
+    # guruhlar ro'yxati (qisqa)
+    f_t = _f("sans-m", 23)
+    names = [n for n, _, _ in toc]
+    line, lines = "", []
+    for nm in names:
+        add = (line + "  ·  " if line else "") + nm
+        if d.textlength(add, font=f_t) > W - 2 * M:
+            lines.append(line)
+            line = nm
+        else:
+            line = add
+    if line:
+        lines.append(line)
+    yy = 1560
+    for ln in lines[:3]:
+        d.text((M, yy), ln, font=f_t, fill=DARK)
+        yy += 36
+    d.text((W - M, H - 70), "@lenondokon", font=_f("sans-b", 24), fill=DARK, anchor="rs")
     return im
 
 
 # ---------------------------------------------------------------- guruh sahifasi
 def _page_head(im, d, design_title, cat_name, count, part, page_no):
-    d.rectangle([0, 0, W, 14], fill=GOLD)
-    lg = _logo(130)
-    im.paste(lg, (M, 46), lg)
-    _spaced(d, (W - M, 58), design_title.upper(), _f("sans-m", 20), MUTED, 4, "r")
-    y = 46 + lg.height + 40
-    d.text((M, y), cat_name, font=_f("serif-b", 64), fill=TEXT)
-    y += 86
+    # tepadagi to'lqinli sarlavha tasmasi
+    _shape(im, [((0, 300), (400, 380), (760, 160), (W, 250))], [(W, 0), (0, 0)], YEL2)
+    _shape(im, [((0, 270), (380, 330), (720, 130), (W, 200))], [(W, 0), (0, 0)], YEL)
+    _shape(im, [((W - 260, 0), (W - 200, 60), (W - 80, 30), (W, 110))], [(W, 0)], DARK)
+    d = ImageDraw.Draw(im)
+    d.text((M, 56), design_title.upper(), font=_f("sans-m", 22), fill=DARK)
+    d.text((M, 92), cat_name, font=_f("sans-b", 66), fill="white")
     sub = f"{count} ta mahsulot" + (f"  ·  {part}-qism" if part else "")
-    d.text((M, y), sub, font=_f("sans-l", 24), fill=MUTED)
-    d.line([(M, y + 50), (M + 120, y + 50)], fill=GOLD, width=4)
-    # pastki qism
-    d.line([(M, H - 84), (W - M, H - 84)], fill=GOLD_L, width=1)
-    _spaced(d, (M, H - 66), "LENON", _f("sans-b", 18), GOLD_D, 5)
-    d.text((M + 90, H - 66), "·  @lenondokon", font=_f("sans", 18), fill=MUTED)
-    d.text((W - M, H - 66), f"{page_no:02d}", font=_f("sans-b", 18), fill=GOLD_D, anchor="ra")
-    return y + 90
+    d.text((M, 180), sub, font=_f("sans-m", 24), fill=DARK)
+    # pastki o'ng burchak — to'lqin va sahifa raqami
+    _shape(im, [((W - 420, H), (W - 300, H - 60), (W - 160, H - 150), (W, H - 120))], [(W, H)], YEL)
+    d = ImageDraw.Draw(im)
+    d.text((W - 60, H - 46), f"{page_no:02d}", font=_f("sans-b", 34), fill="white", anchor="rs")
+    d.text((M, H - 50), "LENON  ·  @lenondokon", font=_f("sans-m", 18), fill=MUTED, anchor="ls")
+    return 330
 
 
 def _text_h(cw):
@@ -216,7 +246,7 @@ def _card(im, d, x, y, cw, ph, it, raw, st):
     k = max(0.6, min(1.6, cw / 300))
     ch = ph + _text_h(cw)
     _shadow(im, (x, y, x + cw, y + ch), radius=22, blur=14, opacity=40, offset=6)
-    d.rounded_rectangle([x, y, x + cw, y + ch], radius=22, fill=CARD)
+    d.rounded_rectangle([x, y, x + cw, y + ch], radius=22, fill=CARD, outline=(236, 236, 236), width=2)
     if raw:
         try:
             p = _photo_box(raw, cw, ph)
@@ -257,32 +287,35 @@ def _card(im, d, x, y, cw, ph, it, raw, st):
         tw = d.textlength(price, font=f_pr)
         bh = int(42 * k)
         by = y + ch - bh - int(14 * k)
-        color = (235, 225, 225) if st == "qolmadi" else GOLD
-        tcol = RED if st == "qolmadi" else "white"
+        color = (245, 225, 225) if st == "qolmadi" else YEL
+        tcol = RED if st == "qolmadi" else DARK
         d.rounded_rectangle([x + pad, by, x + pad + tw + int(30 * k), by + bh], radius=bh // 2, fill=color)
         d.text((x + pad + int(15 * k), by + bh // 2), price, font=f_pr, fill=tcol, anchor="lm")
 
 
 # ---------------------------------------------------------------- orqa muqova
 def _back(agents):
-    im = Image.new("RGB", (W, H), INK)
+    im = Image.new("RGB", (W, H), DARK)
+    _shape(im, [((0, 1180), (400, 1040), (760, 1380), (W, 1220))], [(W, H), (0, H)], YEL2)
+    _shape(im, [((0, 1270), (420, 1140), (780, 1460), (W, 1320))], [(W, H), (0, H)], YEL)
+    _shape(im, [((560, 0), (720, 180), (980, 60), (W, 280))], [(W, 0)], YEL)
     d = ImageDraw.Draw(im)
-    d.rectangle([40, 40, W - 40, H - 40], outline=GOLD_D, width=2)
-    lg = _logo(420)
-    y = 520
-    im.paste(lg, ((W - lg.width) // 2, y), lg)
-    y += lg.height + 70
-    d.text((W // 2, y), "Buyurtma berish uchun", font=_f("serif", 52), fill=GOLD, anchor="mt")
-    y += 100
+    lg = _logo(380)
+    im.paste(lg, (M, 300), lg)
+    y = 300 + lg.height + 80
+    d.text((M, y), "Buyurtma", font=_f("sans-b", 96), fill="white")
+    y += 115
+    d.text((M, y), "berish uchun", font=_f("sans-l", 60), fill=YEL)
+    y += 120
     for name, user in agents:
         if not user:
             continue
-        d.text((W // 2, y), f"{name}   ·   @{user}", font=_f("sans-m", 32), fill=(238, 230, 214), anchor="mt")
-        y += 62
-    y += 50
-    d.line([(W // 2 - 90, y), (W // 2 + 90, y)], fill=GOLD, width=2)
-    y += 40
-    d.text((W // 2, y), "Telegram guruhimiz:  @lenondokon", font=_f("sans-l", 28), fill=GOLD_L, anchor="mt")
+        d.ellipse([M, y + 14, M + 16, y + 30], fill=YEL)
+        d.text((M + 36, y), f"{name}", font=_f("sans-b", 34), fill="white")
+        d.text((M + 330, y + 2), f"@{user}", font=_f("sans", 32), fill=(220, 220, 220))
+        y += 66
+    d.text((M, 1420), "Telegram guruhimiz", font=_f("sans-m", 30), fill=DARK)
+    d.text((M, 1460), "@lenondokon", font=_f("sans-b", 64), fill="white")
     return im
 
 
@@ -309,7 +342,7 @@ def build(design: dict, section_title: str, photos: dict, cover: bytes | None = 
         for pi in range(parts):
             chunk = items[pi * per_page:(pi + 1) * per_page]
             page_no += 1
-            im = Image.new("RGB", (W, H), CREAM)
+            im = Image.new("RGB", (W, H), "white")
             d = ImageDraw.Draw(im)
             y = _page_head(im, d, design["title"], c["name"], len(items), pi + 1 if parts > 1 else 0, page_no)
             aw, ah = W - 2 * M, H - 120 - y

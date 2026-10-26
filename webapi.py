@@ -353,7 +353,7 @@ _pdf_lock = asyncio.Lock()   # bir vaqtda bitta PDF (bepul serverda xotira kam)
 def _pdf_sig(d) -> str:
     agents = [(a, store.settings["agents"].get(a, "")) for a in d.get("agents", [])]
     return hashlib.md5(json.dumps({"c": d.get("categories"), "p": d.get("photos"), "t": d["title"], "a": agents,
-                                   "v": 3}, sort_keys=True, default=str).encode()).hexdigest()[:16]
+                                   "v": 4}, sort_keys=True, default=str).encode()).hexdigest()[:16]
 
 
 async def cached_pdf(did) -> tuple[bytes, str]:
