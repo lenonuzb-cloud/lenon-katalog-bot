@@ -1,5 +1,6 @@
 """Katalog mini ilovasi uchun veb-server qismi (API va rasmlar)."""
 import asyncio
+import io
 import hashlib
 import hmac
 import json
@@ -260,6 +261,36 @@ async def send_design_photos(chat_id, design_id) -> int:
             await bot.call("sendMediaGroup", chat_id=chat_id, media=chunk)
         await asyncio.sleep(1.2)
     return len(media)
+
+
+async def photos_zip(design_id) -> tuple[bytes, str, int]:
+    """Dizayn mahsulot rasmlari — bitta ZIP, har bir rasm KOD bilan nomlangan (iBox va boshqa dasturlarga qo'yish uchun)."""
+    import re as _re
+    import zipfile
+    d = store.designs[design_id]
+    buf = io.BytesIO()
+    n = 0
+    used = set()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_STORED) as z:
+        for c in d.get("categories", []):
+            for it in c["items"]:
+                if not it.get("photo"):
+                    continue
+                try:
+                    data = await bot.download(it["photo"])
+                except Exception:  # noqa
+                    continue
+                base = " - ".join(x for x in (it.get("code", ""), it["name"]) if x)
+                base = _re.sub(r'[\\/:*?"<>|]+', "_", base).strip() or it["id"]
+                fn, k = base, 2
+                while fn in used:
+                    fn, k = f"{base} ({k})", k + 1
+                used.add(fn)
+                z.writestr(f"{fn}.jpg", data)
+                n += 1
+    name = "LENON_" + "".join(ch if ch.isalnum() or ch in "-_" else "_"
+                              for ch in d["title"].replace("LENON ", "")) + "_rasmlar.zip"
+    return buf.getvalue(), name, n
 
 
 async def photos_export(request):

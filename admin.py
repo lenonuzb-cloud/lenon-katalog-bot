@@ -382,6 +382,21 @@ async def on_menu(uid, text):
         await do_check(uid)
     elif cmd in (BTN_SETTINGS, "/sozlamalar"):
         await settings_menu(uid)
+    elif cmd == "/arxiv":
+        q = text.partition(" ")[2].strip()
+        d = store.find_design(q) if q else None
+        if not d:
+            await bot.send(uid, "Qaysi dizayn? Masalan: <code>/arxiv 01-AL</code>")
+        else:
+            import webapi
+            note = await bot.send(uid, f"⏳ «{esc(d['title'])}» rasmlari arxivlanmoqda…")
+            data, name, n = await webapi.photos_zip(d["id"])
+            await bot.safe_delete(uid, note["message_id"])
+            if not n:
+                await bot.send(uid, f"«{esc(d['title'])}» da hali rasm yo'q.")
+            else:
+                await bot.call("sendDocument", files={"document": (name, data, "application/zip")}, chat_id=str(uid),
+                               caption=f"🗂 {d['title']}: {n} ta rasm — har biri mahsulot kodi bilan nomlangan")
     elif cmd == "/rasm":
         q = text.partition(" ")[2].strip()
         d = store.find_design(q) if q else None
@@ -1551,7 +1566,8 @@ async def sync_menu_buttons():
                   {"command": "tekshir", "description": "Nazoratchi tekshiruvi"},
                   {"command": "qolmadi", "description": "Qolmadi / Keldi belgilash"},
                   {"command": "pdf", "description": "Dizayn katalogini PDF qilish (/pdf 01-AL)"},
-                  {"command": "rasm", "description": "Dizayn rasmlarini yuborish (/rasm 01-AL)"}]
+                  {"command": "rasm", "description": "Dizayn rasmlarini yuborish (/rasm 01-AL)"},
+                  {"command": "arxiv", "description": "Rasmlarni kod bilan ZIP arxivda olish (/arxiv 01-AL)"}]
     private = st.get("private", True)
     try:
         if private:
