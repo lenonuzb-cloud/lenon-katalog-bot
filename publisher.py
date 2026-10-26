@@ -79,8 +79,6 @@ def keyboard(d) -> dict | None:
         rows.append(agents)
     if public_links():
         rows.append([{"text": f"📒 {d['title']} — katalogda ochish", "url": catalog_url(d["id"])}])
-    if config.PUBLIC_URL:
-        rows.append([{"text": f"📄 {d['title']} — PDF katalog", "url": f"{config.PUBLIC_URL}/pdf/{d['id']}.pdf"}])
     return {"inline_keyboard": rows} if rows else None
 
 
@@ -297,6 +295,9 @@ async def _delete_post(d):
     for mid in m.get("extra_ids", []):
         await bot.safe_delete(m["chat_id"], mid)
     d["msg"] = None
+    pm = d.pop("pdf_msg", None)
+    if pm:
+        await bot.safe_delete(pm["chat_id"], pm["message_id"])
 
 
 async def publish(design_id: str, repost: bool = False):
@@ -313,22 +314,87 @@ async def publish(design_id: str, repost: bool = False):
         if repost:
             await _delete_post(d)
         kind = store.section(d["section"])["kind"]
+        updated = False
         if d.get("msg"):
-            ok = await _update(d, kind)
-            if ok:
-                store.save()
-                return
-            await _delete_post(d)
-        await _post_new(d, kind, gid, thread)
+            updated = await _update(d, kind)
+            if not updated:
+                await _delete_post(d)
+        if not updated:
+            await _post_new(d, kind, gid, thread)
+            # jadval tagiga — shu jadvalning PDF katalogi (alohida fayl bo'lib)
+            if kind == "design":
+                try:
+                    await _post_pdf(d, gid, thread)
+                except Exception as e:  # noqa
+                    await _report(f"{d['title']}: PDF jadval tagiga joylanmadi", e)
         store.save()
+    if updated:
+        if kind == "design":
+            queue_pdf(design_id)
+        return
     if kind in ("design", "nabor") and d["section"] != "lenon":
         queue_index(d["section"])
-    if kind == "design" and config.PUBLIC_URL:
+
+
+# ---------------- jadval tagidagi PDF fayl ----------------
+async def _post_pdf(d, gid, thread):
+    import webapi
+    pdf, name = await webapi.cached_pdf(d["id"])
+    reply = {"message_id": d["msg"]["message_id"], "allow_sending_without_reply": True} if d.get("msg") else None
+    m = await bot.call("sendDocument", files={"document": (name, pdf, "application/pdf")},
+                       chat_id=str(gid), message_thread_id=str(thread),
+                       caption=f"📄 {d['title']} — PDF katalog", disable_notification="true",
+                       **({"reply_parameters": reply} if reply else {}))
+    d["pdf_msg"] = {"chat_id": gid, "message_id": m["message_id"], "sig": webapi._pdf_sig(d)}
+
+
+async def refresh_pdf(design_id):
+    """Jadval o'zgargach — tagidagi PDF faylni o'sha joyida yangilaydi (yangi xabar yubormaydi)."""
+    import webapi
+    d = store.designs.get(design_id)
+    if not d or d.get("deleted") or not d.get("msg"):
+        return
+    pm = d.get("pdf_msg")
+    sig = webapi._pdf_sig(d)
+    if pm and pm.get("sig") == sig:
+        return
+    pdf, name = await webapi.cached_pdf(design_id)
+    if pm:
         try:
-            import webapi
-            webapi.warm_pdf(design_id)
-        except Exception:  # noqa
+            await bot.call("editMessageMedia", files={"doc": (name, pdf, "application/pdf")},
+                           chat_id=str(pm["chat_id"]), message_id=str(pm["message_id"]),
+                           media={"type": "document", "media": "attach://doc",
+                                  "caption": f"📄 {d['title']} — PDF katalog"})
+            pm["sig"] = sig
+            store.save()
+            return
+        except TelegramError as e:
+            if "not modified" in e.description:
+                pm["sig"] = sig
+                return
+            await bot.safe_delete(pm["chat_id"], pm["message_id"])
+    gid, thread = _target(d["section"])
+    await _post_pdf(d, gid, thread)
+    store.save()
+
+
+_pdf_tasks: dict = {}
+
+
+def queue_pdf(design_id, delay=60):
+    t = _pdf_tasks.get(design_id)
+    if t and not t.done():
+        t.cancel()
+
+    async def later():
+        try:
+            await asyncio.sleep(delay)
+            await refresh_pdf(design_id)
+        except asyncio.CancelledError:
             pass
+        except Exception as e:  # noqa
+            await _report("PDF yangilanmadi", e)
+    _pdf_tasks[design_id] = asyncio.get_event_loop().create_task(later())
 
 
 async def _post_new(d, kind, gid, thread):
