@@ -194,6 +194,16 @@ async def on_startup(app):
         asyncio.get_event_loop().create_task(admin.apply_privacy())
 
     app["bg"] = asyncio.get_event_loop().create_task(background())
+    # har ishga tushganda: jadvallar tagidagi PDF lar to'liqmi — yetishmaganini joylaydi
+    async def _ensure_pdfs_later():
+        await asyncio.sleep(120)
+        try:
+            await publisher.ensure_pdfs(store.settings.get("owner_id"))
+        except Exception as e:  # noqa
+            await checker.report_error("PDF larni tekshirishda xato", e)
+    if store.settings.get("group_id") and store.settings.get("pdf_msgs_v") == 1:
+        asyncio.get_event_loop().create_task(_ensure_pdfs_later())
+
     # bir marta: hamma jadvallarni qayta joylash — har bir jadval tagida o'zining PDF katalogi bilan
     if store.settings.get("pdf_msgs_v") != 1 and store.settings.get("group_id") and store.settings.get("owner_id"):
         store.settings["pdf_msgs_v"] = 1
@@ -211,7 +221,7 @@ async def on_startup(app):
     if owner_id and store.settings.get("relabel_done") != 2:
 
         async def _relabel_later():
-            await asyncio.sleep(40)
+            await asyncio.sleep(900)   # og'ir ishlar bir vaqtga to'g'ri kelmasin
             import relabel
             try:
                 await relabel.run(owner_id)

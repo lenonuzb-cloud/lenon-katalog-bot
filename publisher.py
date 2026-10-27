@@ -378,6 +378,27 @@ async def refresh_pdf(design_id):
     store.save()
 
 
+async def ensure_pdfs(notify_uid=None):
+    """Guruhdagi har bir jadval tagida PDF borligini tekshiradi; yo'q yoki eskirgan bo'lsa — joylaydi/yangilaydi.
+    To'xtab qolgan ish (masalan server qayta ishga tushgani) shu bilan oxirigacha yetkaziladi."""
+    todo = [d["id"] for d in store.designs.values()
+            if d.get("msg") and not d.get("deleted") and store.section(d["section"])["kind"] == "design"]
+    done = 0
+    for did in todo:
+        try:
+            before = (store.designs[did].get("pdf_msg") or {}).get("sig")
+            await refresh_pdf(did)
+            if (store.designs[did].get("pdf_msg") or {}).get("sig") != before:
+                done += 1
+                await asyncio.sleep(3)
+        except NotConfigured:
+            return
+        except Exception as e:  # noqa
+            await _report(f"{store.designs[did]['title']}: PDF joylanmadi", e)
+    if notify_uid and done:
+        await bot.send(notify_uid, f"📄 {done} ta jadval tagiga PDF katalog joylandi/yangilandi.")
+
+
 _pdf_tasks: dict = {}
 
 

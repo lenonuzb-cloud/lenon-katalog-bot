@@ -333,7 +333,7 @@ def build(design: dict, section_title: str, photos: dict, cover: bytes | None = 
         toc.append((c["name"], len(c["items"]), f"{pno:02d}"))
         pno += -(-len(c["items"]) // per_page)
 
-    pages = [_cover(design, section_title, cover, cats, total, toc, stamp)]
+    pages = [_jpeg(_cover(design, section_title, cover, cats, total, toc, stamp))]
     gap = 28
     page_no = 1
     for c in cats:
@@ -358,10 +358,57 @@ def build(design: dict, section_title: str, photos: dict, cover: bytes | None = 
                 x0 = M + (aw - (n_in_row * cw + (n_in_row - 1) * gap)) // 2
                 _card(im, d, x0 + col * (cw + gap), y0 + r * (card_h + gap), cw, ph, it,
                       photos.get(it["id"]), state_of(it))
-            pages.append(im)
-    pages.append(_back(design.get("agents") or []))
+            pages.append(_jpeg(im))
+            del im, d
+    pages.append(_jpeg(_back(design.get("agents") or [])))
 
+    return _write_pdf(pages, f"LENON katalog — {design['title']}")
+
+
+# ---------------------------------------------------------------- yengil PDF yozuvchi
+def _jpeg(im) -> bytes:
+    """Sahifani darhol JPEG ga siqamiz — xotirada katta rasmlar to'planmaydi (bepul server uchun muhim)."""
     buf = io.BytesIO()
-    pages[0].save(buf, "PDF", resolution=150, save_all=True, append_images=pages[1:],
-                  title=f"LENON katalog — {design['title']}", author="LENON")
+    im.convert("RGB").save(buf, "JPEG", quality=88, optimize=True)
     return buf.getvalue()
+
+
+def _write_pdf(jpegs: list, title: str) -> bytes:
+    """JPEG sahifalardan PDF yasaydi (har sahifa A4)."""
+    pw, ph = 595.28, 841.89  # A4, nuqtalarda
+    objs = []
+
+    def add(b):
+        objs.append(b)
+        return len(objs)
+
+    catalog = add(b"")
+    pages_id = add(b"")
+    kids = []
+    for jp in jpegs:
+        img_id = add(b"<< /Type /XObject /Subtype /Image /Width %d /Height %d /ColorSpace /DeviceRGB "
+                     b"/BitsPerComponent 8 /Filter /DCTDecode /Length %d >>\nstream\n" % (W, H, len(jp))
+                     + jp + b"\nendstream")
+        content = b"q %.2f 0 0 %.2f 0 0 cm /Im0 Do Q" % (pw, ph)
+        c_id = add(b"<< /Length %d >>\nstream\n" % len(content) + content + b"\nendstream")
+        pg = add(b"<< /Type /Page /Parent %d 0 R /MediaBox [0 0 %.2f %.2f] /Resources << /XObject << /Im0 %d 0 R >> >> "
+                 b"/Contents %d 0 R >>" % (pages_id, pw, ph, img_id, c_id))
+        kids.append(pg)
+    objs[catalog - 1] = b"<< /Type /Catalog /Pages %d 0 R >>" % pages_id
+    objs[pages_id - 1] = (b"<< /Type /Pages /Kids [" + b" ".join(b"%d 0 R" % k for k in kids)
+                          + b"] /Count %d >>" % len(kids))
+    t = title.encode("utf-16-be")
+    info = add(b"<< /Title <FEFF" + t.hex().upper().encode() + b"> /Producer (LENON katalog bot) >>")
+    out = io.BytesIO()
+    out.write(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
+    offs = []
+    for i, o in enumerate(objs, 1):
+        offs.append(out.tell())
+        out.write(b"%d 0 obj\n" % i + o + b"\nendobj\n")
+    x = out.tell()
+    out.write(b"xref\n0 %d\n0000000000 65535 f \n" % (len(objs) + 1))
+    for o in offs:
+        out.write(b"%010d 00000 n \n" % o)
+    out.write(b"trailer\n<< /Size %d /Root %d 0 R /Info %d 0 R >>\nstartxref\n%d\n%%%%EOF\n"
+              % (len(objs) + 1, catalog, info, x))
+    return out.getvalue()
