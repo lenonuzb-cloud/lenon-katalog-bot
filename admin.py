@@ -1625,41 +1625,57 @@ async def pin_catalog(uid):
     await bot.send(uid, msg)
 
 
+_publish_running = {"on": False}
+
+
 async def publish_all(uid, repost=False):
-    sec_order = {"lenon": 0, "boden": 1, "nabor44": 2, "nabor33": 3, "nabor39": 4, "rasmlar": 5}
-    todo = [d for d in sorted(store.designs.values(), key=lambda x: (sec_order.get(x["section"], 9), x.get("order", 0)))
-            if not d.get("deleted") and (repost or not d.get("msg"))
-            # naborlarning rasmi yo'q postlari joylanmaydi — ular uchun ro'yxat (❌ belgilari bilan) yangilanadi
-            and not (store.section(d["section"])["kind"] in ("nabor", "photos") and not d.get("photos"))]
-    if repost:
-        for key, info in list(store.s["index_msgs"].items()):
-            if info:
-                await bot.safe_delete(info["chat_id"], info["message_id"])
-            store.s["index_msgs"].pop(key, None)
-        store.save()
-    await bot.send(uid, f"⏳ {len(todo)} ta post joylanmoqda… (har biri orasida bir oz kutiladi)")
-    ok = 0
-    for d in todo:
-        try:
-            await publisher.publish(d["id"], repost=repost)
-            ok += 1
-        except publisher.NotConfigured as e:
-            await bot.send(uid, f"⚠️ {esc(e)}")
-            break
-        except Exception as e:  # noqa
-            await checker.report_error(f"{d['title']} joylanmadi", e)
-        await asyncio.sleep(3.5)
-    # har bo'lim oxiri: jadvallar ro'yxati, keyin yo'riqnoma + katalog havolasi
-    for key in ("lenon", "boden", "nabor44", "nabor33", "nabor39"):
-        if not store.settings["topics"].get(key):
-            continue
-        try:
-            await publisher.finish_section(key)
-        except Exception as e:  # noqa
-            await checker.report_error(f"{key}: ro'yxat/yo'riqnoma joylanmadi", e)
-        await asyncio.sleep(2)
-    await bot.send(uid, f"✅ Tayyor: {ok}/{len(todo)} ta jadval qayta joylandi.\n"
-                        "Har bo'lim oxirida — jadvallar ro'yxati va katalogdan foydalanish yo'riqnomasi.")
+    """Guruhga joylash. repost=True — TO'LIQ QAYTA QURISH: avval botning barcha postlari o'chiriladi,
+    keyin har bo'lim tartib bilan joylanadi: jadval → uning PDF i → … → jadvallar ro'yxati → yo'riqnoma."""
+    if _publish_running["on"]:
+        await bot.send(uid, "⏳ Joylash allaqachon ketyapti — tugashini kuting.")
+        return
+    _publish_running["on"] = True
+    publisher.REBUILD["on"] = True   # fondagi yangilashlar shu payt to'xtab turadi
+    try:
+        sec_order = {"lenon": 0, "boden": 1, "nabor44": 2, "nabor33": 3, "nabor39": 4, "rasmlar": 5}
+        if repost:
+            note = await bot.send(uid, "🧹 1-qadam: guruhdagi botning barcha eski postlari o'chirilmoqda "
+                                       "(jadvallar, PDF lar, ro'yxatlar, dublikatlar)… Bir necha daqiqa.")
+            n = await publisher.wipe_group(uid)
+            await bot.send(uid, f"✅ {n} ta eski post o'chirildi.")
+        todo = [d for d in sorted(store.designs.values(),
+                                  key=lambda x: (sec_order.get(x["section"], 9), x.get("order", 0)))
+                if not d.get("deleted") and not d.get("msg")
+                and not (store.section(d["section"])["kind"] in ("nabor", "photos") and not d.get("photos"))]
+        await bot.send(uid, f"📤 2-qadam: {len(todo)} ta jadval tartib bilan joylanmoqda (har birining tagida PDF)… "
+                            "Taxminan 10–15 daqiqa.")
+        ok = 0
+        for i, d in enumerate(todo, 1):
+            try:
+                await publisher.publish(d["id"])
+                ok += 1
+            except publisher.NotConfigured as e:
+                await bot.send(uid, f"⚠️ {esc(e)}")
+                break
+            except Exception as e:  # noqa
+                await checker.report_error(f"{d['title']} joylanmadi", e)
+            if i % 5 == 0:
+                await bot.send(uid, f"⏳ {i}/{len(todo)}", disable_notification=True)
+            await asyncio.sleep(3)
+        # har bo'lim oxiri: jadvallar ro'yxati, keyin yo'riqnoma + katalog havolasi
+        for key in ("lenon", "boden", "nabor44", "nabor33", "nabor39"):
+            if not store.settings["topics"].get(key):
+                continue
+            try:
+                await publisher.finish_section(key)
+            except Exception as e:  # noqa
+                await checker.report_error(f"{key}: ro'yxat/yo'riqnoma joylanmadi", e)
+            await asyncio.sleep(2)
+        await bot.send(uid, f"✅ Tayyor: {ok}/{len(todo)} ta jadval joylandi.\n"
+                            "Har bo'lim oxirida — jadvallar ro'yxati va katalogdan foydalanish yo'riqnomasi.")
+    finally:
+        publisher.REBUILD["on"] = False
+        _publish_running["on"] = False
 
 
 async def admin_add_text(uid, text):

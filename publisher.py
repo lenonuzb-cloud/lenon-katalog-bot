@@ -383,6 +383,8 @@ async def refresh_pdf(design_id):
 async def ensure_pdfs(notify_uid=None):
     """Guruhdagi har bir jadval tagida PDF borligini tekshiradi; yo'q yoki eskirgan bo'lsa — joylaydi/yangilaydi.
     To'xtab qolgan ish (masalan server qayta ishga tushgani) shu bilan oxirigacha yetkaziladi."""
+    if REBUILD["on"]:
+        return
     todo = [d["id"] for d in store.designs.values()
             if d.get("msg") and not d.get("deleted") and store.section(d["section"])["kind"] == "design"]
     done = 0
@@ -412,6 +414,8 @@ def queue_pdf(design_id, delay=60):
     async def later():
         try:
             await asyncio.sleep(delay)
+            while REBUILD["on"]:
+                await asyncio.sleep(10)
             await refresh_pdf(design_id)
         except asyncio.CancelledError:
             pass
@@ -547,6 +551,90 @@ async def publish_index(section_key):
         store.save()
 
 
+# ---------------- to'liq tozalash: botning guruhdagi barcha postlarini o'chirish ----------------
+def record_sent(chat_id, result):
+    """tg.bot.sent_hook — guruhga yuborilgan har bir xabar raqamini eslab qoladi (keyin tozalash uchun)."""
+    gid = store.settings.get("group_id")
+    if not gid or str(chat_id) != str(gid):
+        return
+    ids = store.s.setdefault("sent_ids", [])
+    for r in (result if isinstance(result, list) else [result]):
+        if isinstance(r, dict) and r.get("message_id"):
+            ids.append(r["message_id"])
+    if len(ids) > 5000:
+        del ids[:-5000]
+
+
+async def wipe_group(uid=None, scan_back=1500):
+    """Botning guruhdagi barcha postlarini o'chiradi: jadvallar, PDF lar, ro'yxatlar, yo'riqnomalar —
+    shu jumladan hisobda yo'q «adashgan» dublikatlar ham (oxirgi xabarlar orasidan bot yozganlari topiladi)."""
+    st = store.settings
+    gid = st.get("group_id")
+    if not gid:
+        return 0
+    known = set(store.s.get("sent_ids", []))
+    for d in store.designs.values():
+        m = d.get("msg") or {}
+        if m.get("message_id"):
+            known.add(m["message_id"])
+            known.update(m.get("extra_ids", []))
+        pm = d.get("pdf_msg") or {}
+        if pm.get("message_id"):
+            known.add(pm["message_id"])
+    for info in store.s.get("index_msgs", {}).values():
+        if info and info.get("message_id"):
+            known.add(info["message_id"])
+    known.update(v for v in store.s.get("pins", {}).values() if v)
+
+    # oxirgi xabar raqami
+    probe = await bot.call("sendMessage", chat_id=gid, text="🧹", disable_notification=True)
+    top = probe["message_id"]
+    known.add(top)
+    me = bot.me.get("id")
+    owner = st.get("owner_id") or uid
+    # hisobda yo'q bot xabarlarini topish: oxirgi xabarlarni egasiga jimgina forward qilib, kim yozganini tekshiramiz
+    found, copies = set(), []
+    lo = max(1, top - scan_back)
+    if owner:
+        for mid in range(top - 1, lo - 1, -1):
+            if mid in known:
+                continue
+            try:
+                m = await bot.call("forwardMessage", chat_id=owner, from_chat_id=gid, message_id=mid,
+                                   disable_notification=True, _retries=6)
+            except TelegramError:
+                continue
+            copies.append(m["message_id"])
+            if ((m.get("forward_origin") or {}).get("sender_user") or {}).get("id") == me:
+                found.add(mid)
+            if len(copies) >= 90:
+                await _del_many(owner, copies)
+                copies = []
+        await _del_many(owner, copies)
+    targets = sorted(known | found)
+    await _del_many(gid, targets)
+    # hisobni tozalash
+    for d in store.designs.values():
+        d["msg"] = None
+        d.pop("pdf_msg", None)
+    store.s["index_msgs"] = {}
+    store.s["pins"] = {}
+    store.s["sent_ids"] = []
+    store.save()
+    return len(targets)
+
+
+async def _del_many(chat_id, ids):
+    ids = list(ids)
+    for i in range(0, len(ids), 100):
+        part = ids[i:i + 100]
+        try:
+            await bot.call("deleteMessages", chat_id=chat_id, message_ids=part)
+        except TelegramError:
+            for x in part:
+                await bot.safe_delete(chat_id, x)
+
+
 # ---------------- yo'riqnoma: katalogdan qanday foydalanish (bo'limdagi oxirgi post) ----------------
 GUIDE_TEXT = (
     "📒 <b>LENON KATALOGI — qanday foydalaniladi?</b>\n\n"
@@ -605,12 +693,12 @@ def queue_update(design_id: str, delay: float = 4):
         t.cancel()
     _pending[key] = asyncio.get_event_loop().create_task(_later(delay, publish, design_id))
     d = store.designs.get(design_id)
-    if d and d["section"] != "lenon":
+    if d:
         queue_index(d["section"], delay + 3)
 
 
 def queue_index(section_key: str, delay: float = 6):
-    if section_key == "lenon" or section_key == "rasmlar":
+    if section_key == "rasmlar":
         return
     key = "i:" + section_key
     t = _pending.get(key)
@@ -619,9 +707,14 @@ def queue_index(section_key: str, delay: float = 6):
     _pending[key] = asyncio.get_event_loop().create_task(_later(delay, publish_index, section_key))
 
 
+REBUILD = {"on": False}
+
+
 async def _later(delay, fn, arg):
     try:
         await asyncio.sleep(delay)
+        while REBUILD["on"]:
+            await asyncio.sleep(10)
         await fn(arg)
     except asyncio.CancelledError:
         pass

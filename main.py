@@ -165,6 +165,7 @@ async def on_startup(app):
 
     # agentlarni bog'lash
     store.backup_hook = backup_to_telegram
+    bot.sent_hook = publisher.record_sent
     publisher.error_hook = checker.report_error
     notify.error_hook = checker.report_error
 

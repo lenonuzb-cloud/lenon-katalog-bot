@@ -25,11 +25,12 @@ class Bot:
         self.base = f"https://api.telegram.org/bot{token}/"
         self.file_base = f"https://api.telegram.org/file/bot{token}/"
         self.session: aiohttp.ClientSession | None = None
+        self.sent_hook = None  # guruhga yuborilgan xabarlarni qayd etish uchun
         self.me: dict = {}
 
     async def start(self):
         if self.session is None:
-            self.session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=90))
+            self.session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=240))
         self.me = await self.call("getMe")
         return self.me
 
@@ -62,12 +63,19 @@ class Bot:
                     async with self.session.post(self.base + method, json=params) as r:
                         res = await r.json(content_type=None)
             except (aiohttp.ClientError, asyncio.TimeoutError) as e:
-                if attempt < _retries:
+                # xabar yuborish so'rovi javobsiz qolsa — qayta yubormaymiz: xabar aslida ketgan bo'lishi mumkin
+                if attempt < _retries and not method.startswith(("send", "forward", "copy")):
                     await asyncio.sleep(2 * (attempt + 1))
                     continue
                 raise TelegramError(method, -1, f"tarmoq xatosi: {e}")
             if res.get("ok"):
-                return res.get("result")
+                result = res.get("result")
+                if self.sent_hook and method.startswith("send") and isinstance(result, (dict, list)):
+                    try:
+                        self.sent_hook(params.get("chat_id"), result)
+                    except Exception:  # noqa
+                        pass
+                return result
             code = res.get("error_code")
             desc = res.get("description", "")
             if code == 429 and attempt < _retries:
