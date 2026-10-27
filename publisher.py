@@ -181,8 +181,9 @@ def index_html(section_key) -> str:
         link = store.post_link(d)
         name = f'<a href="{esc(link)}">{esc(d["title"])}</a>' if link and s != "qolmadi" else esc(d["title"])
         lines.append(f"{mark} {name}")
-    head = "꧁👑 <b>LENON</b> 👑꧂" if section_key.startswith("nabor") else f"<b>{esc(sec['title'])}</b>"
-    return f"<p>{head}</p><p>" + "<br>".join(lines) + "</p>"
+    head = f"📋 <b>{esc(sec['title'])} — barcha jadvallar</b>"
+    return (f"<p>{head}</p><p>" + "<br>".join(lines) + "</p>"
+            "<p><i>Kerakli nomni bosing — o'sha jadval ochiladi. ❌ qolmagan · 🆕 yangi · ✅ yana keldi</i></p>")
 
 
 # ---------------- zaxira (oddiy) ko'rinish ----------------
@@ -215,7 +216,8 @@ def index_text(section_key) -> str:
         mark = {"qolmadi": "❌", "new": "🆕", "keldi": "✅"}.get(s, "▫️")
         link = store.post_link(d)
         out.append(f'{mark} <a href="{esc(link)}">{esc(d["title"])}</a>' if link else f"{mark} {esc(d['title'])}")
-    return f"<b>{esc(sec['title'])}</b>\n\n" + "\n".join(out)
+    return (f"📋 <b>{esc(sec['title'])} — barcha jadvallar</b>\n\n" + "\n".join(out)
+            + "\n\n<i>Kerakli nomni bosing — o'sha jadval ochiladi. ❌ qolmagan · 🆕 yangi · ✅ yana keldi</i>")
 
 
 # ---------------- yuborish / tahrirlash ----------------
@@ -332,7 +334,7 @@ async def publish(design_id: str, repost: bool = False):
         if kind == "design":
             queue_pdf(design_id)
         return
-    if kind in ("design", "nabor") and d["section"] != "lenon":
+    if kind in ("design", "nabor"):
         queue_index(d["section"])
 
 
@@ -501,18 +503,18 @@ async def _update(d, kind) -> bool:
 
 # ---------------- ko'rsatkich (indeks) postlari: BODEN va naborlar ----------------
 async def publish_index(section_key):
-    if section_key != "boden" and not section_key.startswith("nabor"):
+    if section_key not in ("lenon", "boden") and not section_key.startswith("nabor"):
         return
     async with _lock("index:" + section_key):
         gid, thread = _target(section_key)
         info = store.s["index_msgs"].get(section_key)
         markup = {"inline_keyboard": [[{"text": "📒 Katalog", "url": catalog_url()}]]} if public_links() else None
-        if section_key == "boden":
+        if True:
             btns = []
-            for d in store.designs_in("boden"):
+            for d in store.designs_in(section_key):
                 link = store.post_link(d)
                 if link:
-                    btns.append({"text": d["title"], "url": link})
+                    btns.append({"text": d["title"].replace("LENON ", "").replace("BODEN ", ""), "url": link})
             rows = [btns[i:i + 3] for i in range(0, len(btns), 3)]
             if public_links():
                 rows.append([{"text": "📒 Katalog", "url": catalog_url()}])
@@ -543,6 +545,55 @@ async def publish_index(section_key):
         m = await bot.send(gid, text_plain, message_thread_id=thread, reply_markup=markup)
         store.s["index_msgs"][section_key] = {"chat_id": gid, "message_id": m["message_id"], "mode": "text"}
         store.save()
+
+
+# ---------------- yo'riqnoma: katalogdan qanday foydalanish (bo'limdagi oxirgi post) ----------------
+GUIDE_TEXT = (
+    "📒 <b>LENON KATALOGI — qanday foydalaniladi?</b>\n\n"
+    "1️⃣ Pastdagi <b>«📒 Katalogni ochish»</b> tugmasini bosing.\n"
+    "2️⃣ Kerakli dizaynni tanlang (masalan <b>01-AL</b>) — har bir mahsulotning rasmi, kodi va narxi chiqadi.\n"
+    "3️⃣ Mahsulotni bossangiz — rasmi katta bo'lib ochiladi.\n\n"
+    "🔍 <b>Tez qidirish:</b> katalog tepasidagi qatorga qisqa yozing — masalan <code>ta to 9</code> → Tar tosh 9.\n"
+    "📋 <b>Jadvalda</b> mahsulot nomini bossangiz — o'sha mahsulot rasmi ochiladi.\n"
+    "📄 <b>PDF</b> — har jadval tagidagi fayl: butun dizayn katalogi, yuklab olib saqlash mumkin.\n\n"
+    "Belgilar: ❌ <b>Qolmadi</b> — hozir yo'q · ✅ <b>Keldi</b> — yana bor · 🆕 — yangi mahsulot"
+)
+
+
+async def publish_guide(section_key, pin=True):
+    """Bo'limga yo'riqnoma + katalog tugmasi bilan xabar qo'yadi (eskisini o'chiradi) va tepaga mahkamlaydi."""
+    gid, thread = _target(section_key)
+    pins = store.s.setdefault("pins", {})
+    old = pins.pop(section_key, None)
+    if old:
+        try:
+            await bot.call("unpinChatMessage", chat_id=gid, message_id=old)
+        except TelegramError:
+            pass
+        await bot.safe_delete(gid, old)
+    rows = []
+    if bot.username:
+        rows.append([{"text": "📒 Katalogni ochish", "url": catalog_url()}])
+    m = await bot.send(gid, GUIDE_TEXT, message_thread_id=thread, disable_notification=True,
+                       reply_markup={"inline_keyboard": rows} if rows else None)
+    pins[section_key] = m["message_id"]
+    store.save()
+    if pin:
+        try:
+            await bot.call("pinChatMessage", chat_id=gid, message_id=m["message_id"], disable_notification=True)
+        except TelegramError:
+            pass
+    return m["message_id"]
+
+
+async def finish_section(section_key):
+    """Bo'lim oxiri: avval jadvallar ro'yxati (indeks), eng oxirida — yo'riqnoma va katalog havolasi."""
+    info = store.s["index_msgs"].pop(section_key, None)
+    if info:
+        await bot.safe_delete(info["chat_id"], info["message_id"])
+    await publish_index(section_key)
+    await asyncio.sleep(1.5)
+    await publish_guide(section_key)
 
 
 # ---------------- kechiktirilgan (to'plab) yangilash ----------------

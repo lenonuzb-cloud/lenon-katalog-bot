@@ -1602,41 +1602,22 @@ async def apply_privacy(uid=None):
 
 
 async def pin_catalog(uid):
-    """Har bir bo'limning tepasiga katalogni ochadigan tugmali xabarni mahkamlaydi (pin)."""
+    """Har bir bo'limga katalogdan foydalanish yo'riqnomasini (katalog tugmasi bilan) qo'yib, tepaga mahkamlaydi."""
     st = store.settings
-    gid = st.get("group_id")
-    if not gid or not st["topics"]:
+    if not st.get("group_id") or not st["topics"]:
         await bot.send(uid, "Avval guruh bo'limlarini ulang (/bolim).")
         return
-    pins = store.s.setdefault("pins", {})
-    text = ("📒 <b>LENON katalogi</b>\n"
-            "Barcha dizaynlar, narxlar va qaysi mahsulot bor/qolmagani — rasmlari bilan.\n"
-            "Ochish uchun pastdagi tugmani bosing 👇")
-    markup = {"inline_keyboard": [[{"text": "📒 Katalogni ochish", "url": publisher.catalog_url()}]]}
     ok, errs = 0, []
     for key, thread in st["topics"].items():
         if not thread:
             continue
-        old = pins.get(key)
         try:
-            if old:
-                try:
-                    await bot.call("editMessageText", chat_id=gid, message_id=old, text=text, parse_mode="HTML",
-                                   reply_markup=markup)
-                except TelegramError as e:
-                    if "not modified" not in e.description:
-                        old = None
-            if not old:
-                m = await bot.send(gid, text, message_thread_id=thread, reply_markup=markup, disable_notification=True)
-                old = m["message_id"]
-                pins[key] = old
-            await bot.call("pinChatMessage", chat_id=gid, message_id=old, disable_notification=True)
+            await publisher.publish_guide(key)
             ok += 1
         except TelegramError as e:
             errs.append(f"{config.TOPIC_KEYS.get(key, key)}: {e.description}")
         await asyncio.sleep(1.5)
-    store.save()
-    msg = f"📌 {ok} ta bo'limning tepasiga katalog havolasi qo'yildi."
+    msg = f"📌 {ok} ta bo'limga yo'riqnoma va katalog havolasi qo'yildi."
     if errs:
         msg += "\n⚠️ " + "\n⚠️ ".join(esc(x) for x in errs)
         if any("not enough rights" in x.lower() for x in errs):
@@ -1668,13 +1649,17 @@ async def publish_all(uid, repost=False):
         except Exception as e:  # noqa
             await checker.report_error(f"{d['title']} joylanmadi", e)
         await asyncio.sleep(3.5)
-    for key in ("boden", "nabor44", "nabor33", "nabor39"):
+    # har bo'lim oxiri: jadvallar ro'yxati, keyin yo'riqnoma + katalog havolasi
+    for key in ("lenon", "boden", "nabor44", "nabor33", "nabor39"):
+        if not store.settings["topics"].get(key):
+            continue
         try:
-            await publisher.publish_index(key)
-        except Exception:  # noqa
-            pass
-    await bot.send(uid, f"✅ Tayyor: {ok}/{len(todo)} ta post joylandi.\n"
-                        "Endi guruhdagi eski (qo'lda yozilgan) postlarni o'chirib tashlashingiz mumkin.")
+            await publisher.finish_section(key)
+        except Exception as e:  # noqa
+            await checker.report_error(f"{key}: ro'yxat/yo'riqnoma joylanmadi", e)
+        await asyncio.sleep(2)
+    await bot.send(uid, f"✅ Tayyor: {ok}/{len(todo)} ta jadval qayta joylandi.\n"
+                        "Har bo'lim oxirida — jadvallar ro'yxati va katalogdan foydalanish yo'riqnomasi.")
 
 
 async def admin_add_text(uid, text):
