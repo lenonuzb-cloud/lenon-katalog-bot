@@ -112,6 +112,11 @@ async def admin_action(request):
             warns = ops.edit_item(body["design"], body["item"], name=body.get("name"), code=body.get("code"),
                                   price=body.get("price"), category=body.get("category"),
                                   size=body.get("size"))
+        elif a == "post_now":
+            if not config.ROTATION:
+                return web.json_response({"ok": False, "error": "Bu guruhda ishlamaydi"}, status=400)
+            import rotation
+            await rotation.post_now(body["design"])
         elif a == "remove_product":
             ops.remove_product(body["section"], body.get("name", ""), body.get("code", ""),
                                "hide" if body.get("mode") == "hide" else "all")

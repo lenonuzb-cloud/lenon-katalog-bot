@@ -14,3 +14,22 @@ services:
         sync: false
       - key: OWNER_ID
         value: "8823403417"
+
+  # LENON_UZ guruhi uchun ikkinchi bot (@lenonyordamchibot): o'z katalogi + har soatda avto-aylantirish
+  - type: web
+    name: lenon-uz-bot
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: BOT_TOKEN
+        sync: false
+      - key: OWNER_ID
+        value: "8823403417"
+      - key: PROFILE
+        value: lenonuz

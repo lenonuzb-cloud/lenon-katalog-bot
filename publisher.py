@@ -106,7 +106,7 @@ def item_url(d, it) -> str:
 
 
 def _links_on() -> bool:
-    return bool(bot.username) and store.settings.get("item_links", True)
+    return bool(bot.username) and store.settings.get("item_links", True) and not config.LENONUZ
 
 
 def _name_cell(it, d=None) -> str:
@@ -133,8 +133,12 @@ def design_html(d) -> tuple[str, list]:
     if item_state(d) == "new":
         parts.append("<p>🆕 <b>Yangi dizayn!</b></p>")
     has_code = any(it.get("code") for c in d["categories"] for it in c["items"])
-    ncol = 4 if has_code else 3
-    rows = ["<tr><th>No.</th><th>Nomi</th>" + ("<th>Kodi</th>" if has_code else "") + "<th>Narxi</th></tr>"]
+    has_qty = any(it.get("qty") for c in d["categories"] for it in c["items"])
+    has_price = any(it.get("price") for c in d["categories"] for it in c["items"])
+    has_total = any(it.get("total") for c in d["categories"] for it in c["items"])
+    ncol = 2 + has_code + has_qty + has_price + has_total
+    rows = ["<tr><th>No.</th><th>Nomi</th>" + ("<th>Kodi</th>" if has_code else "") + ("<th>Soni</th>" if has_qty else "")
+            + ("<th>Narxi</th>" if has_price else "") + ("<th>Jami</th>" if has_total else "") + "</tr>"]
     no = 0
     for c in d["categories"]:
         if c["name"] and c["name"] != "Asosiy":
@@ -142,7 +146,10 @@ def design_html(d) -> tuple[str, list]:
         for it in c["items"]:
             no += 1
             code = f"<td>{esc(it['code'])}</td>" if has_code else ""
-            rows.append(f'<tr><td align="center">{no}</td><td>{_name_cell(it, d)}</td>{code}<td>{esc(it["price"])}</td></tr>')
+            qty = f"<td>{esc(it.get('qty', ''))}</td>" if has_qty else ""
+            price = f"<td>{esc(it['price'])}</td>" if has_price else ""
+            total = f"<td>{esc(it.get('total', ''))}</td>" if has_total else ""
+            rows.append(f'<tr><td align="center">{no}</td><td>{_name_cell(it, d)}</td>{code}{qty}{price}{total}</tr>')
     parts.append("<table bordered striped compact>" + "".join(rows) + "</table>")
     if d.get("note"):
         parts.append(f"<p><b>{esc(d['note'])}</b></p>")
@@ -304,6 +311,8 @@ async def _delete_post(d):
 
 async def publish(design_id: str, repost: bool = False):
     """Dizaynni guruhga joylaydi (yoki mavjud postni yangilaydi)."""
+    if config.ROTATION:
+        return  # LENON_UZ: guruhga faqat avto-aylantirish orqali chiqadi
     d = store.designs.get(design_id)
     if not d:
         return
@@ -338,6 +347,19 @@ async def publish(design_id: str, repost: bool = False):
         queue_index(d["section"])
 
 
+# ---------------- aylantirish: dizaynning yangi nusxasini guruhga yuborish ----------------
+async def send_copy(design_id) -> int:
+    """Dizaynni guruhga yangi post qilib yuboradi (rasm + jadval + tugmalar). Doimiy post sifatida saqlanmaydi."""
+    d = store.designs[design_id]
+    gid = store.settings.get("group_id")
+    if not gid:
+        raise NotConfigured("Guruh ulanmagan")
+    tmp = dict(d)
+    tmp["msg"] = None
+    await _post_new(tmp, "design", gid, -1)
+    return (tmp.get("msg") or {}).get("message_id", 0)
+
+
 # ---------------- jadval tagidagi PDF fayl ----------------
 async def _post_pdf(d, gid, thread):
     import webapi
@@ -352,6 +374,8 @@ async def _post_pdf(d, gid, thread):
 
 async def refresh_pdf(design_id):
     """Jadval o'zgargach — tagidagi PDF faylni o'sha joyida yangilaydi (yangi xabar yubormaydi)."""
+    if config.ROTATION:
+        return
     import webapi
     d = store.designs.get(design_id)
     if not d or d.get("deleted") or not d.get("msg"):
@@ -383,7 +407,7 @@ async def refresh_pdf(design_id):
 async def ensure_pdfs(notify_uid=None):
     """Guruhdagi har bir jadval tagida PDF borligini tekshiradi; yo'q yoki eskirgan bo'lsa — joylaydi/yangilaydi.
     To'xtab qolgan ish (masalan server qayta ishga tushgani) shu bilan oxirigacha yetkaziladi."""
-    if REBUILD["on"]:
+    if REBUILD["on"] or config.ROTATION:
         return
     todo = [d["id"] for d in store.designs.values()
             if d.get("msg") and not d.get("deleted") and store.section(d["section"])["kind"] == "design"]
@@ -507,6 +531,8 @@ async def _update(d, kind) -> bool:
 
 # ---------------- ko'rsatkich (indeks) postlari: BODEN va naborlar ----------------
 async def publish_index(section_key):
+    if config.ROTATION:
+        return
     if section_key not in ("lenon", "boden") and not section_key.startswith("nabor"):
         return
     async with _lock("index:" + section_key):

@@ -1,0 +1,7174 @@
+{
+ "profile": "lenonuz",
+ "sections": [
+  {
+   "key": "nb",
+   "title": "Naborlar",
+   "kind": "design"
+  },
+  {
+   "key": "pela",
+   "title": "Pela + choynak to'plami",
+   "kind": "design"
+  },
+  {
+   "key": "patnos",
+   "title": "Patnos",
+   "kind": "design"
+  },
+  {
+   "key": "gulli",
+   "title": "Gulli farfor",
+   "kind": "design"
+  },
+  {
+   "key": "oqfarfor",
+   "title": "Oq farfor / Oq torix",
+   "kind": "design"
+  },
+  {
+   "key": "gastro",
+   "title": "Gastroyomkost",
+   "kind": "design"
+  },
+  {
+   "key": "non",
+   "title": "Non idish",
+   "kind": "design"
+  },
+  {
+   "key": "sous",
+   "title": "Sous va tuzdon",
+   "kind": "design"
+  },
+  {
+   "key": "choynak",
+   "title": "Choynak",
+   "kind": "design"
+  },
+  {
+   "key": "qoshiq",
+   "title": "Qoshiq-vilka",
+   "kind": "design"
+  }
+ ],
+ "designs": [
+  {
+   "section": "qoshiq",
+   "title": "Qoshiq (1шт = 6dona)",
+   "photos": [
+    "AgACAgIAAxUHas3fWAk6iTGJP6W-Nu_vGjRM_o8AAuUhaxuXl2hKuZ_0S2jZJ00BAAMCAAN3AAM9BA"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Qoshiq",
+       "code": "984-1",
+       "qty": "50шт",
+       "price": "2.5$",
+       "total": ""
+      },
+      {
+       "name": "Vilka",
+       "code": "984-2",
+       "qty": "50шт",
+       "price": "2.5$",
+       "total": ""
+      },
+      {
+       "name": "Kichik qoshiq",
+       "code": "984-3",
+       "qty": "50шт",
+       "price": "2.4$",
+       "total": ""
+      },
+      {
+       "name": "Kichik vilka",
+       "code": "984-4",
+       "qty": "50шт",
+       "price": "2.4$",
+       "total": ""
+      },
+      {
+       "name": "Bardak qoshiq",
+       "code": "984-5",
+       "qty": "50шт",
+       "price": "2.4$",
+       "total": ""
+      },
+      {
+       "name": "Pichoq",
+       "code": "984-6",
+       "qty": "50шт",
+       "price": "4$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD5SFrG5eXaEp8"
+  },
+  {
+   "section": "non",
+   "title": "Non idish 1",
+   "photos": [
+    "AgACAgIAAxUHas3bdyRAdWAIOS3Z8gABYhBNfOlwAAK_IWsbl5doSpsbZftdta3OAQADAgADdwADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Emil oq tortburchak",
+       "code": "-1",
+       "qty": "",
+       "price": "2.3$",
+       "total": ""
+      },
+      {
+       "name": "Emil oq aval",
+       "code": "-2",
+       "qty": "",
+       "price": "2.3$",
+       "total": ""
+      },
+      {
+       "name": "Emil oq dumalo",
+       "code": "-3",
+       "qty": "",
+       "price": "2.3$",
+       "total": ""
+      },
+      {
+       "name": "Emil oq kvadrat",
+       "code": "-4",
+       "qty": "",
+       "price": "2.3$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADvyFrG5eXaEp8"
+  },
+  {
+   "section": "patnos",
+   "title": "Patnos · H6-1",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4okKZYCbsy9sxYa1t7ybbhsAAKRIGsb2ngISZ9RlJF-FGdyAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "29sm",
+       "code": "H6-1",
+       "qty": "",
+       "price": "2$",
+       "total": ""
+      },
+      {
+       "name": "36sm",
+       "code": "H7-1",
+       "qty": "",
+       "price": "2.6$",
+       "total": ""
+      },
+      {
+       "name": "40sm",
+       "code": "H8-1",
+       "qty": "",
+       "price": "3.3$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADkSBrG9p4CEl-"
+  },
+  {
+   "section": "patnos",
+   "title": "Patnos · H6-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4qLm_VaAAGhT1mmBIDAT4nSEgACoyBrG9p4CEmOcHM4jFYT1AEAAwIAA3kAAz0E"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "29sm",
+       "code": "H6-2",
+       "qty": "",
+       "price": "2$",
+       "total": ""
+      },
+      {
+       "name": "36sm",
+       "code": "H7-2",
+       "qty": "",
+       "price": "2.6$",
+       "total": ""
+      },
+      {
+       "name": "40sm",
+       "code": "H8-3",
+       "qty": "",
+       "price": "3.3$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADoyBrG9p4CEl-"
+  },
+  {
+   "section": "patnos",
+   "title": "Patnos · H6-3",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4uIJT3OegABhMh6noG83-KiEgACqSBrG9p4CEnaXcq6tIao6QEAAwIAA3kAAz0E"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "29sm",
+       "code": "H6-3",
+       "qty": "",
+       "price": "2$",
+       "total": ""
+      },
+      {
+       "name": "36sm",
+       "code": "H7-3",
+       "qty": "",
+       "price": "2.6$",
+       "total": ""
+      },
+      {
+       "name": "40sm",
+       "code": "H8-3",
+       "qty": "",
+       "price": "3.3$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADqSBrG9p4CEl-"
+  },
+  {
+   "section": "patnos",
+   "title": "Patnos · H1-1",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4t4ajhVOOGfzC-KnCitfWVGAAIuIWsbfmMQSUTwzeYgWDWTAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "35sm",
+       "code": "H1-1",
+       "qty": "",
+       "price": "2.2$",
+       "total": ""
+      },
+      {
+       "name": "40sm",
+       "code": "H2-1",
+       "qty": "",
+       "price": "2.7$",
+       "total": ""
+      },
+      {
+       "name": "45sm",
+       "code": "H3-1",
+       "qty": "",
+       "price": "3.6$",
+       "total": ""
+      },
+      {
+       "name": "50sm",
+       "code": "H4-1",
+       "qty": "",
+       "price": "4.6$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADLiFrG35jEEl-"
+  },
+  {
+   "section": "patnos",
+   "title": "Patnos · H1-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4udG8eav9Bb9uGG-N-zTTAxAAJBIWsbfmMQSVemaOrMEtmuAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "35sm",
+       "code": "H1-2",
+       "qty": "",
+       "price": "2.2$",
+       "total": ""
+      },
+      {
+       "name": "40sm",
+       "code": "H2-2",
+       "qty": "",
+       "price": "2.7$",
+       "total": ""
+      },
+      {
+       "name": "45sm",
+       "code": "H3-2",
+       "qty": "",
+       "price": "3.6$",
+       "total": ""
+      },
+      {
+       "name": "50sm",
+       "code": "H4-2",
+       "qty": "",
+       "price": "4.6$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADQSFrG35jEEl-"
+  },
+  {
+   "section": "patnos",
+   "title": "Patnos · H1-3",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4uuE9XtQMbvdQZKlT67luedAAJCIWsbfmMQSdbY-5MEXzH-AQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "35×27",
+       "code": "H1-3",
+       "qty": "",
+       "price": "2.2$",
+       "total": ""
+      },
+      {
+       "name": "40×30",
+       "code": "H2-3",
+       "qty": "",
+       "price": "2.7$",
+       "total": ""
+      },
+      {
+       "name": "45×35",
+       "code": "H3-3",
+       "qty": "",
+       "price": "3.6$",
+       "total": ""
+      },
+      {
+       "name": "50×37",
+       "code": "H4-3",
+       "qty": "",
+       "price": "4.6$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADQiFrG35jEEl-"
+  },
+  {
+   "section": "pela",
+   "title": "Pela 6ta, Choynak 1ta",
+   "photos": [
+    "AgACAgIAAxUAAWrNGUMckY9O1c7lsQMwVyjD_DAEAAJRHGsbl0YwSQL6pwiJO-KGAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNGUMs4AgK4pwyB9wlPOoRPay8AAJSHGsbl0YwScO2z6k80M67AQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNGUOY1l3ri8pN57F38X1wu4znAAJTHGsbl0YwSWi0bMy9uhceAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNGUOEHk7Zgcks5qt25IjB_e4qAAJWHGsbl0YwSddeM3EVZAhdAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNGUPLC8Zan3Z1pPuPUgqMsqAnAAJVHGsbl0YwSZdyZYQyHKH4AQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "M1",
+       "code": "",
+       "qty": "8шт",
+       "price": "7$",
+       "total": ""
+      },
+      {
+       "name": "M2",
+       "code": "",
+       "qty": "8шт",
+       "price": "7$",
+       "total": ""
+      },
+      {
+       "name": "M3",
+       "code": "",
+       "qty": "8шт",
+       "price": "7$",
+       "total": ""
+      },
+      {
+       "name": "M4",
+       "code": "",
+       "qty": "8шт",
+       "price": "7$",
+       "total": ""
+      },
+      {
+       "name": "M5",
+       "code": "",
+       "qty": "8шт",
+       "price": "7$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADURxrG5dGMEl-"
+  },
+  {
+   "section": "pela",
+   "title": "Pela 6ta, Chonak 1ta · ETP8-1a",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4zH-4q-OQR9r00o6g7Iqz3ZAAIoG2sbl0Y4SVVKCRmYtm-2AQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4yEeq4-EtkwaLRSCxJSla-LAAIpG2sbl0Y4SZOIqiHraomeAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4xXk_EscDw815lXfsGO0YAbAAIqG2sbl0Y4Se_huzKdpqaYAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "ETP8-1a",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-1b",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-1C",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-1D",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADKBtrG5dGOEl-"
+  },
+  {
+   "section": "pela",
+   "title": "Pela 6ta, Chonak 1ta · ETP8-2A.",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4yWY6USNbLwTSMCcsg8uXTLAAIeG2sbl0Y4SZsKfoIrF6bqAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4xAjNkbQ6dgLgELS94Pc8ufAAIgG2sbl0Y4SQcSRWQC-7wcAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4zgm0pYxMEGO29ra_uNoT7jAAIhG2sbl0Y4SdAbe2Jb2JZ5AQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4yvO5veXxxR__KDOjwGN_TJAAIiG2sbl0Y4SVU7pml-P46eAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "ETP8-2A.",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-2b.",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-2C",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-2D",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADHhtrG5dGOEl-"
+  },
+  {
+   "section": "pela",
+   "title": "Pela 6ta, Chonak 1ta · ETP8-3A.",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4yTU3SJTQABYxl65mYc97Q5jAACKxtrG5dGOEnW5jI80e7wAgEAAwIAA3kAAz0E",
+    "AgACAgIAAxUAAWrNG4yoA9KPWQABJv6WHEAwPxnmOgACLBtrG5dGOEn8feCTvx4lwQEAAwIAA3kAAz0E",
+    "AgACAgIAAxUAAWrNG4xD5qZJnwLgJ4V5EncDlfVNAAItG2sbl0Y4SZQ7iTu6gcbVAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "ETP8-3A.",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-3b.",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-3C",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-3D",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADKxtrG5dGOEl-"
+  },
+  {
+   "section": "pela",
+   "title": "Pela 6ta, Chonak 1ta · ETP8-4A",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4wSnBTStL03LZJrwv8LmXRyAAIvG2sbl0Y4SbbH6nsY00FpAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4xLz_zaIUnzjB55Ew42IfyGAAIwG2sbl0Y4SZKyNIvwWBoLAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4z0PNX9xzi48eXj7-AGbEvvAAIxG2sbl0Y4SZS-_9OVKLupAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4wfNyR2VwJVIa_o4DYSLzXvAAIyG2sbl0Y4SWeT-Usl4VT9AQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "ETP8-4A",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-4B",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-4C",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-4D",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADLxtrG5dGOEl-"
+  },
+  {
+   "section": "pela",
+   "title": "Pela 6ta, Chonak 1ta · ETP8-5A",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4x_SnLYgn66T-_oEq6sn1qkAAIzG2sbl0Y4ScgJiSc1GXHmAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4xlFwcpHEy3mTUB5ElqsC1xAAI0G2sbl0Y4SfGtExxCnvX9AQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4wDPWpx263kZ6UB0SQuumALAAI1G2sbl0Y4SeFyPme93AptAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4ygljPbB9NgoJnsv4eqcH_gAAI2G2sbl0Y4SaA4xVARduCtAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "ETP8-5A",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-5B",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-5C",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-5D",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADMxtrG5dGOEl-"
+  },
+  {
+   "section": "pela",
+   "title": "Pela 6ta, Chonak 1ta · ETP8-6A",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4zGWIXUAduowH5PN7UTWaA5AAI3G2sbl0Y4SbP2guW4U0gVAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4zbOey4eEXp_YoJTM4Km6DJAAI4G2sbl0Y4SQi3uypJL32SAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4xLsSsCZ59_sIF6JwJnY4zoAAI5G2sbl0Y4SQiqOAQiiC8HAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG4w7g89_tGddzW3ZQeqVD5moAAI6G2sbl0Y4SQYjpexGjMnVAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "ETP8-6A",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-6B",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-6C",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-6D",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADNxtrG5dGOEl-"
+  },
+  {
+   "section": "pela",
+   "title": "Pela 6ta, Chonak 1ta · ETP8-7A",
+   "photos": [
+    "AgACAgIAAxUAAWrNG41cPNJewn5wEZ0Be5v745sBAAI7G2sbl0Y4SenWcRMeD2AIAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG42EFyL1cyWnLGOZC21qBjjpAAI8G2sbl0Y4SVYc-Pzj2_X-AQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG42hR-MHsm4PA_oIDCrh6UTLAAI9G2sbl0Y4SZrhynEUnlZYAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG43P0mJ1-jGL2wQX75UzYAueAAI-G2sbl0Y4SUGJWYOf4GY6AQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "ETP8-7A",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-7B",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-7C",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-7D",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADOxtrG5dGOEl-"
+  },
+  {
+   "section": "pela",
+   "title": "Pela 6ta, Chonak 1ta · ETP8-8A",
+   "photos": [
+    "AgACAgIAAxUAAWrNG42EeClIDGeL0x8tkDEoUzYCAAI_G2sbl0Y4SVHW74UtQAijAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG41ckJfndURN-k421XfdIOmOAAJBG2sbl0Y4Sf2sMyow86RaAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG41huoIKLORoyiZXpF_HbaSvAAJCG2sbl0Y4SSO4kEDCA34MAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG40oSvI-SJuViQxy36P5e4buAAJDG2sbl0Y4SZtczWIRsgmmAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "ETP8-8A",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-8B",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-8C",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      },
+      {
+       "name": "ETP8-8D",
+       "code": "",
+       "qty": "8шт",
+       "price": "8$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADPxtrG5dGOEl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR95",
+   "photos": [
+    "AgACAgIAAxUAAWrNG40UxZLZrTUG9x-syY3xO2iGAAJ2HmsbxFVRSUl8uHx5mi6pAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "24шт",
+       "price": "3$",
+       "total": "72$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADdh5rG8RVUUl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR96",
+   "photos": [
+    "AgACAgIAAxUAAWrNG42VHPCQRYDgZSMuPDiynnlGAAJ1HmsbxFVRSVx_62GGm0-yAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "24шт",
+       "price": "3$",
+       "total": "72$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADdR5rG8RVUUl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR100",
+   "photos": [
+    "AgACAgIAAxUAAWrNG45qNqQ8-N-prHkyqavYnel2AAJ3HmsbxFVRSaJLoxI4D4mSAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "24шт",
+       "price": "3$",
+       "total": "72$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADdx5rG8RVUUl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR94",
+   "photos": [
+    "AgACAgIAAxUAAWrNG45_vuyWk8umC7trD3OolpTnAAJ4HmsbxFVRSYA5UgzyYJmvAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "24шт",
+       "price": "3$",
+       "total": "72$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADeB5rG8RVUUl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR90",
+   "photos": [
+    "AgACAgIAAxUAAWrNG46a5ndcrOV8olBgHTSu7G5jAAJ6HmsbxFVRSe0dvj8trMyzAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "24шт",
+       "price": "3$",
+       "total": "72$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADeh5rG8RVUUl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR93",
+   "photos": [
+    "AgACAgIAAxUAAWrNG47tYrk4VySuP5ISTJGGfCIgAAKHHmsbxFVRSce3OwoHcahVAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "24шт",
+       "price": "3$",
+       "total": "72$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADhx5rG8RVUUl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR97",
+   "photos": [
+    "AgACAgIAAxUAAWrNG49qn735fq7NU2dECvSh_YQSAAKIHmsbxFVRSVfnDgc7t0IXAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "24шт",
+       "price": "3$",
+       "total": "72$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADiB5rG8RVUUl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR91",
+   "photos": [
+    "AgACAgIAAxUAAWrNG494KPNewnSmJlqF9T3A-2WfAAKKHmsbxFVRSS6IOudOxHaKAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "24шт",
+       "price": "3$",
+       "total": "72$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADih5rG8RVUUl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR81",
+   "photos": [
+    "AgACAgIAAxUAAWrNG485P9ZRFJLMsRGbCgzMUgcOAAJvG2sbxFVJSQzJqOF2SrssAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADbxtrG8RVSUl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR99",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4_bje-2LuAPAghq9v3sFjAcAAKSHmsbxFVRSeYnRbaIX59UAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADkh5rG8RVUUl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR80",
+   "photos": [
+    "AgACAgIAAxUAAWrNG4_YikEdcSvarsdCIstd6vyZAAKTHmsbxFVRSeycQ3BegDqXAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADkx5rG8RVUUl-"
+  },
+  {
+   "section": "gulli",
+   "title": "SR98",
+   "photos": [
+    "AgACAgIAAxUAAWrNG49sn8ph6S0SnASIpG0Tq10hAAKAG2sb2KlRSSG4xJnkw8afAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "42$"
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.65$",
+       "total": "39$"
+      },
+      {
+       "name": "lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": "43.2$"
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.6$",
+       "total": "48$"
+      },
+      {
+       "name": "salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.7$",
+       "total": "42$"
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "24шт",
+       "price": "3$",
+       "total": "72$"
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADgBtrG9ipUUl-"
+  },
+  {
+   "section": "gastro",
+   "title": "Gastroyomkost · 1/1 6.5sm",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5C4iOOztEj78Z1XPmSfkn3iAAJ4HGsb2KlZScA2HbL7wc1iAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5BfN3JsFFHmBZSezEQMSJe0AAK7HGsb2KlZSQ2zB4usqJWXAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5DoEyRUvr2YIMgTlivndc73AAK8HGsb2KlZSSKFU2yg13F1AQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5CZDyF8-DnPKUyORi2GLNkLAAK9HGsb2KlZSSJpAAG2QtKIZgEAAwIAA3kAAz0E"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "1/1 6.5sm",
+       "code": "",
+       "qty": "24шт",
+       "price": "2.7$",
+       "total": ""
+      },
+      {
+       "name": "1/1 10sm",
+       "code": "",
+       "qty": "24шт",
+       "price": "3$",
+       "total": ""
+      },
+      {
+       "name": "1/1 15sm",
+       "code": "",
+       "qty": "18шт",
+       "price": "3.6$",
+       "total": ""
+      },
+      {
+       "name": "1/1 krishka",
+       "code": "",
+       "qty": "30шт",
+       "price": "1.9$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADeBxrG9ipWUl-"
+  },
+  {
+   "section": "gastro",
+   "title": "gastoyomks 1/2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5CZ42GNkOkgs06VpRmyr5aBAAK3HGsb2KlZSVrTiAzgNQ8jAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5Al7g8PQ24_U-buI9bypCmtAAK4HGsb2KlZSTOvZcl6XoRiAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5C_9xrusdMkELY92dHnMzwyAAK5HGsb2KlZSZEF1l-v1dBUAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5ADO0cLBbBUFxSRXNxQW2EbAAK6HGsb2KlZSeYjdletz9zmAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "1/2 6.5sm",
+       "code": "",
+       "qty": "72шт",
+       "price": "1.9$",
+       "total": ""
+      },
+      {
+       "name": "1/2 10sm",
+       "code": "",
+       "qty": "72шт",
+       "price": "2.1$",
+       "total": ""
+      },
+      {
+       "name": "1/2 15sm",
+       "code": "",
+       "qty": "36шт",
+       "price": "2.6$",
+       "total": ""
+      },
+      {
+       "name": "1/2 krishka",
+       "code": "",
+       "qty": "48шт",
+       "price": "1.1$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADtxxrG9ipWUl-"
+  },
+  {
+   "section": "gastro",
+   "title": "gastoyomks 1/3",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5BDCPKBdJx_xpigDdpaZvbcAAKyHGsb2KlZSci_Ly4bXSaZAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5C957Zl9rO7de1SSwhiljvwAAK1HGsb2KlZSftHyYho16heAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5BcL5dk2gjI6BuNdtZXx5UQAAK2HGsb2KlZSTnlLLXiG9sWAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5BwCTfNVGWmT7VESVaNMvdYAAKdHGsb2KlZSRhNjeCnNV8xAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "1/3 6.5sm",
+       "code": "",
+       "qty": "90шт",
+       "price": "1.4$",
+       "total": ""
+      },
+      {
+       "name": "1/3 10sm",
+       "code": "",
+       "qty": "80шт",
+       "price": "1.75$",
+       "total": ""
+      },
+      {
+       "name": "1/3 15sm",
+       "code": "",
+       "qty": "60шт/90шт",
+       "price": "2.3$",
+       "total": ""
+      },
+      {
+       "name": "1/3 krishka",
+       "code": "",
+       "qty": "60шт/160шт",
+       "price": "0.85$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADshxrG9ipWUl-"
+  },
+  {
+   "section": "gastro",
+   "title": "gastoyomks 1/4",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5DAyU0LoorGjveQzp3Y9xYgAAKPHGsb2KlZSf0vOxwZkAgAAQEAAwIAA3kAAz0E",
+    "AgACAgIAAxUAAWrNG5DwTR-QtyJjXYhBrEnOKaxeAAKRHGsb2KlZScWNiql0LnhrAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5Ajtly4ATPbeZ6B6_gEtcCAAAKTHGsb2KlZSRIffv5opbTGAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5AkKw-clWL50PJEodQvBVQ3AAKUHGsb2KlZSXCVYb2iPMpyAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "1/4 6.5sm",
+       "code": "",
+       "qty": "60шт",
+       "price": "1.3$",
+       "total": ""
+      },
+      {
+       "name": "1/4 10sm",
+       "code": "",
+       "qty": "100шт",
+       "price": "1.6$",
+       "total": ""
+      },
+      {
+       "name": "1/4 15sm",
+       "code": "",
+       "qty": "60шт",
+       "price": "2$",
+       "total": ""
+      },
+      {
+       "name": "1/4 krishka",
+       "code": "",
+       "qty": "80шт/180шт",
+       "price": "0.75$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADjxxrG9ipWUl-"
+  },
+  {
+   "section": "gastro",
+   "title": "Gastroyomkost · 1/6 6.5sm",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5B6FM65urPGt-t6rF9gETMcAAKLHGsb2KlZSYwSJjeVMMiyAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5AYg1_VbmfT97KcfU0cClquAAKMHGsb2KlZSRtp-jQMf5ESAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5C76KvPQVD-2nBV-TNVCa4SAAKNHGsb2KlZSYx7l9MigqkjAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5Bw4Un-HtMMKPEmoF65E4iZAAKOHGsb2KlZSb19xMwkHkZiAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "1/6 6.5sm",
+       "code": "",
+       "qty": "шт",
+       "price": "1.1$",
+       "total": ""
+      },
+      {
+       "name": "1/6 10sm",
+       "code": "",
+       "qty": "120шт",
+       "price": "1.3$",
+       "total": ""
+      },
+      {
+       "name": "1/6 15sm",
+       "code": "",
+       "qty": "шт",
+       "price": "2$",
+       "total": ""
+      },
+      {
+       "name": "1/6 krishka",
+       "code": "",
+       "qty": "шт",
+       "price": "0.65$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADixxrG9ipWUl-"
+  },
+  {
+   "section": "gastro",
+   "title": "Gastroyomkost · 1/9 6.5sm",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5GZYMeVE14EGvsfh7QibU20AAKHHGsb2KlZSfUCz0vpr18GAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5F4JB1xR3mv0XuL0hbDMTY8AAKIHGsb2KlZSWCV8Dx4pQ0sAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5E4AAEqUNDBVPclbRetN80HtgACiRxrG9ipWUkk3CqwutpmlAEAAwIAA3kAAz0E",
+    "AgACAgIAAxUAAWrNG5GxMds5KXKUyznk_mTVsYLQAAKKHGsb2KlZSXChO9OsE9mdAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "1/9 6.5sm",
+       "code": "",
+       "qty": "шт",
+       "price": "0.95$",
+       "total": ""
+      },
+      {
+       "name": "1/9 10sm",
+       "code": "",
+       "qty": "шт",
+       "price": "1.1$",
+       "total": ""
+      },
+      {
+       "name": "1/9 15sm",
+       "code": "",
+       "qty": "120шт",
+       "price": "2$",
+       "total": ""
+      },
+      {
+       "name": "1/9 krishka",
+       "code": "",
+       "qty": "шт",
+       "price": "0.5$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADhxxrG9ipWUl-"
+  },
+  {
+   "section": "gastro",
+   "title": "gastoyomks 1/1 teshik",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5GfumGwKLQszX3BnaB-ZcT8AAKVHGsb2KlZSfMzN3WPw4-5AQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5FmugQqRAabKGJ_L87dGymhAAKWHGsb2KlZSRuPPYYesBfbAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG5GBMFIJH2knw9QS_UznMHXyAAKXHGsb2KlZSTs6D-1j71-IAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "1/1 6.5sm",
+       "code": "",
+       "qty": "48шт",
+       "price": "3.8$",
+       "total": ""
+      },
+      {
+       "name": "1/1 10sm",
+       "code": "",
+       "qty": "36шт",
+       "price": "4.5$",
+       "total": ""
+      },
+      {
+       "name": "1/1 15sm",
+       "code": "",
+       "qty": "36шт",
+       "price": "5.5$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADlRxrG9ipWUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 46 · P823",
+   "photos": [
+    "AgACAgIAAxUAAWrNGURhHPu8dZonPvt5g7iZxqhSAAKoHmsblIloSabPkV9x0FFyAQADAgADeQADPQQ"
+   ],
+   "note": "jami; 46шт narxi; 115$ kodi; P823",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka nabor",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "gul vaza",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADqB5rG5SJaEl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 46 · P827",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5H8eY2X9qd62bNbNsgHPRntAAKsHmsblIloSXRxm7DiCWZPAQADAgADeQADPQQ"
+   ],
+   "note": "jami; 46шт narxi; 115$ kodi; P827",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka nabor",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "gul vaza",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADrB5rG5SJaEl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 46 · Y953",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5HdlbBstZq4vLQYMiKRmo8lAAKyHmsblIloSa3MfLgWQqOJAQADAgADeQADPQQ"
+   ],
+   "note": "jami; 46шт narxi; 115$ kodi; Y953",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka nabor",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "gul vaza",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADsh5rG5SJaEl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 46 · Y954",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5KQNsZjsKCXF0-A0LcIAsRPAALAHmsblIloSUbtJbkSK_t5AQADAgADeQADPQQ"
+   ],
+   "note": "jami; 46шт narxi; 115$ kodi; Y954",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka nabor",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "gul vaza",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADwB5rG5SJaEl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 46 · P824",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5KptvYX3r4jujMTeFq-ND3JAALCHmsblIloSQE9ehaFbi-LAQADAgADeQADPQQ"
+   ],
+   "note": "jami; 46шт narxi; 115$ kodi; P824",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka nabor",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "gul vaza",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADwh5rG5SJaEl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 46 · Y952",
+   "photos": [
+    "AgACAgIAAxUAAWrNG5KedTkInzabLuL7on3nPxOrAALDHmsblIloSRgwdi0LxA7AAQADAgADeQADPQQ"
+   ],
+   "note": "jami; 46шт narxi; 115$ kodi; Y952",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka nabor",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "gul vaza",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADwx5rG5SJaEl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 46 · P826",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6hMAXO4algPtUXZcUw3zuXtAALFHmsblIloSVRacgsHpa6OAQADAgADeQADPQQ"
+   ],
+   "note": "jami; 46шт narxi; 115$ kodi; P826",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka nabor",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "gul vaza",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADxR5rG5SJaEl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 46 · P804",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6gQXpL-SWI51axqhyGZUhLXAALIHmsblIloSTuf3-xxiToIAQADAgADeQADPQQ"
+   ],
+   "note": "jami; 46шт narxi; 115$ kodi; P804",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka nabor",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "gul vaza",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADyB5rG5SJaEl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 46 · P825",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6h3w0X1FsVAIaSzU_PEhL2TAALMHmsblIloScdaGMUNBylbAQADAgADeQADPQQ"
+   ],
+   "note": "jami; 46шт narxi; 115$ kodi; P825",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka nabor",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "gul vaza",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADzB5rG5SJaEl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 46 · P828",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6l9cwnD8szOnPgm9XP8uZNUAALoHmsblIloSfaF6OPCPH-kAQADAgADeQADPQQ"
+   ],
+   "note": "jami; 46шт narxi; 115$ kodi; P828",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka nabor",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "gul vaza",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD6B5rG5SJaEl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 46 · P822",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6mMwpmnqe_4Auw5fQs0ZGSzAALqHmsblIloSeExX9dlj8yfAQADAgADeQADPQQ"
+   ],
+   "note": "jami; 46шт narxi; 115$ kodi; P822",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka nabor",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "gul vaza",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD6h5rG5SJaEl-"
+  },
+  {
+   "section": "gulli",
+   "title": "Torix gulli pela",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6nVnwR0susZarviJ6ADflBMAAL9KWsb_fRwSW4uO28QMES0AQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Lola -(932)",
+       "code": "",
+       "qty": "144шт",
+       "price": "0.39$",
+       "total": ""
+      },
+      {
+       "name": "Rose -(500)",
+       "code": "",
+       "qty": "144шт",
+       "price": "0.39$",
+       "total": ""
+      },
+      {
+       "name": "777 -(138)",
+       "code": "",
+       "qty": "144шт",
+       "price": "0.39$",
+       "total": ""
+      },
+      {
+       "name": "Gul -(367)",
+       "code": "",
+       "qty": "144шт",
+       "price": "0.39$",
+       "total": ""
+      },
+      {
+       "name": "Maysa -(931)",
+       "code": "",
+       "qty": "144шт",
+       "price": "0.39$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD_SlrG_30cEl-"
+  },
+  {
+   "section": "oqfarfor",
+   "title": "Oq farfor",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6mEdpCS67OofII3fzBq6Re_AAIYGmsbpSvpSAziUrKLmfZhAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNG6l9E7YiFQrF2V_p2ND89Z0_AAIZGmsbpSvpSBVIDOonkS7NAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Pela qozo",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.29$",
+       "total": ""
+      },
+      {
+       "name": "Kosa qozo",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.56$",
+       "total": ""
+      },
+      {
+       "name": "Pela abd",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.29$",
+       "total": ""
+      },
+      {
+       "name": "Kosa abd",
+       "code": "",
+       "qty": "72шт",
+       "price": "0.56$",
+       "total": ""
+      },
+      {
+       "name": "Tarelka 6",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.3$",
+       "total": ""
+      },
+      {
+       "name": "Tarelka 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.43$",
+       "total": ""
+      },
+      {
+       "name": "Tarelka 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.6$",
+       "total": ""
+      },
+      {
+       "name": "Tarelka 9",
+       "code": "",
+       "qty": "40шт",
+       "price": "0.78$",
+       "total": ""
+      },
+      {
+       "name": "Tarelka 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.1$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 6",
+       "code": "",
+       "qty": "100шт",
+       "price": "0.35$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.5$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.6$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 9",
+       "code": "",
+       "qty": "40шт",
+       "price": "0.78$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.2$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 12",
+       "code": "",
+       "qty": "20шт",
+       "price": "2$",
+       "total": ""
+      },
+      {
+       "name": "Aval 10",
+       "code": "",
+       "qty": "50шт",
+       "price": "0.85$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADGBprG6Ur6Uh-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y821",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6llCogj9DYHL7Xuw-O8DY7ZAAI7IWsb8VqhScdDHIyp-rXvAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y821",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADOyFrG_FaoUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y896-2-A",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6pnjs8SeOWe94EBYKhZc-hiAAI6IWsb8VqhSdMQG-kPb5fLAQADAgADdwADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y896-2-A",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADOiFrG_FaoUl8"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y893-2-A",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6pU2wABvV-hQXJ-bWUwIAPCaAACPSFrG_FaoUnXyXTY3DPsswEAAwIAA3kAAz0E"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y893-2-A",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADPSFrG_FaoUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y907-2-A",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6rbdmTtDWIQd9w4maYd3AwJAAI-IWsb8VqhSVfjnLKyj28CAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y907-2-A",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADPiFrG_FaoUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y834-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6pVOlfjolQoUV6NdeS47zveAAJBIWsb8VqhSViWJNzIxzvOAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y834-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADQSFrG_FaoUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y827-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6vTF2B6Km5SeKZpjl8Gna9vAAJEIWsb8VqhSRDxNrUNIUO0AQADAgADdwADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y827-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADRCFrG_FaoUl8"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y826-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6vbH2OpL60gnOaV7ZEvAk7EAAJFIWsb8VqhSYnk7hcAAVE47wEAAwIAA3cAAz0E"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y826-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADRSFrG_FaoUl8"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y874-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6tBi8Jg5HsG-tK0sL1Qef9_AAJGIWsb8VqhSZ15WfKH9yZZAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y874-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADRiFrG_FaoUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y880-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6vzye1CrYaRnwODQRPuzfzrAAJHIWsb8VqhSQPR9rwpYRkTAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y880-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADRyFrG_FaoUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y879-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6xSxeJXyhABEh6zaPVrx5NGAAJIIWsb8VqhSR7VxnBE56dAAQADAgADdwADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y879-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADSCFrG_FaoUl8"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y849-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6wiFuYSRWzKRr0NGy1jGwyrAAJKIWsb8VqhSZiWs_iR0vtcAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y849-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADSiFrG_FaoUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y852-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG61P9Mt8CZlt76HeLirbHKhBAAJLIWsb8VqhST5WgQajDJoGAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y852-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADSyFrG_FaoUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y882-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG63QbslJzHAlNqczRXiMQVkXAAJMIWsb8VqhSR1QAAFUIFADjQEAAwIAA3kAAz0E"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y882-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADTCFrG_FaoUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y823-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG67T2Xz1GGjn5C_qMd_RgawTAAJOIWsb8VqhSec5wzDEyMHkAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y823-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADTiFrG_FaoUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 39 · Y809-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG67JpH0iX1kTMaD2I4GAgnthAAJPIWsb8VqhSfzKUkiLznHhAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 39шт narxi: 95$ kodi: Y809-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "chashka 190",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar bort 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan bort 12",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval 12",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6.5",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADTyFrG_FaoUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y944-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG64Lw4DJ1dGMqELuW_S2ZRbuAALrG2sb7OPBSU0n4s5v79PZAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y944-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD6xtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y936-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG69jzxBlOpKOWfxZkwzOXaGmAALsG2sb7OPBSTu-dDOBKajcAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y936-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD7BtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y823-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6-xF6PHMqc5670EXQQJ75AEAALvG2sb7OPBSdVBeS4abYuVAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y823-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD7xtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y938-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG69MQC8KMl2pKeNVAlkF8vyIAALwG2sb7OPBSfSLH-Vc5dL_AQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y938-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD8BtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y809-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6_Ag088nhaibiwJIN2A74F5AALyG2sb7OPBSReNr3BYgyxBAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y809-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD8htrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y881-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG6_vjlAZM9oTSXGh3vrJLwpyAALzG2sb7OPBScj1ix64BNopAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y881-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD8xtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y875-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7DGAAHy9K3brGty5eymQH-zAgAC9BtrG-zjwUnHrXD8Mj8t6AEAAwIAA3kAAz0E"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y875-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD9BtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y880-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7DhfqE77dNg28EhpqragW54AAL1G2sb7OPBSTJLHDX23qpOAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y880-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD9RtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y838-UW4",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7AP2QE8CXcZRMgnaUvwmNhxAAL2G2sb7OPBSTolGp75XyCyAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y838-UW4",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD9htrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y940-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7BPfgAB-VqCReJ6lKuX_HmD8QAC9xtrG-zjwUkVx8HiP6syuQEAAwIAA3kAAz0E"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y940-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD9xtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y874-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7CJZxZ7nrwWfqAsMQxfKcPuAAL4G2sb7OPBSTetCCCTx32eAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y874-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD-BtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y834-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7EJgCh_wyFlK5pAOWP08qLcAAL5G2sb7OPBSZ-i7bF3mg9QAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y834-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD-RtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y827-UW4",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7G4f2OV78wBXxK7kk43ytqwAAL6G2sb7OPBSdaXPp9HM0wZAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y827-UW4",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD-htrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y911-UW4",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7GF8qKZl6idHJWX6aVToUA1AAL7G2sb7OPBSRduVk7Km-xYAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y911-UW4",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD-xtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y901-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7HoxRbWmpckW3IrmisDZ_O4AAL8G2sb7OPBSRO3U0IonAk5AQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y901-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD_BtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y878-UW4",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7IJ5GaxrFAILOhbs3pukaXGAAL9G2sb7OPBSVsp6MhPEYl9AQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y878-UW4",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD_RtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y939-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7JnaimCYDVQAviVxIacuR3cAAL-G2sb7OPBSfBw-eFupbZEAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y939-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD_htrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y866-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7KxGovdcHRfvwU0aUsZoRGOAAL_G2sb7OPBSWJ9RCLYSWHkAQADAgADeQADPQQ"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y866-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD_xtrG-zjwUl-"
+  },
+  {
+   "section": "nb",
+   "title": "LENON nabor 33 · Y821-2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7NWnBtQvWShioUQMxy4V9KfAAMcaxvs48FJDp8PNOAnG50BAAMCAAN5AAM9BA"
+   ],
+   "note": "jami: 33шт narxi: 65$ kodi: Y821-2",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 7",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "tar turk 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "lagan turk 10",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "salat 6",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "aval kv 11",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAEHGsb7OPBSX4"
+  },
+  {
+   "section": "nb",
+   "title": "KLASS nabor 44 · A01-44K",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7OHo_uI9k2_WrFkhinwN0aTAAJDGWsbOpP4SQABtOnK8Mgy3AEAAwIAA3kAAz0E"
+   ],
+   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44K",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Chashka + tarelka",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Salat",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Aval",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADQxlrGzqT-El-"
+  },
+  {
+   "section": "nb",
+   "title": "KLASS nabor 44 · A01-44G",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7NpvzfJK7knAXdaJoAHSqpRAAJEGWsbOpP4STHd6Pr_B871AQADAgADeQADPQQ"
+   ],
+   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44G",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Chashka + tarelka",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Salat",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Aval",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADRBlrGzqT-El-"
+  },
+  {
+   "section": "nb",
+   "title": "KLASS nabor 44 · A01-44B",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7OyfH_SkaOStCkLHhv_roVXAAJFGWsbOpP4Se1lkUslCmwzAQADAgADeQADPQQ"
+   ],
+   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44B",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Chashka + tarelka",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Salat",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Aval",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADRRlrGzqT-El-"
+  },
+  {
+   "section": "nb",
+   "title": "KLASS nabor 44 · A01-44L",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7ObOvcoHkGgaHKijrHlw0l_AAJGGWsbOpP4Se5ZYvo66QnLAQADAgADeQADPQQ"
+   ],
+   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44L",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Chashka + tarelka",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Salat",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Aval",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADRhlrGzqT-El-"
+  },
+  {
+   "section": "nb",
+   "title": "KLASS nabor 44 · A01-44C",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7RhaxxIWwzUIav2ioxxRmJkAAJHGWsbOpP4SR1m0o5hX2EsAQADAgADeQADPQQ"
+   ],
+   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44C",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Chashka + tarelka",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Salat",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Aval",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADRxlrGzqT-El-"
+  },
+  {
+   "section": "nb",
+   "title": "KLASS nabor 44 · A01-44D",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7Rmi0uCU_OYX3QAAsasYXVDAAJIGWsbOpP4Sb0ZpxNBSrNbAQADAgADeQADPQQ"
+   ],
+   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44D",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Chashka + tarelka",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Salat",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Aval",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADSBlrGzqT-El-"
+  },
+  {
+   "section": "nb",
+   "title": "KLASS nabor 44 · A01-44F",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7TzNWDeh-AJy_ahreqb4EADAAJJGWsbOpP4SWANMELuIMCiAQADAgADeQADPQQ"
+   ],
+   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44F",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Chashka + tarelka",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Salat",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Aval",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADSRlrGzqT-El-"
+  },
+  {
+   "section": "nb",
+   "title": "KLASS nabor 44 · A01-44E",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7QwfE06wkHTQWLmQ7j6zomwAAJKGWsbOpP4SYf1KRjknFlSAQADAgADeQADPQQ"
+   ],
+   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44E",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Chashka + tarelka",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Salat",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Aval",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADShlrGzqT-El-"
+  },
+  {
+   "section": "nb",
+   "title": "KLASS nabor 44 · A01-44J",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7Q5tVXMeDRUUJL4zKVSyGLdAAJLGWsbOpP4SdPvVZOtaNzXAQADAgADeQADPQQ"
+   ],
+   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44J",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Chashka + tarelka",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Salat",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Aval",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADSxlrGzqT-El-"
+  },
+  {
+   "section": "nb",
+   "title": "KLASS nabor 44 · A01-44I",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7Smi3D11b4sv9Gt98vFxTwoAAJMGWsbOpP4SXrSDVSOHCvHAQADAgADeQADPQQ"
+   ],
+   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44I",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Chashka + tarelka",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Salat",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Aval",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADTBlrGzqT-El-"
+  },
+  {
+   "section": "nb",
+   "title": "KLASS nabor 44 · A01-44A",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7VxFJLD6JDKD_zQ5H3PriWTAAJSGWsbOpP4SXmrg2v-aWHBAQADAgADeQADPQQ"
+   ],
+   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44A",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Kosa",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Chashka + tarelka",
+       "code": "",
+       "qty": "6шт+6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "6шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choynak",
+       "code": "",
+       "qty": "1шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Salat",
+       "code": "",
+       "qty": "4шт",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Aval",
+       "code": "",
+       "qty": "2шт",
+       "price": "",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADUhlrGzqT-El-"
+  },
+  {
+   "section": "choynak",
+   "title": "Choynak porshin",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7W4oob2KK67Pen86RS5YhSQAALdHWsbQhUxSsWxWTODU2erAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Porshin  1L",
+       "code": "",
+       "qty": "12шт",
+       "price": "11$",
+       "total": ""
+      },
+      {
+       "name": "Porshin 0.8L",
+       "code": "",
+       "qty": "12шт",
+       "price": "10.5$",
+       "total": ""
+      },
+      {
+       "name": "Porshin qora 1L",
+       "code": "",
+       "qty": "12шт",
+       "price": "13$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD3R1rG0IVMUp-"
+  },
+  {
+   "section": "sous",
+   "title": "Melamin sous · D183501-1",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7W85r3vQVJe2j9pKr_AzLnTAALgHWsbQhUxSshcSx0-8v_IAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Oq",
+       "code": "D183501-1",
+       "qty": "120шт/480шт",
+       "price": "0.4$",
+       "total": ""
+      },
+      {
+       "name": "Qora",
+       "code": "D183501-2",
+       "qty": "120шт/480шт",
+       "price": "0.4$",
+       "total": ""
+      },
+      {
+       "name": "Qizil",
+       "code": "D183501-3",
+       "qty": "120шт/480шт",
+       "price": "0.4$",
+       "total": ""
+      },
+      {
+       "name": "Apelsin",
+       "code": "D183501-4",
+       "qty": "120шт/480шт",
+       "price": "0.4$",
+       "total": ""
+      },
+      {
+       "name": "Sariq",
+       "code": "D183501-5",
+       "qty": "120шт/480шт",
+       "price": "0.4$",
+       "total": ""
+      },
+      {
+       "name": "Yashil",
+       "code": "D183501-6",
+       "qty": "120шт/480шт",
+       "price": "0.4$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD4B1rG0IVMUp-"
+  },
+  {
+   "section": "sous",
+   "title": "Melamin sous · D183503",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7VbEIUyLG4wzUJMeDpfd5PEAAIuHmsbQhUxSluuOR_KzZFvAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Oq",
+       "code": "D183503",
+       "qty": "120шт/480шт",
+       "price": "0.4$",
+       "total": ""
+      },
+      {
+       "name": "Qora",
+       "code": "D183503-1",
+       "qty": "120шт/480шт",
+       "price": "0.4$",
+       "total": ""
+      },
+      {
+       "name": "Oq kv",
+       "code": "D183502",
+       "qty": "120шт/480шт",
+       "price": "0.4$",
+       "total": ""
+      },
+      {
+       "name": "Qora kv",
+       "code": "D183502-1",
+       "qty": "120шт/480шт",
+       "price": "0.4$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADLh5rG0IVMUp-"
+  },
+  {
+   "section": "patnos",
+   "title": "Patnos · JB-690  (16.5×27.5)sm",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7XiS7NO2D_n_0_a6mam_WLvAAIvHmsbO0JASkUymCVgAq7QAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "JB-690  (16.5×27.5)sm",
+       "code": "",
+       "qty": "50шт",
+       "price": "0.7$",
+       "total": ""
+      },
+      {
+       "name": "JB-691  (19.5×29.5)sm",
+       "code": "",
+       "qty": "50шт",
+       "price": "0.8$",
+       "total": ""
+      },
+      {
+       "name": "JB-692  (23×32)sm",
+       "code": "",
+       "qty": "50шт",
+       "price": "1$",
+       "total": ""
+      },
+      {
+       "name": "JB-693  (25×35)sm",
+       "code": "",
+       "qty": "50шт",
+       "price": "1.2$",
+       "total": ""
+      },
+      {
+       "name": "JB-694  (28×39)sm",
+       "code": "",
+       "qty": "50шт",
+       "price": "1.4$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADLx5rGztCQEp-"
+  },
+  {
+   "section": "patnos",
+   "title": "Patnos · JB-06  (19×32)sm",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7aYBvJJSL4oPC8PQ2kxwxSUAAJFI2sbO0JISv0OobHGDcTQAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "JB-06  (19×32)sm",
+       "code": "",
+       "qty": "100шт",
+       "price": "0.7$",
+       "total": ""
+      },
+      {
+       "name": "JB-08  (24×38)sm",
+       "code": "",
+       "qty": "50шт",
+       "price": "0.9$",
+       "total": ""
+      },
+      {
+       "name": "JB-18  (29×42)sm",
+       "code": "",
+       "qty": "50шт",
+       "price": "1.4$",
+       "total": ""
+      },
+      {
+       "name": "JB-28  (35×47)sm",
+       "code": "",
+       "qty": "30шт",
+       "price": "2.5$",
+       "total": ""
+      },
+      {
+       "name": "JB-48  (40×53)sm",
+       "code": "",
+       "qty": "20шт",
+       "price": "3$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADRSNrGztCSEp-"
+  },
+  {
+   "section": "patnos",
+   "title": "Patnos · 1800",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7be3NUMn-F_7wfkKBIU1KihAAKqHWsb8-hRStAJD5dDHwSOAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Patnos dumalo 45sm",
+       "code": "1800",
+       "qty": "",
+       "price": "3.8$",
+       "total": ""
+      },
+      {
+       "name": "Patnos dumalo 40sm",
+       "code": "1600",
+       "qty": "",
+       "price": "3.2$",
+       "total": ""
+      },
+      {
+       "name": "Patnos dumalo arzon",
+       "code": "1800",
+       "qty": "",
+       "price": "3$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADqh1rG_PoUUp-"
+  },
+  {
+   "section": "patnos",
+   "title": "Patnos · 1622",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7Yu1wtXLKez7XH1XUsAASAH_wACth1rG_PoUUqL2BP1WfhxVwEAAwIAA3kAAz0E"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Patnos 56×40",
+       "code": "1622",
+       "qty": "",
+       "price": "6.5$",
+       "total": ""
+      },
+      {
+       "name": "Patnos 50×38",
+       "code": "1520",
+       "qty": "",
+       "price": "3.8$",
+       "total": ""
+      },
+      {
+       "name": "Patnos 45×35",
+       "code": "1418",
+       "qty": "",
+       "price": "3.2$",
+       "total": ""
+      },
+      {
+       "name": "Patnos 50×38",
+       "code": "1520",
+       "qty": "",
+       "price": "3$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADth1rG_PoUUp-"
+  },
+  {
+   "section": "non",
+   "title": "Non idish 2",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7ZUXP1zbVnmNsx9sXZGI1JfAALUHWsb8-hRSind7lUvCfowAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Sim yangi torburchak",
+       "code": "-1",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      },
+      {
+       "name": "Sim yangi aval",
+       "code": "-2",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      },
+      {
+       "name": "Sim yangi dumalo",
+       "code": "-3",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      },
+      {
+       "name": "Sim yangi kvadrat",
+       "code": "-4",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD1B1rG_PoUUp-"
+  },
+  {
+   "section": "non",
+   "title": "Non idish 3",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7cJM4QCoSu3az-Su63i9v1CAALeHWsb8-hRSjsfrCbPQbmRAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Sim torburchak",
+       "code": "-1",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      },
+      {
+       "name": "Sim aval",
+       "code": "-2",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      },
+      {
+       "name": "Sim dumalo",
+       "code": "-3",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      },
+      {
+       "name": "Sim kvadrat",
+       "code": "-4",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD3h1rG_PoUUp-"
+  },
+  {
+   "section": "non",
+   "title": "Non idish 4",
+   "photos": [
+    "AgACAgIAAxUAAWrNG7eoX5mVW5AplJxjBsJzVL5KAALfHWsb8-hRSnyUq2Kh5v4kAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Arginal torburchak",
+       "code": "-1",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      },
+      {
+       "name": "Arginal aval",
+       "code": "-2",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      },
+      {
+       "name": "Arginal dumalo",
+       "code": "-3",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      },
+      {
+       "name": "Arginal kvadrat",
+       "code": "-4",
+       "qty": "",
+       "price": "1.2$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQAD3x1rG_PoUUp-"
+  },
+  {
+   "section": "oqfarfor",
+   "title": "Farfor zarli",
+   "photos": [
+    "AgACAgIAAxUAAWrNEIfPLHpEhK1OFFScBkF9iZ2OAAKzGmsbkGl5SHrry8rmw1-aAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Far for zarli",
+     "items": [
+      {
+       "name": "Nomi",
+       "code": "Narxi",
+       "qty": "",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choyne",
+       "code": "",
+       "qty": "24шт",
+       "price": "3.8$",
+       "total": ""
+      },
+      {
+       "name": "Kosa qozo",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.8$",
+       "total": ""
+      },
+      {
+       "name": "Pela qozo",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.47$",
+       "total": ""
+      },
+      {
+       "name": "Kosa abd",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.8$",
+       "total": ""
+      },
+      {
+       "name": "Pela abd",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.47$",
+       "total": ""
+      },
+      {
+       "name": "Tar 6",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.51$",
+       "total": ""
+      },
+      {
+       "name": "Tar 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.71$",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.87$",
+       "total": ""
+      },
+      {
+       "name": "Tar 9",
+       "code": "",
+       "qty": "40шт",
+       "price": "1.13$",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "38шт",
+       "price": "1.37$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 6",
+       "code": "",
+       "qty": "100шт",
+       "price": "0.53$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 7",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.76$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.95$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 9",
+       "code": "",
+       "qty": "40шт",
+       "price": "1.13$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.5$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 12",
+       "code": "",
+       "qty": "20шт",
+       "price": "2.54$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADsxprG5BpeUh-"
+  },
+  {
+   "section": "oqfarfor",
+   "title": "Oq torix",
+   "photos": [
+    "AgACAgIAAxUAAWrNE5CPvPqKXToTiB0rkrBODmDhAAJTH2sbNymBSNMdt6mDA8_aAQADAgADeQADPQQ",
+    "AgACAgIAAxUAAWrNE5Bjyu3E0hK-m8CTVIyGfZHmAAJUH2sbNymBSNO6UAy4ORIIAQADAgADeQADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Torix oq",
+     "items": [
+      {
+       "name": "Nomi",
+       "code": "Narxi",
+       "qty": "",
+       "price": "",
+       "total": ""
+      },
+      {
+       "name": "Choyne nok",
+       "code": "",
+       "qty": "24шт",
+       "price": "2.5$",
+       "total": ""
+      },
+      {
+       "name": "Choyne pachoq",
+       "code": "",
+       "qty": "24шт",
+       "price": "2.6$",
+       "total": ""
+      },
+      {
+       "name": "Choyne dazmol",
+       "code": "",
+       "qty": "24шт",
+       "price": "2.6$",
+       "total": ""
+      },
+      {
+       "name": "Pela",
+       "code": "",
+       "qty": "144шт",
+       "price": "0.39$",
+       "total": ""
+      },
+      {
+       "name": "Kosa 6",
+       "code": "",
+       "qty": "48шт",
+       "price": "0.95$",
+       "total": ""
+      },
+      {
+       "name": "Kosa 5.5",
+       "code": "",
+       "qty": "48шт",
+       "price": "0.91$",
+       "total": ""
+      },
+      {
+       "name": "Tar 6",
+       "code": "",
+       "qty": "96шт",
+       "price": "0.49$",
+       "total": ""
+      },
+      {
+       "name": "Tar 7",
+       "code": "",
+       "qty": "72шт",
+       "price": "0.55$",
+       "total": ""
+      },
+      {
+       "name": "Tar 8",
+       "code": "",
+       "qty": "48шт",
+       "price": "0.78$",
+       "total": ""
+      },
+      {
+       "name": "Tar 9",
+       "code": "",
+       "qty": "36шт",
+       "price": "0.85$",
+       "total": ""
+      },
+      {
+       "name": "Tar 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 10",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.3$",
+       "total": ""
+      },
+      {
+       "name": "Lagan 12",
+       "code": "",
+       "qty": "24шт",
+       "price": "2.6$",
+       "total": ""
+      },
+      {
+       "name": "Tar kv 85",
+       "code": "",
+       "qty": "48шт",
+       "price": "0.97$",
+       "total": ""
+      },
+      {
+       "name": "Tar kv 110",
+       "code": "",
+       "qty": "24шт",
+       "price": "1.3$",
+       "total": ""
+      },
+      {
+       "name": "Tar kv 130",
+       "code": "",
+       "qty": "18шт",
+       "price": "1.53$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADUx9rGzcpgUh-"
+  },
+  {
+   "section": "sous",
+   "title": "Sous va tuzdon",
+   "photos": [
+    "AgACAgIAAxUAAWrNFIa6iwUpec_FzPmU2CvUk0ibAAJEIWsbeoH5SG2kqqCMbLRFAQADAgADeAADPQQ"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Uksus",
+       "code": "",
+       "qty": "72шт",
+       "price": "0.7$",
+       "total": ""
+      },
+      {
+       "name": "Tuzdon kichik",
+       "code": "",
+       "qty": "144шт",
+       "price": "0.38$",
+       "total": ""
+      },
+      {
+       "name": "Tuzdon kotta",
+       "code": "",
+       "qty": "144шт",
+       "price": "0.46$",
+       "total": ""
+      },
+      {
+       "name": "Tuzdon kotta (yaahil)",
+       "code": "",
+       "qty": "144шт",
+       "price": "0.46$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADRCFrG3qB-Uh9"
+  },
+  {
+   "section": "non",
+   "title": "Non idish 5",
+   "photos": [
+    "AgACAgIAAxUHas0JftWokPgIoPOHJCV6xd1mewQAAmQmaxuGjmhKOg6ehKIbCLMBAAMCAAN5AAM9BA"
+   ],
+   "note": "",
+   "categories": [
+    {
+     "name": "Asosiy",
+     "items": [
+      {
+       "name": "Doppi tortburchak",
+       "code": "-1",
+       "qty": "24шт",
+       "price": "2.3$",
+       "total": ""
+      },
+      {
+       "name": "Doppi avalniy",
+       "code": "-2",
+       "qty": "24шт",
+       "price": "2.3$",
+       "total": ""
+      },
+      {
+       "name": "Doppi dumaloq",
+       "code": "-3",
+       "qty": "24шт",
+       "price": "2.3$",
+       "total": ""
+      },
+      {
+       "name": "Doppi kvadrat",
+       "code": "-4",
+       "qty": "24шт",
+       "price": "2.3$",
+       "total": ""
+      }
+     ]
+    }
+   ],
+   "src_id": "AQADZCZrG4aOaEp-"
+  }
+ ]
+}

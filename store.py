@@ -14,6 +14,8 @@ log = logging.getLogger("store")
 
 STATE_FILE = config.DATA_DIR / "state.json"
 INITIAL_FILE = config.BASE_DIR / "katalog_boshlangich.json"
+if config.LENONUZ:
+    INITIAL_FILE = config.BASE_DIR / "katalog_lenonuz.json"
 
 SECTIONS = [
     {"key": "lenon", "title": "LENON", "kind": "design"},
@@ -23,6 +25,11 @@ SECTIONS = [
     {"key": "nabor39", "title": "LENON nabor 39", "kind": "nabor"},
     {"key": "rasmlar", "title": "Rasmlar", "kind": "photos"},
 ]
+if config.LENONUZ:
+    try:
+        SECTIONS = json.loads((config.BASE_DIR / "katalog_lenonuz.json").read_text("utf-8"))["sections"]
+    except Exception:  # noqa
+        SECTIONS = [{"key": "nb", "title": "Naborlar", "kind": "design"}]
 SECTION_BY_KEY = {s["key"]: s for s in SECTIONS}
 
 
@@ -136,6 +143,8 @@ class Store:
         if not INITIAL_FILE.exists():
             return
         data = json.loads(INITIAL_FILE.read_text("utf-8"))
+        if config.LENONUZ:
+            return self._import_lenonuz(data)
         order = 0
         for sec_key, lst in (("lenon", data.get("lenon", [])), ("boden", data.get("boden", []))):
             for d in lst:
@@ -158,14 +167,42 @@ class Store:
                 self.s["designs"][did]["in_stock"] = st["in_stock"]
         self.save(backup=False)
 
+    def _import_lenonuz(self, data):
+        """LENON_UZ katalogi (eski botdan ko'chirilgan): har bir post — alohida «dizayn»,
+        jadval qatorlarida nomi, kodi, soni, narxi, jami."""
+        order = 0
+        for x in data.get("designs", []):
+            order += 1
+            did = self.add_design(x["section"], x["title"], note=x.get("note", ""), photos=x.get("photos") or [],
+                                  log_event=False, mark_new=False)
+            des = self.s["designs"][did]
+            des["order"] = order
+            des["agents"] = ["Abduvosit", "Azamat", "Ibrohim"]
+            for c in x["categories"]:
+                cat = {"name": c["name"], "items": []}
+                for it in c["items"]:
+                    cat["items"].append(self._mk_item(it["name"], it.get("code", ""), it.get("price", ""), new=False,
+                                                      qty=it.get("qty", ""), total=it.get("total", "")))
+                des["categories"].append(cat)
+        st = self.settings
+        if config.DEFAULT_GROUP_ID:
+            st["group_id"] = config.DEFAULT_GROUP_ID
+        st["topics"] = {s["key"]: -1 for s in self.s["sections"]}
+        st["topics"]["umumiy"] = -1
+        st["rot"] = {"queue": [d["id"] for d in sorted(self.designs.values(), key=lambda d: d.get("order", 0))],
+                     "last_slot": "", "posted": 0}
+        self.save(backup=False)
+
     # ---------- yordamchi ----------
-    def _mk_item(self, name, code, price, new=True) -> dict:
+    def _mk_item(self, name, code, price, new=True, qty="", total="") -> dict:
         t = now()
         return {
             "id": new_id(),
             "name": name.strip(),
             "code": (code or "").strip().upper(),
-            "price": price.strip(),
+            "qty": (qty or "").strip(),
+            "total": (total or "").strip(),
+            "price": (price or "").strip(),
             "in_stock": True,
             "new_until": t + config.NEW_DAYS * 86400 if new else 0,
             "keldi_until": 0,
@@ -236,6 +273,8 @@ class Store:
         return did
 
     def default_agents(self, section_key):
+        if config.LENONUZ:
+            return ["Abduvosit", "Azamat", "Ibrohim"]
         if section_key in ("lenon", "boden"):
             return ["Ibrohim", "Azamat", "Abduvosit"]
         return []
@@ -325,6 +364,7 @@ class Store:
                     "categories": [
                         {"name": c["name"], "items": [
                             {"id": it["id"], "name": it["name"], "code": it["code"], "price": it["price"], "size": it.get("size", ""),
+                             "qty": it.get("qty", ""), "total": it.get("total", ""),
                              "photo": it.get("photo", ""),
                              "in_stock": it.get("in_stock", True),
                              "is_new": it.get("new_until", 0) > t,
@@ -338,7 +378,8 @@ class Store:
                 item["template"] = self.s["nabor_templates"].get(s["key"])
             secs.append(item)
         import registry
-        return {"sections": secs, "registry": registry.all_registries(), "bot": None, "updated": self.s.get("saved_at", 0)}
+        return {"sections": secs, "registry": registry.all_registries(), "bot": None, "updated": self.s.get("saved_at", 0),
+                "layout": "table" if config.LENONUZ else "cards", "rotation": bool(config.ROTATION)}
 
     def known_photo(self, fid: str) -> bool:
         for d in self.designs.values():

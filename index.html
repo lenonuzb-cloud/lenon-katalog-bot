@@ -27,7 +27,7 @@ header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdro
 .search:focus-within{border-color:var(--gold2)}
 .search span{opacity:.5;font-size:14px}
 .search input{flex:1;border:0;background:transparent;color:var(--text);font:15px var(--sans);padding:11px 8px;outline:none}
-.tabs{display:flex;gap:22px;overflow-x:auto;margin-top:6px;scrollbar-width:none;justify-content:center}
+.tabs{display:flex;gap:22px;overflow-x:auto;margin-top:6px;scrollbar-width:none;justify-content:safe center;white-space:nowrap}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex:none;padding:10px 2px 11px;background:none;border:0;border-bottom:2.5px solid transparent;color:var(--hint);font:600 13px var(--sans);letter-spacing:1.5px;text-transform:uppercase}
 .tab.on{color:var(--gold-dark);border-bottom-color:var(--gold)}
@@ -256,6 +256,7 @@ async function load(){
     CAT = await r.json(); BOT = CAT.bot || "";
     try{ localStorage.setItem("lenon_cat", JSON.stringify(CAT)); }catch(e){}
   }
+  if (CAT.sections && !CAT.sections.some(s=>s.key===view.key)) view = {name:"section", key: CAT.sections[0].key};
   if (initData){
     try{ const m = await (await fetch("/api/me",{headers:{"X-Init-Data":initData}})).json(); ADMIN = !!m.admin; }catch(e){}
   }
@@ -443,6 +444,7 @@ function renderDesign(){
   if (!f){ m.innerHTML='<div class="empty-msg">Topilmadi</div>'; return; }
   const {sec, d} = f;
   if (sec.kind!=="design"){ renderTable(); return; }
+  if (CAT.layout==="table" && !d.categories.some(c=>c.items.some(i=>i.photo))){ renderTable(); return; }
   const q = curQ();
   let h = "";
   if (!q){
@@ -547,11 +549,11 @@ function renderTable(){
   if (!f){ m.innerHTML='<div class="empty-msg">Topilmadi</div>'; return; }
   const {sec, d} = f;
   let h = "";
-  if (false){
+  if (CAT.layout==="table" && d.photos && d.photos.length){
     h += `<div class="slidewrap"><div class="slides" id="slides">${d.photos.map(p=>`<img loading="lazy" src="${img(p,1000)}">`).join("")}</div>${badges(sec.kind==="design"?{is_new:d.is_new,in_stock:true}:d)}
       ${d.photos.length>1?`<div class="dots">${d.photos.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`:""}</div>`;
   }
-  h += `<h1>${esc(d.title)}</h1><div class="orn">JADVAL</div>`;
+  h += `<h1>${esc(d.title)}</h1><div class="orn">${CAT.layout==="table"?"LENON":"JADVAL"}</div>`;
   if (sec.kind==="nabor"){
     const t = sec.template || {};
     h += `<div>${chips(d)}</div><div class="nabor-info">Jami: <b>${esc(t.pieces)} ta</b> · Narxi: <b>${esc(t.price)}</b></div>`;
@@ -573,7 +575,7 @@ function renderTable(){
         n++;
         rows += `<div class="row ${it.in_stock?"":"out"} ${ADMIN?"adm":""}" data-item="${it.id}">
           <span class="n">${n}</span><span class="nm">${esc(it.name)}${chips(it)}</span>
-          <span class="cd">${hasCode?esc(it.code):""}</span><span class="pr">${esc(it.price)}</span>
+          <span class="cd">${esc([hasCode?it.code:"", it.qty||""].filter(Boolean).join(" · "))}</span><span class="pr">${esc(it.price)}${it.total?`<small style="display:block;color:var(--hint);font-weight:500">jami ${esc(it.total)}</small>`:""}</span>
           ${ADMIN?`<button class="sw ${it.in_stock?"on":""}" data-sw="${it.id}" aria-label="bor/qolmadi"></button>`:""}</div>`;
       }
     }
@@ -583,7 +585,12 @@ function renderTable(){
                      <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="rename">🔤 Nomini o'zgartirish</button><button class="btn ghost" style="flex:1;color:var(--red)" id="deld">🗑 Dizaynni o'chirish</button></div>`;
   }
   if (d.link) h += `<button class="btn ghost addbtn" id="openpost">↗️ Guruhdagi postni ochish</button>`;
+  if (ADMIN && CAT.rotation && sec.kind==="design") h += `<button class="btn addbtn" id="postnow">✅ Guruhga hozir joylash</button>
+      <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="t_pdf">📄 PDF</button><button class="btn ghost" style="flex:1" id="t_ph">🖼 Rasmlar</button></div>`;
   m.innerHTML = h;
+  const pn = $("#postnow"); if (pn) pn.onclick = () => confirmDo(`«${d.title}» guruhga hozir joylansinmi?`, () => act({action:"post_now", design:d.id}, "Guruhga joylandi"));
+  const tp = $("#t_pdf"); if (tp) tp.onclick = () => exportPdf(d);
+  const tf = $("#t_ph"); if (tf) tf.onclick = () => exportPhotos(d);
 
   const sl = $("#slides");
   if (sl) sl.onscroll = () => { const i = Math.round(sl.scrollLeft / sl.clientWidth); document.querySelectorAll(".dots i").forEach((x,j)=>x.classList.toggle("on", i===j)); };
@@ -663,7 +670,7 @@ function adminPanel(){
     <button class="choice" id="ap_chk"><span>🛠</span><div><b>Tekshirish (nazoratchi)</b><small>Bot holati va jadvallardagi xatolar: narx, kod, takrorlar</small></div></button>
     <div class="pinfo2">Adminlar va agentlar sozlamalari — botdagi ⚙️ Sozlamalar menyusida (faqat egasi uchun).</div>`);
   $("#ap_rep").onclick = () => reportSheet(24);
-  $("#ap_prod").onclick = () => productsSheet("lenon");
+  $("#ap_prod").onclick = () => productsSheet((CAT.sections.find(s=>s.kind==="design")||{}).key);
   $("#ap_chk").onclick = async () => {
     openSheet(`<h3>🛠 Tekshiruv</h3><div class="loading">Tekshirilmoqda…</div>`);
     try{

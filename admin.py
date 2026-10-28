@@ -382,6 +382,24 @@ async def on_menu(uid, text):
         await do_check(uid)
     elif cmd in (BTN_SETTINGS, "/sozlamalar"):
         await settings_menu(uid)
+    elif cmd in ("/aylantir", "/navbat", "/guruhga") and config.ROTATION:
+        import rotation
+        if cmd == "/navbat":
+            await bot.send(uid, rotation.status_text())
+        elif cmd == "/aylantir":
+            try:
+                t = await rotation.post_next("qo'lda")
+                await bot.send(uid, f"✅ Guruhga joylandi: <b>{esc(t)}</b>" if t else "Navbat bo'sh.")
+            except Exception as e:  # noqa
+                await bot.send(uid, f"⚠️ Avto-post xatosi: {esc(e)}")
+        else:
+            q = text.partition(" ")[2].strip()
+            d = store.find_design(q) if q else None
+            if not d:
+                await bot.send(uid, "Qaysi tovar? Masalan: <code>/guruhga SR95</code>")
+            else:
+                t = await rotation.post_now(d["id"])
+                await bot.send(uid, f"✅ Guruhga joylandi va navbat oxiriga qo'yildi: <b>{esc(t)}</b>")
     elif cmd == "/arxiv":
         q = text.partition(" ")[2].strip()
         d = store.find_design(q) if q else None
@@ -1470,8 +1488,9 @@ async def settings_menu(uid):
             f"<b>Agentlar:</b>\n{agents}\n\n<b>Guruh bo'limlari:</b>\n{topics}")
     rows = [[btn("➕ Admin qo'shish", "se:aa"), btn("➖ Adminni olib tashlash", "se:ar")],
             [btn("👥 Agent username", "se:ag")],
-            [btn("📤 Katalogni guruhga joylash", "se:pub")],
-            [btn("🔁 Hamma postlarni qayta joylash", "se:rep")],
+            *([[btn("🔁 Avto-aylantirish holati", "se:rot")]] if config.ROTATION else
+              [[btn("📤 Katalogni guruhga joylash", "se:pub")]]),
+            *([] if config.ROTATION else [[btn("🔁 Hamma postlarni qayta joylash", "se:rep")]]),
             [btn("🔒 Katalog: faqat guruh a'zolari (ochish)" if st.get("private", True)
                  else "🔓 Katalog: hamma uchun (yopish)", "se:priv")],
             [btn("📌 Katalog havolasini tepaga qo'yish", "se:pin")],
@@ -1524,6 +1543,9 @@ async def settings_callback(uid, data, cb):
         await bot.send(uid, txt, reply_markup=ikb([[btn("📤 Ha, joylash", "se:puby")], [btn("❌ Bekor", "cancel")]]))
     elif p[1] == "puby":
         asyncio.get_event_loop().create_task(publish_all(uid))
+    elif p[1] == "rot":
+        import rotation
+        await bot.send(uid, rotation.status_text())
     elif p[1] == "priv":
         store.settings["private"] = not store.settings.get("private", True)
         store.save()
@@ -1568,6 +1590,10 @@ async def sync_menu_buttons():
                   {"command": "pdf", "description": "Dizayn katalogini PDF qilish (/pdf 01-AL)"},
                   {"command": "rasm", "description": "Dizayn rasmlarini yuborish (/rasm 01-AL)"},
                   {"command": "arxiv", "description": "Rasmlarni kod bilan ZIP arxivda olish (/arxiv 01-AL)"}]
+    if config.ROTATION:
+        admin_cmds += [{"command": "navbat", "description": "Avto-aylantirish holati"},
+                       {"command": "aylantir", "description": "Navbatdagi tovarni hozir guruhga joylash"},
+                       {"command": "guruhga", "description": "Tanlangan tovarni hozir joylash (/guruhga SR95)"}]
     private = st.get("private", True)
     try:
         if private:
@@ -1631,6 +1657,10 @@ _publish_running = {"on": False}
 async def publish_all(uid, repost=False):
     """Guruhga joylash. repost=True — TO'LIQ QAYTA QURISH: avval botning barcha postlari o'chiriladi,
     keyin har bo'lim tartib bilan joylanadi: jadval → uning PDF i → … → jadvallar ro'yxati → yo'riqnoma."""
+    if config.ROTATION:
+        await bot.send(uid, "Bu guruhda tovarlar har soatda avtomatik aylantirib joylanadi (08:00–22:00).\n"
+                            "/navbat — holat, /aylantir — navbatdagisini hozir joylash.")
+        return
     if _publish_running["on"]:
         await bot.send(uid, "⏳ Joylash allaqachon ketyapti — tugashini kuting.")
         return

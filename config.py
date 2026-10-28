@@ -44,6 +44,10 @@ DEFAULT_AGENTS = {
     "Abduvosit": "abduvosit104",
 }
 
+# Qaysi guruh uchun ishlayapti: lenon55 (LENON 55, bo'limli guruh) | lenonuz (LENON_UZ, avto-aylantirish)
+PROFILE = os.getenv("PROFILE", "lenon55").strip().lower()
+LENONUZ = PROFILE == "lenonuz"
+
 # Guruh bo'limlari (bo'lim kaliti -> nomi)
 TOPIC_KEYS = {
     "lenon": "LENON",
@@ -54,3 +58,13 @@ TOPIC_KEYS = {
     "nabor39": "LENON nabor 39",
     "muhokama": "Muhokama",
 }
+
+if LENONUZ:
+    # LENON_UZ guruhida bo'limlar (topic) yo'q — hammasi umumiy chatga
+    TOPIC_KEYS = {"umumiy": "Umumiy chat"}
+DEFAULT_GROUP_ID = int(os.getenv("GROUP_ID", "-1002661096776" if LENONUZ else "0") or 0)
+
+# Avto-aylantirish (faqat LENON_UZ): har kuni shu soatlarda, har soat boshida bitta tovar (Toshkent vaqti)
+ROTATION = LENONUZ
+ROT_FIRST_HOUR = int(os.getenv("ROT_FIRST_HOUR", "8"))
+ROT_LAST_HOUR = int(os.getenv("ROT_LAST_HOUR", "22"))

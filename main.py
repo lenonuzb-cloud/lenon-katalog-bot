@@ -86,6 +86,10 @@ async def background():
     while True:
         try:
             await asyncio.sleep(60)
+            # 0) avto-aylantirish (LENON_UZ): har soat boshida navbatdagi tovar
+            if config.ROTATION:
+                import rotation
+                await rotation.tick()
             # 1) muddati o'tgan NEW/KELDI belgilarini olib tashlash
             for did in store.expire_marks():
                 publisher.queue_update(did, delay=5)
@@ -202,11 +206,12 @@ async def on_startup(app):
             await publisher.ensure_pdfs(store.settings.get("owner_id"))
         except Exception as e:  # noqa
             await checker.report_error("PDF larni tekshirishda xato", e)
-    if store.settings.get("group_id") and store.settings.get("pdf_msgs_v") == 1:
+    if store.settings.get("group_id") and store.settings.get("pdf_msgs_v") == 1 and not config.ROTATION:
         asyncio.get_event_loop().create_task(_ensure_pdfs_later())
 
     # bir marta: hamma jadvallarni qayta joylash — har bir jadval tagida o'zining PDF katalogi bilan
-    if store.settings.get("pdf_msgs_v") != 1 and store.settings.get("group_id") and store.settings.get("owner_id"):
+    if (store.settings.get("pdf_msgs_v") != 1 and store.settings.get("group_id") and store.settings.get("owner_id")
+            and not config.ROTATION):
         store.settings["pdf_msgs_v"] = 1
         store.save()
 
@@ -219,7 +224,7 @@ async def on_startup(app):
         asyncio.get_event_loop().create_task(_repost_with_pdfs())
     # yozuvdan narx olib tashlangach — mahsulot rasmlarini bir marta avtomatik qayta tayyorlash
     owner_id = store.settings.get("owner_id")
-    if owner_id and store.settings.get("relabel_done") != 2:
+    if owner_id and store.settings.get("relabel_done") != 2 and not config.ROTATION:
 
         async def _relabel_later():
             await asyncio.sleep(900)   # og'ir ishlar bir vaqtga to'g'ri kelmasin
