@@ -78,7 +78,8 @@ def keyboard(d) -> dict | None:
     if agents:
         rows.append(agents)
     if public_links():
-        rows.append([{"text": f"📒 {d['title']} — katalogda ochish", "url": catalog_url(d["id"])}])
+        label = "📒 Katalog" if config.LENONUZ else f"📒 {d['title']} — katalogda ochish"
+        rows.append([{"text": label, "url": catalog_url(d["id"])}])
     return {"inline_keyboard": rows} if rows else None
 
 

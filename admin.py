@@ -524,14 +524,20 @@ async def process_and_ask(uid, raw_files, caption, logo=True):
         rows.append([btn(f"🖼 {short(d0)} · {it0['name']} rasmi", f"ph:it:{d0['id']}:{it0['id']}")])
     if found:
         rows.append([btn(f"➡️ «{found['title']}» ga qo'yish", f"ph:to:{found['id']}")])
-    rows += [[btn("LENON", "ph:sec:lenon"), btn("BODEN", "ph:sec:boden")],
-             [btn("Nabor 44", "ph:sec:nabor44"), btn("Nabor 33", "ph:sec:nabor33"), btn("Nabor 39", "ph:sec:nabor39")],
-             [btn("Rasmlar bo'limi", "ph:sec:rasmlar")],
-             [btn("🚫 Logosiz" if logo else "👑 Logo bilan", "ph:logo"), btn("❌ Bekor", "cancel")]]
+    if config.LENONUZ:
+        rows += grid([btn(s_["title"], f"ph:sec:{s_['key']}") for s_ in design_sections()], 2)
+        rows.append([btn("🚫 Logosiz" if logo else "👑 Logo bilan", "ph:logo"), btn("❌ Bekor", "cancel")])
+    else:
+        rows += [[btn("LENON", "ph:sec:lenon"), btn("BODEN", "ph:sec:boden")],
+                 [btn("Nabor 44", "ph:sec:nabor44"), btn("Nabor 33", "ph:sec:nabor33"), btn("Nabor 39", "ph:sec:nabor39")],
+                 [btn("Rasmlar bo'limi", "ph:sec:rasmlar")],
+                 [btn("🚫 Logosiz" if logo else "👑 Logo bilan", "ph:logo"), btn("❌ Bekor", "cancel")]]
     n = len(raw_files[:20])
     await bot.send(uid, (f"📥 {n} ta rasm qabul qilindi.\n" if n > 1 else "📥 Rasm qabul qilindi.\n")
-                   + "Bu qaysi mahsulot? Avval bo'limni, keyin dizayn va mahsulotni tanlang — "
-                     "rasm logo va mahsulot nomi/kodi/narxi bilan tayyorlanadi.", reply_markup=ikb(rows))
+                   + ("Qaysi bo'limga? Bo'limni tanlang, keyin «🆕 Yangi mahsulot» yoki mavjud mahsulotni bosing."
+                      if config.LENONUZ else
+                      "Bu qaysi mahsulot? Avval bo'limni, keyin dizayn va mahsulotni tanlang — "
+                      "rasm logo va mahsulot nomi/kodi/narxi bilan tayyorlanadi."), reply_markup=ikb(rows))
 
 
 async def ensure_processed(uid, sess):
@@ -652,10 +658,12 @@ async def photo_callback(uid, data, cb):
         await bot.answer_cb(cb["id"])
         if kind == "design":
             ds = store.designs_in(key)
-            rows = [[btn("🆕 Yangi dizayn", "ph:new")]]
+            rows = [[btn("🆕 Yangi mahsulot" if config.LENONUZ else "🆕 Yangi dizayn", "ph:new")]]
             rows += grid([btn(short(d), f"ph:to:{d['id']}") for d in ds], 3)
             rows.append([btn("❌ Bekor", "cancel")])
-            await bot.send(uid, f"<b>{esc(store.section(key)['title'])}</b>: yangi dizaynmi yoki mavjud dizaynga?",
+            await bot.send(uid, f"<b>{esc(store.section(key)['title'])}</b>: " + (
+                "yangi mahsulotmi yoki mavjud mahsulot rasmini almashtiramizmi?" if config.LENONUZ
+                else "yangi dizaynmi yoki mavjud dizaynga?"),
                            reply_markup=ikb(rows))
         elif kind == "nabor":
             sess["await"] = "nabor_code"
@@ -675,8 +683,11 @@ async def photo_callback(uid, data, cb):
         if sess.get("raw"):
             await ensure_processed(uid, sess)
         sess["await"] = "design_title"
-        ex = "15-OL" if sess.get("section") == "lenon" else "008"
-        await bot.send(uid, f"Yangi dizayn nomini yozing (masalan <code>{ex}</code>):")
+        if config.LENONUZ:
+            await bot.send(uid, "Yangi mahsulot nomini yozing (masalan <code>Nabor SR95 gulli</code>):")
+        else:
+            ex = "15-OL" if sess.get("section") == "lenon" else "008"
+            await bot.send(uid, f"Yangi dizayn nomini yozing (masalan <code>{ex}</code>):")
         return
     if parts[1] in ("to", "dz"):
         d = store.designs.get(parts[2])
@@ -685,7 +696,7 @@ async def photo_callback(uid, data, cb):
             return
         await bot.answer_cb(cb["id"])
         sess["design"] = d["id"]
-        if parts[1] == "to" and store.section(d["section"])["kind"] == "design":
+        if parts[1] == "to" and store.section(d["section"])["kind"] == "design" and not config.LENONUZ:
             sess["idx"] = 0
             await ask_item_for_photo(uid, sess, d, 0)
             return
@@ -798,6 +809,11 @@ async def apply_photos(uid, sess, replace):
     d = store.designs[sess["design"]]
     ops.mark_design_photos(d["id"], sess["photos"], replace)
     sessions.pop(uid, None)
+    if config.ROTATION:
+        store.save()
+        await bot.send(uid, f"✅ «{esc(d['title'])}» rasmi yangilandi. Navbati kelganda yangi rasm bilan chiqadi.",
+                       reply_markup=ikb([[btn("✅ Kanalga joylash", f"rt:now:{d['id']}")]]))
+        return
     rep = bool(d.get("msg")) and d["msg"].get("mode") != "rich"
     try:
         await publisher.publish(d["id"], repost=rep)
@@ -828,6 +844,12 @@ async def create_rasm(uid, sess, caption):
 TABLE_HELP = ("Jadvalni shu ko'rinishda yozing — har bir qator alohida:\n\n"
               "<code>#Tarelka bort\nTarelka 8 | KG0014 | 4$\nTarelka 9 | KG0015 | 5.2$\n#Aval\nAval 12 | YA5576 | 8$</code>\n\n"
               "<b>#</b> bilan boshlangan qator — guruh nomi. BODEN uchun kod shart emas: <code>Tarelka 8 | 2.3$</code>")
+if config.LENONUZ:
+    TABLE_HELP = ("Jadvalni shu ko'rinishda yozing — har bir qator alohida:\n\n"
+                  "<code>Nomi | Kodi | Soni | Narxi</code>\n\nMasalan:\n"
+                  "<code>Tarelka 25sm | SR95-1 | 6 | 3.5$\nKosa 15sm | SR95-2 | 6 | 2$\nChoynak | SR95-3 | 1 | 12$</code>\n\n"
+                  "Soni bo'lmasa: <code>Nomi | Kodi | Narxi</code>. "
+                  "<b>#</b> bilan boshlangan qator — guruh nomi (shart emas).")
 
 
 def parse_table(text: str) -> tuple[list, list]:
@@ -842,8 +864,12 @@ def parse_table(text: str) -> tuple[list, list]:
             cats.append(cur)
             continue
         parts = [p.strip() for p in re.split(r"\s*[|;]\s*|\t+", line) if p.strip()]
+        qty = total = ""
         if len(parts) == 2:
             name, code, price = parts[0], "", parts[1]
+        elif len(parts) >= 4 and config.LENONUZ:
+            name, code, qty, price = parts[0], parts[1], parts[2], parts[3]
+            total = parts[4] if len(parts) > 4 else ""
         elif len(parts) >= 3:
             name, code, price = parts[0], parts[1], parts[2]
         else:
@@ -856,7 +882,7 @@ def parse_table(text: str) -> tuple[list, list]:
         code = checker.normalize_code(code)
         for w in checker.check_item(name, code, price, bool(code)):
             warns.append(f"{name}: {w}")
-        cur["items"].append({"name": name, "code": code, "price": price})
+        cur["items"].append({"name": name, "code": code, "price": price, "qty": qty, "total": total})
     return [c for c in cats if c["items"]], warns
 
 
@@ -883,7 +909,8 @@ async def new_design_callback(uid, data, cb):
     elif act == "from":
         src = store.designs[data.split(":")[2]]
         sess["categories"] = [{"name": c["name"], "items": [{"name": i["name"], "code": i.get("code", ""),
-                                                              "price": i["price"]} for i in c["items"]]}
+                                                              "price": i["price"], "qty": i.get("qty", ""),
+                                                              "total": i.get("total", "")} for i in c["items"]]}
                               for c in src["categories"]]
         await design_preview(uid, sess, [])
     elif act == "write":
@@ -906,7 +933,7 @@ async def design_preview(uid, sess, warns):
     if warns:
         lines.append("\n⚠️ <b>Nazoratchi eslatmalari:</b>\n" + "\n".join(f"– {esc(w)}" for w in warns[:15]))
     sess["await"] = None
-    await bot.send(uid, "\n".join(lines), reply_markup=ikb([[btn("✅ Guruhga joylash", "nd:go")],
+    await bot.send(uid, "\n".join(lines), reply_markup=ikb([[btn("✅ Kanalga joylash" if config.ROTATION else "✅ Guruhga joylash", "nd:go")],
                                                             [btn("❌ Bekor", "cancel")]]))
 
 
@@ -915,10 +942,23 @@ async def design_create(uid, sess):
     d = store.designs[did]
     for c in sess.get("categories", []):
         d["categories"].append({"name": c["name"], "items": [
-            store._mk_item(i["name"], i.get("code", ""), i["price"], new=True) for i in c["items"]]})
+            store._mk_item(i["name"], i.get("code", ""), i["price"], new=True,
+                           qty=i.get("qty", ""), total=i.get("total", "")) for i in c["items"]]})
+    if config.LENONUZ and not d.get("agents"):
+        d["agents"] = sorted(store.settings["agents"])
     store.save()
     sessions.pop(uid, None)
     notify.add("new", f"{d['title']} — yangi dizayn")
+    if config.ROTATION:
+        import rotation
+        try:
+            await rotation.post_now(did)
+            await bot.send(uid, f"✅ <b>{esc(d['title'])}</b> katalogga qo'shildi, guruhga joylandi va navbat "
+                                f"oxiriga qo'yildi.", reply_markup=main_menu())
+        except Exception as e:  # noqa
+            await bot.send(uid, f"✅ Katalogga qo'shildi (navbat oxirida).\n⚠️ Avto-post xatosi: {esc(e)}",
+                           reply_markup=main_menu())
+        return
     try:
         await publisher.publish(did)
         await bot.send(uid, f"✅ <b>{esc(d['title'])}</b> katalogga qo'shildi va guruhga joylandi. "
@@ -1039,8 +1079,11 @@ async def on_awaited_text(uid, sess, text):
 #                 QOLMADI / KELDI (5-agent asosiy ishi)
 # =====================================================================
 async def stock_sections(uid):
-    rows = [[btn(s["title"], f"sk:sec:{s['key']}") for s in design_sections()],
-            [btn(s["title"].replace("LENON ", ""), f"sk:sec:{s['key']}") for s in nabor_sections()]]
+    if config.LENONUZ:
+        rows = grid([btn(s["title"], f"sk:sec:{s['key']}") for s in design_sections()], 2)
+    else:
+        rows = [[btn(s["title"], f"sk:sec:{s['key']}") for s in design_sections()],
+                [btn(s["title"].replace("LENON ", ""), f"sk:sec:{s['key']}") for s in nabor_sections()]]
     await bot.send(uid, "📦 Qaysi bo'lim?", reply_markup=ikb(rows))
 
 
@@ -1411,7 +1454,8 @@ async def edit_field_text(uid, sess, text):
 
 # ---------------- yangi mahsulot qo'shish ----------------
 async def add_start(uid):
-    rows = [[btn(s["title"], f"ad:sec:{s['key']}") for s in design_sections()]]
+    rows = (grid([btn(s["title"], f"ad:sec:{s['key']}") for s in design_sections()], 2) if config.LENONUZ
+            else [[btn(s["title"], f"ad:sec:{s['key']}") for s in design_sections()]])
     await bot.send(uid, "➕ Qaysi bo'limga yangi mahsulot?", reply_markup=ikb(rows))
 
 
@@ -1763,6 +1807,18 @@ async def on_callback(cb):
         await botextra.search_callback(uid, data, cb, sessions)
     elif pre == "pk":
         await botextra.pick_callback(uid, data, cb, sessions, main_menu)
+    elif pre == "rt" and config.ROTATION:
+        import rotation
+        d = store.designs.get(data.split(":")[2])
+        if not d or d.get("deleted"):
+            await bot.answer_cb(cb["id"], "Topilmadi", True)
+            return
+        await bot.answer_cb(cb["id"], "Joylanmoqda…")
+        try:
+            t = await rotation.post_now(d["id"])
+            await bot.send(uid, f"✅ Guruhga joylandi va navbat oxiriga qo'yildi: <b>{esc(t)}</b>")
+        except Exception as e:  # noqa
+            await bot.send(uid, f"⚠️ Avto-post xatosi: {esc(e)}")
     elif pre == "rep":
         await bot.answer_cb(cb["id"])
         await bot.send(uid, await report.build(int(data.split(":")[1])))

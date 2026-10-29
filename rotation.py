@@ -58,6 +58,10 @@ async def post_now(design_id) -> str:
         q.remove(design_id)
     q.append(design_id)
     await publisher.send_copy(design_id)
+    r = _rot()
+    r["posted"] = r.get("posted", 0) + 1
+    r["last_title"] = store.designs[design_id]["title"]
+    r["last_at"] = datetime.now(config.TZ).strftime("%d.%m %H:%M")
     store.save()
     return store.designs[design_id]["title"]
 

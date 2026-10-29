@@ -392,6 +392,7 @@ function sectionView(key){
   if (!sec.designs.length && !ADMIN) return '<div class="empty-msg">Hozircha bo\'sh</div>';
   if (sec.kind==="photos") return `<div class="grid two">${sec.designs.map(d=>cardHtml(d,true)).join("")}</div>`;
   const add = ADMIN && sec.kind==="design" ? `<button class="newdz" id="newdz" data-sec="${sec.key}">➕ Yangi dizayn qo'shish</button>` : "";
+  if (CAT.layout==="table") return add + `<div class="grid two">${sec.designs.map(d=>cardHtml(d,true)).join("")}</div>`;
   return add + `<div class="grid">${sec.designs.map(d=>cardHtml(d,false)).join("")}</div>`;
 }
 function nabTitle(s){ return "Nabor " + s.title.replace(/\D+/g,""); }
@@ -585,10 +586,10 @@ function renderTable(){
                      <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="rename">🔤 Nomini o'zgartirish</button><button class="btn ghost" style="flex:1;color:var(--red)" id="deld">🗑 Dizaynni o'chirish</button></div>`;
   }
   if (d.link) h += `<button class="btn ghost addbtn" id="openpost">↗️ Guruhdagi postni ochish</button>`;
-  if (ADMIN && CAT.rotation && sec.kind==="design") h += `<button class="btn addbtn" id="postnow">✅ Guruhga hozir joylash</button>
+  if (ADMIN && CAT.rotation && sec.kind==="design") h += `<button class="btn addbtn" id="postnow">✅ Kanalga joylash</button>
       <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="t_pdf">📄 PDF</button><button class="btn ghost" style="flex:1" id="t_ph">🖼 Rasmlar</button></div>`;
   m.innerHTML = h;
-  const pn = $("#postnow"); if (pn) pn.onclick = () => confirmDo(`«${d.title}» guruhga hozir joylansinmi?`, () => act({action:"post_now", design:d.id}, "Guruhga joylandi"));
+  const pn = $("#postnow"); if (pn) pn.onclick = () => confirmDo(`«${d.title}» guruhga hozir joylansinmi?`, () => act({action:"post_now", design:d.id}, "Joylandi va navbat oxiriga o'tdi"));
   const tp = $("#t_pdf"); if (tp) tp.onclick = () => exportPdf(d);
   const tf = $("#t_ph"); if (tf) tf.onclick = () => exportPhotos(d);
 

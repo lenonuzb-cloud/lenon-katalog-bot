@@ -41,7 +41,7 @@ def check_item(name, code, price, has_codes=True) -> list[str]:
         w.append("nomi bo'sh")
     if not PRICE_RE.match(price or ""):
         w.append(f"narx noto'g'ri: «{price}»")
-    if has_codes and code and not CODE_RE.match(code):
+    if has_codes and code and not CODE_RE.match(code) and not config.LENONUZ:
         w.append(f"kod g'alati: «{code}» (odatda 2–3 harf + 4 raqam)")
     return w
 

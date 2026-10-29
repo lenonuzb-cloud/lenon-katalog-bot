@@ -51,6 +51,8 @@ async def page(request):
         if p:  # ikkinchi bot /uz yo'lida ishlaydi — ichki manzillarni moslaymiz
             html = (html.replace('"/api/', f'"{p}/api/').replace("`/img/", f"`{p}/img/")
                     .replace('"/static/', f'"{p}/static/'))
+        if config.LENONUZ:
+            html = html.replace("<b>Lenon 55</b> guruhi", "<b>LENON_UZ</b> guruhi")
         _page_cache["html"] = html
     resp = web.Response(body=html.encode("utf-8"), content_type="text/html",
                         headers={"Cache-Control": "no-cache"})
