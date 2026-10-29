@@ -20,6 +20,9 @@ OWNER_USERNAME = os.getenv("OWNER_USERNAME", "").strip().lstrip("@").lower()
 # Serverning ochiq manzili (Render buni o'zi beradi: RENDER_EXTERNAL_URL)
 PUBLIC_URL = (os.getenv("PUBLIC_URL") or os.getenv("RENDER_EXTERNAL_URL") or "").rstrip("/")
 PORT = int(os.getenv("PORT", "8080"))
+# Manzil ichidagi yo'l (ikkinchi bot uchun "/uz") — mini ilova shu yo'l bilan ishlaydi
+from urllib.parse import urlparse as _urlparse
+URL_PREFIX = _urlparse(PUBLIC_URL).path.rstrip("/") if PUBLIC_URL else ""
 
 # Toshkent vaqti (UTC+5, yozgi vaqt yo'q)
 TZ = timezone(timedelta(hours=5))

@@ -40,8 +40,19 @@ def verify_init_data(init_data: str) -> dict | None:
         return None
 
 
+_page_cache = {}
+
+
 async def page(request):
-    resp = web.Response(body=(config.WEBAPP_DIR / "index.html").read_bytes(), content_type="text/html",
+    html = _page_cache.get("html")
+    if html is None:
+        html = (config.WEBAPP_DIR / "index.html").read_text("utf-8")
+        p = config.URL_PREFIX
+        if p:  # ikkinchi bot /uz yo'lida ishlaydi — ichki manzillarni moslaymiz
+            html = (html.replace('"/api/', f'"{p}/api/').replace("`/img/", f"`{p}/img/")
+                    .replace('"/static/', f'"{p}/static/'))
+        _page_cache["html"] = html
+    resp = web.Response(body=html.encode("utf-8"), content_type="text/html",
                         headers={"Cache-Control": "no-cache"})
     resp.enable_compression()  # sekin internetda tezroq
     return resp
@@ -364,7 +375,7 @@ async def product_page(request):
              "new": '<span class="b r">NEW</span>'}.get(st, "")
     size = ops.item_size(d, it)
     meta = " · ".join(x for x in (it.get("code", ""), size) if x)
-    photo = (f'<img src="/img/{e(it["photo"])}?w=1080" alt="{e(it["name"])}">' if it.get("photo")
+    photo = (f'<img src="{config.URL_PREFIX}/img/{e(it["photo"])}?w=1080" alt="{e(it["name"])}">' if it.get("photo")
              else '<div class="no">Rasm hali qo\'yilmagan</div>')
     cat = f"https://t.me/{bot.username}?startapp=i_{d['id']}_{it['id']}" if bot.username else ""
     page_html = f"""<!doctype html><html lang="uz"><head><meta charset="utf-8">

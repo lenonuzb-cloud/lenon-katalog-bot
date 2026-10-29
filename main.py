@@ -2,6 +2,15 @@
 
 Ishga tushirish:  python main.py
 Kerakli sozlamalar (Environment): BOT_TOKEN, OWNER_ID (va serverda PUBLIC_URL — Render o'zi beradi)."""
+import os as _os
+import sys as _sys
+
+# BOT_TOKEN_UZ berilgan bo'lsa — bitta bepul xizmatda ikki bot ishlaydi (LENON 55 + LENON_UZ), qarang: run.py
+if __name__ == "__main__" and _os.getenv("BOT_TOKEN_UZ") and not _os.getenv("LENON_CHILD"):
+    import run
+    run.main()
+    _sys.exit(0)
+
 import asyncio
 import hashlib
 import logging
