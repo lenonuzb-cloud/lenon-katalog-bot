@@ -208,6 +208,9 @@ async def on_startup(app):
         asyncio.get_event_loop().create_task(admin.apply_privacy())
 
     app["bg"] = asyncio.get_event_loop().create_task(background())
+    if config.ROTATION:
+        import dedup
+        asyncio.get_event_loop().create_task(dedup.auto_clean_once())
     # har ishga tushganda: jadvallar tagidagi PDF lar to'liqmi — yetishmaganini joylaydi
     async def _ensure_pdfs_later():
         await asyncio.sleep(120)

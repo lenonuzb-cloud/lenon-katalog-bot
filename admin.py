@@ -382,6 +382,12 @@ async def on_menu(uid, text):
         await do_check(uid)
     elif cmd in (BTN_SETTINGS, "/sozlamalar"):
         await settings_menu(uid)
+    elif cmd == "/tozala" and config.ROTATION:
+        import dedup
+        if dedup.start_clean():
+            await bot.send(uid, "🧹 Tozalash boshlandi. Tugagach natijasini shu yerga yozaman.")
+        else:
+            await bot.send(uid, "🧹 Tozalash allaqachon ketyapti, tugashini kuting.")
     elif cmd in ("/aylantir", "/navbat", "/guruhga") and config.ROTATION:
         import rotation
         if cmd == "/navbat":
@@ -1635,7 +1641,8 @@ async def sync_menu_buttons():
                   {"command": "rasm", "description": "Dizayn rasmlarini yuborish (/rasm 01-AL)"},
                   {"command": "arxiv", "description": "Rasmlarni kod bilan ZIP arxivda olish (/arxiv 01-AL)"}]
     if config.ROTATION:
-        admin_cmds += [{"command": "navbat", "description": "Avto-aylantirish holati"},
+        admin_cmds += [{"command": "tozala", "description": "Guruhdagi dublikat postlarni o'chirish"},
+                       {"command": "navbat", "description": "Avto-aylantirish holati"},
                        {"command": "aylantir", "description": "Navbatdagi tovarni hozir guruhga joylash"},
                        {"command": "guruhga", "description": "Tanlangan tovarni hozir joylash (/guruhga SR95)"}]
     private = st.get("private", True)

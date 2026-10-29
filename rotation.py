@@ -41,7 +41,9 @@ async def post_next(reason="jadval") -> str | None:
     did = q.pop(0)
     q.append(did)
     d = store.designs[did]
-    await publisher.send_copy(did)
+    ids = await publisher.send_copy(did)
+    import dedup
+    await dedup.after_post(did, ids)
     r = _rot()
     r["posted"] = r.get("posted", 0) + 1
     r["last_title"] = d["title"]
@@ -57,7 +59,9 @@ async def post_now(design_id) -> str:
     if design_id in q:
         q.remove(design_id)
     q.append(design_id)
-    await publisher.send_copy(design_id)
+    ids = await publisher.send_copy(design_id)
+    import dedup
+    await dedup.after_post(design_id, ids)
     r = _rot()
     r["posted"] = r.get("posted", 0) + 1
     r["last_title"] = store.designs[design_id]["title"]
@@ -70,6 +74,11 @@ async def tick():
     """Fon tsiklidan har daqiqada chaqiriladi: kerakli soat bo'lsa — bitta post."""
     if not config.ROTATION or not store.settings.get("group_id"):
         return
+    import dedup
+    try:
+        await dedup.sweep()
+    except Exception as e:  # noqa
+        log.warning("Eski postlarni o'chirishda xato: %s", e)
     now = datetime.now(config.TZ)
     if not (config.ROT_FIRST_HOUR <= now.hour <= config.ROT_LAST_HOUR) or now.minute > 20:
         return

@@ -349,7 +349,7 @@ async def publish(design_id: str, repost: bool = False):
 
 
 # ---------------- aylantirish: dizaynning yangi nusxasini guruhga yuborish ----------------
-async def send_copy(design_id) -> int:
+async def send_copy(design_id) -> list:
     """Dizaynni guruhga yangi post qilib yuboradi (rasm + jadval + tugmalar). Doimiy post sifatida saqlanmaydi."""
     d = store.designs[design_id]
     gid = store.settings.get("group_id")
@@ -358,7 +358,8 @@ async def send_copy(design_id) -> int:
     tmp = dict(d)
     tmp["msg"] = None
     await _post_new(tmp, "design", gid, -1)
-    return (tmp.get("msg") or {}).get("message_id", 0)
+    m = tmp.get("msg") or {}
+    return [x for x in [m.get("message_id")] + list(m.get("extra_ids") or []) if x]
 
 
 # ---------------- jadval tagidagi PDF fayl ----------------
