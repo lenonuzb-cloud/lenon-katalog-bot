@@ -117,6 +117,8 @@ def _name_cell(it, d=None) -> str:
         n = f'<a href="{esc(item_url(d, it))}">{n}</a>'
 
     if s == "qolmadi":
+        if config.LENONUZ:
+            return f"❌ <s>{n}</s>"
         return f"<s>{n}</s> ❌ <b>Qolmadi</b>"
     if s == "new":
         return f"{n} 🆕"
