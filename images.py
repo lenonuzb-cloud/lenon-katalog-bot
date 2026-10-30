@@ -193,7 +193,7 @@ def render_table(title: str, rows: list, note: str = "") -> bytes:
             color = "black"
             if state == "qolmadi":
                 color = (200, 30, 30)
-                name = name + "  - QOLMADI"
+                name = ("× " + name) if config.LENONUZ else (name + "  - QOLMADI")
             elif state == "new":
                 color = (200, 30, 30)
                 name = name + "  NEW"
