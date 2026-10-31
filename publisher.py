@@ -315,7 +315,12 @@ async def _delete_post(d):
 async def publish(design_id: str, repost: bool = False):
     """Dizaynni guruhga joylaydi (yoki mavjud postni yangilaydi)."""
     if config.ROTATION:
-        return  # LENON_UZ: guruhga faqat avto-aylantirish orqali chiqadi
+        # LENON_UZ: guruhga faqat avto-aylantirish orqali chiqadi; qadalgan postlar esa joyida yangilanadi
+        d = store.designs.get(design_id)
+        if d and d.get("pinned") and d.get("msg") and not d.get("deleted"):
+            async with _lock(design_id):
+                await _update(d, "design")
+        return
     d = store.designs.get(design_id)
     if not d:
         return

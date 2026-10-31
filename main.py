@@ -217,6 +217,8 @@ async def on_startup(app):
                                + "\n".join("• " + x for x in res[0]) + "\nQolmadi belgilari saqlandi.")
         except Exception as e:  # noqa
             log.warning("jadval tuzatish: %s", e)
+        import rotation
+        asyncio.get_event_loop().create_task(rotation.pin_once())
     if config.ROTATION:
         import dedup
         asyncio.get_event_loop().create_task(dedup.auto_clean_once())

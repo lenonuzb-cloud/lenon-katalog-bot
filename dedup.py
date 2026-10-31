@@ -91,6 +91,10 @@ async def sweep():
     now = time.time()
     changed = False
     for did, copies in list(s["posts"].items()):
+        if (store.designs.get(did) or {}).get("pinned"):
+            s["posts"].pop(did, None)
+            changed = True
+            continue
         keep = []
         for c in copies:
             age = now - c.get("t", now)
@@ -215,8 +219,16 @@ async def clean(start=1, max_gap=1000, report=True):
     failed = []
     for did, copies in found.items():
         copies.sort(key=lambda c: max(c[0]))
-        newest = copies[-1]
-        for ids, date in copies[:-1]:
+        dd = store.designs.get(did) or {}
+        pin_id = (dd.get("msg") or {}).get("message_id") if dd.get("pinned") else None
+        if pin_id:  # qadalgan tovar: faqat qadalgan posti qoladi
+            keep = [c for c in copies if pin_id in c[0]]
+            newest = keep[0] if keep else ([pin_id], now)
+            olds = [c for c in copies if pin_id not in c[0]]
+        else:
+            newest = copies[-1]
+            olds = copies[:-1]
+        for ids, date in olds:
             age = now - (date or now)
             ok = await _delete(ids)
             _learn(age, ok)
@@ -226,7 +238,7 @@ async def clean(start=1, max_gap=1000, report=True):
                 failed.append(ids[0])
             await asyncio.sleep(0.4)
         tracked = s["posts"].get(did) or []
-        if not any(newest[0][0] in c["ids"] for c in tracked):
+        if not pin_id and not any(newest[0][0] in c["ids"] for c in tracked):
             s["posts"][did] = [{"ids": newest[0], "t": newest[1] or now}]
     s["scan_done"] = True
     store.save()

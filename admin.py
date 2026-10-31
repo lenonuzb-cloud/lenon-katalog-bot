@@ -382,6 +382,21 @@ async def on_menu(uid, text):
         await do_check(uid)
     elif cmd in (BTN_SETTINGS, "/sozlamalar"):
         await settings_menu(uid)
+    elif cmd in ("/qada", "/qadama") and config.ROTATION:
+        import rotation
+        q = text.partition(" ")[2].strip()
+        d = store.find_design(q) if q else None
+        if not d:
+            await bot.send(uid, f"Qaysi tovar? Masalan: <code>{cmd} Oq torix</code>")
+        elif cmd == "/qada":
+            try:
+                t = await rotation.pin_design(d["id"])
+                await bot.send(uid, f"📌 <b>{esc(t)}</b> guruhga joylandi, tepaga qadaldi va aylantirishdan chiqarildi.")
+            except Exception as e:  # noqa
+                await bot.send(uid, f"⚠️ Qadab bo'lmadi: {esc(e)}")
+        else:
+            t = await rotation.unpin_design(d["id"])
+            await bot.send(uid, f"🔁 <b>{esc(t)}</b> qadalganlardan olindi va yana aylantirishga qo'shildi.")
     elif cmd == "/tiklash" and config.LENONUZ:
         import restore
         note = await bot.send(uid, "⏳ Eski botdagi jadvallar bilan solishtirilmoqda…")
@@ -1658,7 +1673,9 @@ async def sync_menu_buttons():
                   {"command": "rasm", "description": "Dizayn rasmlarini yuborish (/rasm 01-AL)"},
                   {"command": "arxiv", "description": "Rasmlarni kod bilan ZIP arxivda olish (/arxiv 01-AL)"}]
     if config.ROTATION:
-        admin_cmds += [{"command": "tiklash", "description": "Qisqarib qolgan jadvallarni eski botdan tiklash"},
+        admin_cmds += [{"command": "qada", "description": "Tovarni guruh tepasiga qadash (/qada Oq torix)"},
+                       {"command": "qadama", "description": "Qadalgan tovarni aylantirishga qaytarish"},
+                       {"command": "tiklash", "description": "Qisqarib qolgan jadvallarni eski botdan tiklash"},
                        {"command": "tozala", "description": "Guruhdagi dublikat postlarni o'chirish"},
                        {"command": "navbat", "description": "Avto-aylantirish holati"},
                        {"command": "aylantir", "description": "Navbatdagi tovarni hozir guruhga joylash"},

@@ -24,7 +24,7 @@ def _rot() -> dict:
 def sync_queue() -> list:
     """Navbatni katalog bilan moslaydi: o'chirilganlar chiqariladi, yangilari oxiriga qo'shiladi."""
     r = _rot()
-    alive = {d["id"] for d in store.designs.values() if not d.get("deleted")}
+    alive = {d["id"] for d in store.designs.values() if not d.get("deleted") and not d.get("pinned")}
     q = [x for x in r["queue"] if x in alive]
     for d in sorted(store.designs.values(), key=lambda d: (d.get("created", 0), d.get("order", 0))):
         if d["id"] in alive and d["id"] not in q:
@@ -114,3 +114,75 @@ def status_text() -> str:
             f"Navbatda: <b>{len(q)}</b> ta tovar — taxminan {days:.0f} kunda bir aylanib chiqadi.\n"
             f"Jami chiqqan postlar: {r.get('posted', 0)}{last}\n\n<b>Keyingilari:</b>\n{nxt}\n\n"
             f"/aylantir — navbatdagisini hozir joylash")
+
+
+# ---------------- qadalgan (doimiy) postlar ----------------
+async def pin_design(design_id) -> str:
+    """Tovarni aylantirishdan chiqaradi, guruhga joylaydi va tepaga qadaydi.
+    Qolmadi/keldi o'zgarsa — shu post joyida yangilanadi."""
+    d = store.designs[design_id]
+    gid = store.settings.get("group_id")
+    if d.get("pinned") and d.get("msg"):
+        try:
+            await bot.call("unpinChatMessage", chat_id=gid, message_id=d["msg"]["message_id"])
+        except Exception:  # noqa
+            pass
+        try:
+            await bot.call("deleteMessage", chat_id=gid, message_id=d["msg"]["message_id"])
+        except Exception:  # noqa
+            pass
+    import dedup
+    for c in dedup._st()["posts"].pop(design_id, []):  # aylantirishdagi eski nusxasi o'chadi
+        await dedup._delete(c["ids"])
+    d["msg"] = None
+    await publisher._post_new(d, "design", gid, -1)
+    d["pinned"] = True
+    sync_queue()
+    store.save()
+    await bot.call("pinChatMessage", chat_id=gid, message_id=d["msg"]["message_id"], disable_notification=True)
+    return d["title"]
+
+
+async def unpin_design(design_id) -> str:
+    """Qadalgan tovarni yana aylantirishga qaytaradi (post guruhda qoladi, faqat qadash olinadi)."""
+    d = store.designs[design_id]
+    gid = store.settings.get("group_id")
+    if d.get("msg"):
+        try:
+            await bot.call("unpinChatMessage", chat_id=gid, message_id=d["msg"]["message_id"])
+        except Exception:  # noqa
+            pass
+    d["pinned"] = False
+    d["msg"] = None
+    sync_queue()
+    store.save()
+    return d["title"]
+
+
+PIN_ONCE = ["Oq farfor", "Farfor zarli", "Oq torix"]
+
+
+async def pin_once():
+    """Bir martalik: egasi so'ragan 3 ta tovarni qadaydi (tartib: oxirgisi eng tepada ko'rinadi)."""
+    import asyncio
+    if store.settings.get("pin_v1") or not store.settings.get("group_id"):
+        return
+    await asyncio.sleep(20)
+    done = []
+    for title in reversed(PIN_ONCE):
+        d = store.find_design(title)
+        if d and not d.get("deleted"):
+            try:
+                done.append(await pin_design(d["id"]))
+            except Exception as e:  # noqa
+                await bot.send(store.settings.get("owner_id"), f"⚠️ «{publisher.esc(title)}» ni qadab bo'lmadi: "
+                                                                f"{publisher.esc(e)}")
+            await asyncio.sleep(3)
+    store.settings["pin_v1"] = True
+    store.save()
+    owner = store.settings.get("owner_id")
+    if owner and done:
+        await bot.send(owner, "📌 Guruhga joylab, tepaga qadaldi (aylantirishdan chiqarildi):\n"
+                       + "\n".join("• " + publisher.esc(t) for t in done)
+                       + "\n\nQolmadi/keldi belgilasangiz — qadalgan post o'zi yangilanadi.\n"
+                         "Boshqa tovarni qadash: /qada nomi · aylantirishga qaytarish: /qadama nomi")
