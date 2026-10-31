@@ -1,0 +1,488 @@
+{
+ "Oq farfor": [
+  {
+   "name": "Pela qozo",
+   "qty": "120шт",
+   "price": "0.29$",
+   "sold": false
+  },
+  {
+   "name": "Kosa qozo",
+   "qty": "60шт",
+   "price": "0.56$",
+   "sold": false
+  },
+  {
+   "name": "Pela abd",
+   "qty": "120шт",
+   "price": "0.29$",
+   "sold": false
+  },
+  {
+   "name": "Kosa abd",
+   "qty": "72шт",
+   "price": "0.56$",
+   "sold": false
+  },
+  {
+   "name": "Tarelka 6",
+   "qty": "120шт",
+   "price": "0.3$",
+   "sold": false
+  },
+  {
+   "name": "Tarelka 7",
+   "qty": "80шт",
+   "price": "0.43$",
+   "sold": false
+  },
+  {
+   "name": "Tarelka 8",
+   "qty": "60щт",
+   "price": "0.6$",
+   "sold": false
+  },
+  {
+   "name": "Tarelka 9",
+   "qty": "40шт",
+   "price": "0.78$",
+   "sold": false
+  },
+  {
+   "name": "Tarelka 10",
+   "qty": "36шт",
+   "price": "1.1$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 6",
+   "qty": "100шт",
+   "price": "0.35$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 7",
+   "qty": "80шт",
+   "price": "0.5$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 8",
+   "qty": "60шт",
+   "price": "0.6$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 9",
+   "qty": "40шт",
+   "price": "0.78$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 10",
+   "qty": "36шт",
+   "price": "1.2$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 12",
+   "qty": "20шт",
+   "price": "2$",
+   "sold": false
+  },
+  {
+   "name": "Aval 10",
+   "qty": "50шт",
+   "price": "0.85$",
+   "sold": false
+  },
+  {
+   "name": "Aval 12",
+   "qty": "30шт",
+   "price": "1.3$",
+   "sold": false
+  },
+  {
+   "name": "Polechudes 8",
+   "qty": "40шт",
+   "price": "1.5$",
+   "sold": false
+  },
+  {
+   "name": "Polechudes 10",
+   "qty": "30шт",
+   "price": "2$",
+   "sold": false
+  },
+  {
+   "name": "Polechudes 12",
+   "qty": "20шт",
+   "price": "2.5$",
+   "sold": false
+  },
+  {
+   "name": "Polechudes 8",
+   "qty": "36шт",
+   "price": "1.8$",
+   "sold": false
+  },
+  {
+   "name": "Polechudes 11",
+   "qty": "25шт",
+   "price": "2.3$",
+   "sold": false
+  },
+  {
+   "name": "Polechudes 10",
+   "qty": "22шт",
+   "price": "2.6$",
+   "sold": false
+  },
+  {
+   "name": "Salat 5.5",
+   "qty": "120шт",
+   "price": "0.35$",
+   "sold": false
+  },
+  {
+   "name": "Salat 6",
+   "qty": "80шт",
+   "price": "0.4$",
+   "sold": false
+  },
+  {
+   "name": "Salat 7",
+   "qty": "60шт",
+   "price": "0.6$",
+   "sold": false
+  },
+  {
+   "name": "Salat 8",
+   "qty": "50шт",
+   "price": "0.7$",
+   "sold": false
+  },
+  {
+   "name": "Salat qeshu kotta",
+   "qty": "72шт",
+   "price": "1$",
+   "sold": false
+  },
+  {
+   "name": "Salat qechu kichik",
+   "qty": "72шт",
+   "price": "0.9$",
+   "sold": false
+  },
+  {
+   "name": "Salat kv 5",
+   "qty": "72шт",
+   "price": "1$",
+   "sold": false
+  },
+  {
+   "name": "Salat kv 6",
+   "qty": "48шт",
+   "price": "1.2$",
+   "sold": false
+  },
+  {
+   "name": "Salat 5.5",
+   "qty": "80шт",
+   "price": "0.7$",
+   "sold": false
+  },
+  {
+   "name": "Tuzdon peramida",
+   "qty": "72шт",
+   "price": "1.5$",
+   "sold": false
+  }
+ ],
+ "Farfor zarli": [
+  {
+   "name": "Choyne",
+   "qty": "24шт",
+   "price": "3.8$",
+   "sold": false
+  },
+  {
+   "name": "Kosa qozo",
+   "qty": "80шт",
+   "price": "0.8$",
+   "sold": false
+  },
+  {
+   "name": "Pela qozo",
+   "qty": "120шт",
+   "price": "0.47$",
+   "sold": false
+  },
+  {
+   "name": "Kosa abd",
+   "qty": "60шт",
+   "price": "0.8$",
+   "sold": false
+  },
+  {
+   "name": "Pela abd",
+   "qty": "120шт",
+   "price": "0.47$",
+   "sold": false
+  },
+  {
+   "name": "Tar 6",
+   "qty": "120шт",
+   "price": "0.51$",
+   "sold": false
+  },
+  {
+   "name": "Tar 7",
+   "qty": "80шт",
+   "price": "0.71$",
+   "sold": false
+  },
+  {
+   "name": "Tar 8",
+   "qty": "60шт",
+   "price": "0.87$",
+   "sold": false
+  },
+  {
+   "name": "Tar 9",
+   "qty": "40шт",
+   "price": "1.13$",
+   "sold": false
+  },
+  {
+   "name": "Tar 10",
+   "qty": "38шт",
+   "price": "1.37$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 6",
+   "qty": "100шт",
+   "price": "0.53$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 7",
+   "qty": "80шт",
+   "price": "0.76$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 8",
+   "qty": "60шт",
+   "price": "0.95$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 9",
+   "qty": "40шт",
+   "price": "1.13$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 10",
+   "qty": "36шт",
+   "price": "1.5$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 12",
+   "qty": "20шт",
+   "price": "2.54$",
+   "sold": false
+  },
+  {
+   "name": "Salat 5.5",
+   "qty": "120шт",
+   "price": "0.54$",
+   "sold": false
+  },
+  {
+   "name": "Salat 7",
+   "qty": "60шт",
+   "price": "0.83$",
+   "sold": false
+  },
+  {
+   "name": "Salat 8",
+   "qty": "60шт",
+   "price": "1.1$",
+   "sold": false
+  },
+  {
+   "name": "Aval 10",
+   "qty": "50шт",
+   "price": "1.37$",
+   "sold": false
+  },
+  {
+   "name": "Aval 12",
+   "qty": "30шт",
+   "price": "1.95$",
+   "sold": false
+  }
+ ],
+ "Oq torix": [
+  {
+   "name": "Choyne nok",
+   "qty": "24шт",
+   "price": "2.5$",
+   "sold": false
+  },
+  {
+   "name": "Choyne pachoq",
+   "qty": "24шт",
+   "price": "2.6$",
+   "sold": false
+  },
+  {
+   "name": "Choyne dazmol",
+   "qty": "24шт",
+   "price": "2.6$",
+   "sold": false
+  },
+  {
+   "name": "Pela",
+   "qty": "144шт",
+   "price": "0.39$",
+   "sold": false
+  },
+  {
+   "name": "Kosa 6",
+   "qty": "48шт",
+   "price": "0.95$",
+   "sold": false
+  },
+  {
+   "name": "Kosa 5.5",
+   "qty": "48шт",
+   "price": "0.91$",
+   "sold": false
+  },
+  {
+   "name": "Tar 6",
+   "qty": "96шт",
+   "price": "0.49$",
+   "sold": false
+  },
+  {
+   "name": "Tar 7",
+   "qty": "72шт",
+   "price": "0.55$",
+   "sold": false
+  },
+  {
+   "name": "Tar 8",
+   "qty": "48шт",
+   "price": "0.78$",
+   "sold": false
+  },
+  {
+   "name": "Tar 9",
+   "qty": "36шт",
+   "price": "0.85$",
+   "sold": false
+  },
+  {
+   "name": "Tar 10",
+   "qty": "36шт",
+   "price": "1$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 10",
+   "qty": "36шт",
+   "price": "1.3$",
+   "sold": false
+  },
+  {
+   "name": "Lagan 12",
+   "qty": "24шт",
+   "price": "2.6$",
+   "sold": false
+  },
+  {
+   "name": "Tar kv 85",
+   "qty": "48шт",
+   "price": "0.97$",
+   "sold": false
+  },
+  {
+   "name": "Tar kv 110",
+   "qty": "24шт",
+   "price": "1.3$",
+   "sold": false
+  },
+  {
+   "name": "Tar kv 130",
+   "qty": "18шт",
+   "price": "1.53$",
+   "sold": false
+  },
+  {
+   "name": "Aval 10",
+   "qty": "48шт",
+   "price": "1.2$",
+   "sold": false
+  },
+  {
+   "name": "Aval 12",
+   "qty": "24шт",
+   "price": "1.5$",
+   "sold": false
+  },
+  {
+   "name": "Glubok 8",
+   "qty": "48шт",
+   "price": "0.78$",
+   "sold": true
+  },
+  {
+   "name": "Glubok 9",
+   "qty": "36шт",
+   "price": "0.91$",
+   "sold": false
+  },
+  {
+   "name": "Salat 47",
+   "qty": "96шт",
+   "price": "0.52$",
+   "sold": true
+  },
+  {
+   "name": "Salat 5",
+   "qty": "62шт",
+   "price": "0.49$",
+   "sold": false
+  },
+  {
+   "name": "Salat 6",
+   "qty": "72шт",
+   "price": "0.65$",
+   "sold": false
+  },
+  {
+   "name": "Salat kv",
+   "qty": "72шт",
+   "price": "0.997$",
+   "sold": false
+  },
+  {
+   "name": "Bakal kv",
+   "qty": "72шт",
+   "price": "0.78$",
+   "sold": false
+  },
+  {
+   "name": "Bakal dumalo",
+   "qty": "72шт",
+   "price": "0.9$",
+   "sold": false
+  }
+ ]
+}

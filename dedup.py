@@ -125,7 +125,13 @@ def _title_finder():
     items.sort(key=lambda x: -len(x[0]))
     pats = [(re.compile(r"(?<![\w\-])" + re.escape(t) + r"(?![\w\-])"), did) for t, did in items]
 
+    src = [(d["src_id"], d["id"]) for d in store.designs.values() if not d.get("deleted") and d.get("src_id")]
+
     def find(text):
+        # avval rasmning doimiy belgisi (file_unique_id) bo'yicha — eng ishonchli
+        for sid, did in src:
+            if '"' + sid + '"' in text:
+                return did
         for p, did in pats:
             if p.search(text):
                 return did
@@ -176,7 +182,7 @@ async def clean(start=1, max_gap=1000, report=True):
         m, err = await _forward_probe(owner, gid, mid)
         await asyncio.sleep(_DELAY)
         if m is None:
-            if "protected" in err or "can't be forwarded" in err:
+            if "protected" in err:
                 return "Guruhda «kontentni himoyalash» yoqilgan — tekshirib bo'lmadi."
             gap += 1
             mid += 1

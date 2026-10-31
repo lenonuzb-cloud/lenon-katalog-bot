@@ -181,8 +181,11 @@ class Store:
             for c in x["categories"]:
                 cat = {"name": c["name"], "items": []}
                 for it in c["items"]:
-                    cat["items"].append(self._mk_item(it["name"], it.get("code", ""), it.get("price", ""), new=False,
-                                                      qty=it.get("qty", ""), total=it.get("total", "")))
+                    x_ = self._mk_item(it["name"], it.get("code", ""), it.get("price", ""), new=False,
+                                       qty=it.get("qty", ""), total=it.get("total", ""))
+                    if it.get("in_stock") is False:
+                        x_["in_stock"] = False
+                    cat["items"].append(x_)
                 des["categories"].append(cat)
         st = self.settings
         if config.DEFAULT_GROUP_ID:

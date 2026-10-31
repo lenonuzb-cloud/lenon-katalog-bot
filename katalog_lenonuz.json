@@ -219,7 +219,7 @@
       },
       {
        "name": "40sm",
-       "code": "H8-3",
+       "code": "H8-2",
        "qty": "",
        "price": "3.3$",
        "total": ""
@@ -3005,112 +3005,264 @@
        "code": "",
        "qty": "120шт",
        "price": "0.29$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Kosa qozo",
        "code": "",
        "qty": "60шт",
        "price": "0.56$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Pela abd",
        "code": "",
        "qty": "120шт",
        "price": "0.29$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Kosa abd",
        "code": "",
        "qty": "72шт",
        "price": "0.56$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tarelka 6",
        "code": "",
        "qty": "120шт",
        "price": "0.3$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tarelka 7",
        "code": "",
        "qty": "80шт",
        "price": "0.43$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tarelka 8",
        "code": "",
-       "qty": "60шт",
+       "qty": "60щт",
        "price": "0.6$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tarelka 9",
        "code": "",
        "qty": "40шт",
        "price": "0.78$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tarelka 10",
        "code": "",
        "qty": "36шт",
        "price": "1.1$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 6",
        "code": "",
        "qty": "100шт",
        "price": "0.35$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 7",
        "code": "",
        "qty": "80шт",
        "price": "0.5$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 8",
        "code": "",
        "qty": "60шт",
        "price": "0.6$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 9",
        "code": "",
        "qty": "40шт",
        "price": "0.78$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 10",
        "code": "",
        "qty": "36шт",
        "price": "1.2$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 12",
        "code": "",
        "qty": "20шт",
        "price": "2$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Aval 10",
        "code": "",
        "qty": "50шт",
        "price": "0.85$",
-       "total": ""
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Aval 12",
+       "code": "",
+       "qty": "30шт",
+       "price": "1.3$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Polechudes 8",
+       "code": "",
+       "qty": "40шт",
+       "price": "1.5$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Polechudes 10",
+       "code": "",
+       "qty": "30шт",
+       "price": "2$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Polechudes 12",
+       "code": "",
+       "qty": "20шт",
+       "price": "2.5$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Polechudes 8",
+       "code": "",
+       "qty": "36шт",
+       "price": "1.8$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Polechudes 11",
+       "code": "",
+       "qty": "25шт",
+       "price": "2.3$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Polechudes 10",
+       "code": "",
+       "qty": "22шт",
+       "price": "2.6$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat 5.5",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.35$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat 6",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.4$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.6$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat 8",
+       "code": "",
+       "qty": "50шт",
+       "price": "0.7$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat qeshu kotta",
+       "code": "",
+       "qty": "72шт",
+       "price": "1$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat qechu kichik",
+       "code": "",
+       "qty": "72шт",
+       "price": "0.9$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat kv 5",
+       "code": "",
+       "qty": "72шт",
+       "price": "1$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat kv 6",
+       "code": "",
+       "qty": "48шт",
+       "price": "1.2$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat 5.5",
+       "code": "",
+       "qty": "80шт",
+       "price": "0.7$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Tuzdon peramida",
+       "code": "",
+       "qty": "72шт",
+       "price": "1.5$",
+       "total": "",
+       "in_stock": true
       }
      ]
     }
@@ -6823,123 +6975,172 @@
      "name": "Far for zarli",
      "items": [
       {
-       "name": "Nomi",
-       "code": "Narxi",
-       "qty": "",
-       "price": "",
-       "total": ""
-      },
-      {
        "name": "Choyne",
        "code": "",
        "qty": "24шт",
        "price": "3.8$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Kosa qozo",
        "code": "",
        "qty": "80шт",
        "price": "0.8$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Pela qozo",
        "code": "",
        "qty": "120шт",
        "price": "0.47$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Kosa abd",
        "code": "",
        "qty": "60шт",
        "price": "0.8$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Pela abd",
        "code": "",
        "qty": "120шт",
        "price": "0.47$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar 6",
        "code": "",
        "qty": "120шт",
        "price": "0.51$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar 7",
        "code": "",
        "qty": "80шт",
        "price": "0.71$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar 8",
        "code": "",
        "qty": "60шт",
        "price": "0.87$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar 9",
        "code": "",
        "qty": "40шт",
        "price": "1.13$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar 10",
        "code": "",
        "qty": "38шт",
        "price": "1.37$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 6",
        "code": "",
        "qty": "100шт",
        "price": "0.53$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 7",
        "code": "",
        "qty": "80шт",
        "price": "0.76$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 8",
        "code": "",
        "qty": "60шт",
        "price": "0.95$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 9",
        "code": "",
        "qty": "40шт",
        "price": "1.13$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 10",
        "code": "",
        "qty": "36шт",
        "price": "1.5$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 12",
        "code": "",
        "qty": "20шт",
        "price": "2.54$",
-       "total": ""
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat 5.5",
+       "code": "",
+       "qty": "120шт",
+       "price": "0.54$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat 7",
+       "code": "",
+       "qty": "60шт",
+       "price": "0.83$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat 8",
+       "code": "",
+       "qty": "60шт",
+       "price": "1.1$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Aval 10",
+       "code": "",
+       "qty": "50шт",
+       "price": "1.37$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Aval 12",
+       "code": "",
+       "qty": "30шт",
+       "price": "1.95$",
+       "total": "",
+       "in_stock": true
       }
      ]
     }
@@ -6959,123 +7160,212 @@
      "name": "Torix oq",
      "items": [
       {
-       "name": "Nomi",
-       "code": "Narxi",
-       "qty": "",
-       "price": "",
-       "total": ""
-      },
-      {
        "name": "Choyne nok",
        "code": "",
        "qty": "24шт",
        "price": "2.5$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Choyne pachoq",
        "code": "",
        "qty": "24шт",
        "price": "2.6$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Choyne dazmol",
        "code": "",
        "qty": "24шт",
        "price": "2.6$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Pela",
        "code": "",
        "qty": "144шт",
        "price": "0.39$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Kosa 6",
        "code": "",
        "qty": "48шт",
        "price": "0.95$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Kosa 5.5",
        "code": "",
        "qty": "48шт",
        "price": "0.91$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar 6",
        "code": "",
        "qty": "96шт",
        "price": "0.49$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar 7",
        "code": "",
        "qty": "72шт",
        "price": "0.55$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar 8",
        "code": "",
        "qty": "48шт",
        "price": "0.78$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar 9",
        "code": "",
        "qty": "36шт",
        "price": "0.85$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar 10",
        "code": "",
        "qty": "36шт",
        "price": "1$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 10",
        "code": "",
        "qty": "36шт",
        "price": "1.3$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Lagan 12",
        "code": "",
        "qty": "24шт",
        "price": "2.6$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar kv 85",
        "code": "",
        "qty": "48шт",
        "price": "0.97$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar kv 110",
        "code": "",
        "qty": "24шт",
        "price": "1.3$",
-       "total": ""
+       "total": "",
+       "in_stock": true
       },
       {
        "name": "Tar kv 130",
        "code": "",
        "qty": "18шт",
        "price": "1.53$",
-       "total": ""
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Aval 10",
+       "code": "",
+       "qty": "48шт",
+       "price": "1.2$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Aval 12",
+       "code": "",
+       "qty": "24шт",
+       "price": "1.5$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Glubok 8",
+       "code": "",
+       "qty": "48шт",
+       "price": "0.78$",
+       "total": "",
+       "in_stock": false
+      },
+      {
+       "name": "Glubok 9",
+       "code": "",
+       "qty": "36шт",
+       "price": "0.91$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat 47",
+       "code": "",
+       "qty": "96шт",
+       "price": "0.52$",
+       "total": "",
+       "in_stock": false
+      },
+      {
+       "name": "Salat 5",
+       "code": "",
+       "qty": "62шт",
+       "price": "0.49$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat 6",
+       "code": "",
+       "qty": "72шт",
+       "price": "0.65$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Salat kv",
+       "code": "",
+       "qty": "72шт",
+       "price": "0.997$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Bakal kv",
+       "code": "",
+       "qty": "72шт",
+       "price": "0.78$",
+       "total": "",
+       "in_stock": true
+      },
+      {
+       "name": "Bakal dumalo",
+       "code": "",
+       "qty": "72шт",
+       "price": "0.9$",
+       "total": "",
+       "in_stock": true
       }
      ]
     }

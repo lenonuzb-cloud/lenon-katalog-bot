@@ -259,7 +259,7 @@ async def scan_group(uid):
         mid += 1
         if m is None:
             gap += 1
-            if "protected" in err or "can't be forwarded" in err:
+            if "protected" in err:
                 return "Guruhda «kontentni himoyalash» yoqilgan — postlarni o'qib bo'lmadi."
             continue
         gap = 0
@@ -323,3 +323,46 @@ def start_scan(uid) -> bool:
         await bot.send(uid, text, reply_markup=kb)
     _scan["task"] = asyncio.get_event_loop().create_task(run())
     return True
+
+
+def apply_fix_file():
+    """Bir martalik: jadval_tuzatish.json dagi asl (guruhdan olingan) to'liq jadvallarni katalogga yozadi
+    va hamma tovarlardan ortiqcha «Nomi» sarlavha qatorini olib tashlaydi. Qolmadi belgilari saqlanadi."""
+    import json as _j
+    if store.settings.get("fix_tables") == 1:
+        return None
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "jadval_tuzatish.json")
+    try:
+        fix = _j.load(open(path, encoding="utf-8"))
+    except Exception:  # noqa
+        return None
+    plan, names = [], []
+    by_title = {_norm(d["title"]): d for d in store.designs.values() if not d.get("deleted")}
+    for title, rows in fix.items():
+        d = by_title.get(_norm(title))
+        if not d:
+            continue
+        cat = d["categories"][0]["name"] if d["categories"] else "Asosiy"
+        items = [{"name": r["name"], "code": "", "qty": r.get("qty", ""), "price": r.get("price", ""), "total": "",
+                  "in_stock": not r.get("sold")} for r in rows]
+        cur_n = sum(1 for c in d["categories"] for it in c["items"] if not _junk(it))
+        if len(items) > cur_n:
+            plan.append((d["id"], [{"name": cat, "items": items}]))
+            names.append(f"{d['title']}: {cur_n} → {len(items)}")
+    done = {did for did, _ in plan}
+    for d in store.designs.values():
+        if not d.get("deleted") and d["id"] not in done and any(_junk(it) for c in d["categories"] for it in c["items"]):
+            plan.append((d["id"], None))
+    _plan["_fix"] = plan
+    n = apply("_fix")
+    # aniq xatolar: H6-2 to'plamidagi 40sm patnos kodi H8-3 deb yozilgan (H6-3 ning kodi), to'g'risi H8-2
+    for d in by_title.values():
+        if _norm(d["title"]) == _norm("Patnos · H6-2"):
+            for c in d["categories"]:
+                for it in c["items"]:
+                    if _norm(it["name"]) == "40sm" and it.get("code") == "H8-3":
+                        it["code"] = "H8-2"
+                        names.append("Patnos · H6-2: 40sm kodi H8-3 → H8-2")
+    store.settings["fix_tables"] = 1
+    store.save()
+    return names, n

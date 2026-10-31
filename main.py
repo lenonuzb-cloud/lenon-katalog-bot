@@ -208,6 +208,15 @@ async def on_startup(app):
         asyncio.get_event_loop().create_task(admin.apply_privacy())
 
     app["bg"] = asyncio.get_event_loop().create_task(background())
+    if config.LENONUZ:
+        import restore
+        try:
+            res = restore.apply_fix_file()
+            if res and res[0] and store.settings.get("owner_id"):
+                await bot.send(store.settings["owner_id"], "🛠 Qisqarib qolgan jadvallar asl postlardan to'ldirildi:\n"
+                               + "\n".join("• " + x for x in res[0]) + "\nQolmadi belgilari saqlandi.")
+        except Exception as e:  # noqa
+            log.warning("jadval tuzatish: %s", e)
     if config.ROTATION:
         import dedup
         asyncio.get_event_loop().create_task(dedup.auto_clean_once())
