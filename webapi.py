@@ -120,7 +120,9 @@ async def admin_action(request):
     warns = []
     try:
         if a == "stock":
-            ops.set_stock(body["design"], body.get("item"), bool(body["in_stock"]))
+            d_ = store.designs.get(body["design"]) or {}
+            whole = (store.section(d_.get("section")) or {}).get("whole")
+            ops.set_stock(body["design"], None if whole else body.get("item"), bool(body["in_stock"]))
         elif a == "edit_item":
             warns = ops.edit_item(body["design"], body["item"], name=body.get("name"), code=body.get("code"),
                                   price=body.get("price"), category=body.get("category"),

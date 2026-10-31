@@ -2,9 +2,28 @@
  "profile": "lenonuz",
  "sections": [
   {
-   "key": "nb",
-   "title": "Naborlar",
-   "kind": "design"
+   "key": "nb46",
+   "title": "Nabor 46",
+   "kind": "design",
+   "whole": true
+  },
+  {
+   "key": "nb39",
+   "title": "Nabor 39",
+   "kind": "design",
+   "whole": true
+  },
+  {
+   "key": "nb33",
+   "title": "Nabor 33",
+   "kind": "design",
+   "whole": true
+  },
+  {
+   "key": "nb44",
+   "title": "KLASS nabor 44",
+   "kind": "design",
+   "whole": true
   },
   {
    "key": "pela",
@@ -1992,12 +2011,12 @@
    "src_id": "AQADlRxrG9ipWUl-"
   },
   {
-   "section": "nb",
+   "section": "nb46",
    "title": "LENON nabor 46 · P823",
    "photos": [
     "AgACAgIAAxUAAWrNGURhHPu8dZonPvt5g7iZxqhSAAKoHmsblIloSabPkV9x0FFyAQADAgADeQADPQQ"
    ],
-   "note": "jami; 46шт narxi; 115$ kodi; P823",
+   "note": "Jami: 46шт\nNarxi: 115$\nKodi: P823",
    "categories": [
     {
      "name": "Asosiy",
@@ -2078,12 +2097,12 @@
    "src_id": "AQADqB5rG5SJaEl-"
   },
   {
-   "section": "nb",
+   "section": "nb46",
    "title": "LENON nabor 46 · P827",
    "photos": [
     "AgACAgIAAxUAAWrNG5H8eY2X9qd62bNbNsgHPRntAAKsHmsblIloSXRxm7DiCWZPAQADAgADeQADPQQ"
    ],
-   "note": "jami; 46шт narxi; 115$ kodi; P827",
+   "note": "Jami: 46шт\nNarxi: 115$\nKodi: P827",
    "categories": [
     {
      "name": "Asosiy",
@@ -2164,12 +2183,12 @@
    "src_id": "AQADrB5rG5SJaEl-"
   },
   {
-   "section": "nb",
+   "section": "nb46",
    "title": "LENON nabor 46 · Y953",
    "photos": [
     "AgACAgIAAxUAAWrNG5HdlbBstZq4vLQYMiKRmo8lAAKyHmsblIloSa3MfLgWQqOJAQADAgADeQADPQQ"
    ],
-   "note": "jami; 46шт narxi; 115$ kodi; Y953",
+   "note": "Jami: 46шт\nNarxi: 115$\nKodi: Y953",
    "categories": [
     {
      "name": "Asosiy",
@@ -2250,12 +2269,12 @@
    "src_id": "AQADsh5rG5SJaEl-"
   },
   {
-   "section": "nb",
+   "section": "nb46",
    "title": "LENON nabor 46 · Y954",
    "photos": [
     "AgACAgIAAxUAAWrNG5KQNsZjsKCXF0-A0LcIAsRPAALAHmsblIloSUbtJbkSK_t5AQADAgADeQADPQQ"
    ],
-   "note": "jami; 46шт narxi; 115$ kodi; Y954",
+   "note": "Jami: 46шт\nNarxi: 115$\nKodi: Y954",
    "categories": [
     {
      "name": "Asosiy",
@@ -2336,12 +2355,12 @@
    "src_id": "AQADwB5rG5SJaEl-"
   },
   {
-   "section": "nb",
+   "section": "nb46",
    "title": "LENON nabor 46 · P824",
    "photos": [
     "AgACAgIAAxUAAWrNG5KptvYX3r4jujMTeFq-ND3JAALCHmsblIloSQE9ehaFbi-LAQADAgADeQADPQQ"
    ],
-   "note": "jami; 46шт narxi; 115$ kodi; P824",
+   "note": "Jami: 46шт\nNarxi: 115$\nKodi: P824",
    "categories": [
     {
      "name": "Asosiy",
@@ -2422,12 +2441,12 @@
    "src_id": "AQADwh5rG5SJaEl-"
   },
   {
-   "section": "nb",
+   "section": "nb46",
    "title": "LENON nabor 46 · Y952",
    "photos": [
     "AgACAgIAAxUAAWrNG5KedTkInzabLuL7on3nPxOrAALDHmsblIloSRgwdi0LxA7AAQADAgADeQADPQQ"
    ],
-   "note": "jami; 46шт narxi; 115$ kodi; Y952",
+   "note": "Jami: 46шт\nNarxi: 115$\nKodi: Y952",
    "categories": [
     {
      "name": "Asosiy",
@@ -2508,12 +2527,12 @@
    "src_id": "AQADwx5rG5SJaEl-"
   },
   {
-   "section": "nb",
+   "section": "nb46",
    "title": "LENON nabor 46 · P826",
    "photos": [
     "AgACAgIAAxUAAWrNG6hMAXO4algPtUXZcUw3zuXtAALFHmsblIloSVRacgsHpa6OAQADAgADeQADPQQ"
    ],
-   "note": "jami; 46шт narxi; 115$ kodi; P826",
+   "note": "Jami: 46шт\nNarxi: 115$\nKodi: P826",
    "categories": [
     {
      "name": "Asosiy",
@@ -2594,12 +2613,12 @@
    "src_id": "AQADxR5rG5SJaEl-"
   },
   {
-   "section": "nb",
+   "section": "nb46",
    "title": "LENON nabor 46 · P804",
    "photos": [
     "AgACAgIAAxUAAWrNG6gQXpL-SWI51axqhyGZUhLXAALIHmsblIloSTuf3-xxiToIAQADAgADeQADPQQ"
    ],
-   "note": "jami; 46шт narxi; 115$ kodi; P804",
+   "note": "Jami: 46шт\nNarxi: 115$\nKodi: P804",
    "categories": [
     {
      "name": "Asosiy",
@@ -2680,12 +2699,12 @@
    "src_id": "AQADyB5rG5SJaEl-"
   },
   {
-   "section": "nb",
+   "section": "nb46",
    "title": "LENON nabor 46 · P825",
    "photos": [
     "AgACAgIAAxUAAWrNG6h3w0X1FsVAIaSzU_PEhL2TAALMHmsblIloScdaGMUNBylbAQADAgADeQADPQQ"
    ],
-   "note": "jami; 46шт narxi; 115$ kodi; P825",
+   "note": "Jami: 46шт\nNarxi: 115$\nKodi: P825",
    "categories": [
     {
      "name": "Asosiy",
@@ -2766,12 +2785,12 @@
    "src_id": "AQADzB5rG5SJaEl-"
   },
   {
-   "section": "nb",
+   "section": "nb46",
    "title": "LENON nabor 46 · P828",
    "photos": [
     "AgACAgIAAxUAAWrNG6l9cwnD8szOnPgm9XP8uZNUAALoHmsblIloSfaF6OPCPH-kAQADAgADeQADPQQ"
    ],
-   "note": "jami; 46шт narxi; 115$ kodi; P828",
+   "note": "Jami: 46шт\nNarxi: 115$\nKodi: P828",
    "categories": [
     {
      "name": "Asosiy",
@@ -2852,12 +2871,12 @@
    "src_id": "AQAD6B5rG5SJaEl-"
   },
   {
-   "section": "nb",
+   "section": "nb46",
    "title": "LENON nabor 46 · P822",
    "photos": [
     "AgACAgIAAxUAAWrNG6mMwpmnqe_4Auw5fQs0ZGSzAALqHmsblIloSeExX9dlj8yfAQADAgADeQADPQQ"
    ],
-   "note": "jami; 46шт narxi; 115$ kodi; P822",
+   "note": "Jami: 46шт\nNarxi: 115$\nKodi: P822",
    "categories": [
     {
      "name": "Asosiy",
@@ -3270,12 +3289,12 @@
    "src_id": "AQADGBprG6Ur6Uh-"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y821",
    "photos": [
     "AgACAgIAAxUAAWrNG6llCogj9DYHL7Xuw-O8DY7ZAAI7IWsb8VqhScdDHIyp-rXvAQADAgADeQADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y821",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y821",
    "categories": [
     {
      "name": "Asosiy",
@@ -3342,12 +3361,12 @@
    "src_id": "AQADOyFrG_FaoUl-"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y896-2-A",
    "photos": [
     "AgACAgIAAxUAAWrNG6pnjs8SeOWe94EBYKhZc-hiAAI6IWsb8VqhSdMQG-kPb5fLAQADAgADdwADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y896-2-A",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y896-2-A",
    "categories": [
     {
      "name": "Asosiy",
@@ -3414,12 +3433,12 @@
    "src_id": "AQADOiFrG_FaoUl8"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y893-2-A",
    "photos": [
     "AgACAgIAAxUAAWrNG6pU2wABvV-hQXJ-bWUwIAPCaAACPSFrG_FaoUnXyXTY3DPsswEAAwIAA3kAAz0E"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y893-2-A",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y893-2-A",
    "categories": [
     {
      "name": "Asosiy",
@@ -3486,12 +3505,12 @@
    "src_id": "AQADPSFrG_FaoUl-"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y907-2-A",
    "photos": [
     "AgACAgIAAxUAAWrNG6rbdmTtDWIQd9w4maYd3AwJAAI-IWsb8VqhSVfjnLKyj28CAQADAgADeQADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y907-2-A",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y907-2-A",
    "categories": [
     {
      "name": "Asosiy",
@@ -3558,12 +3577,12 @@
    "src_id": "AQADPiFrG_FaoUl-"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y834-2",
    "photos": [
     "AgACAgIAAxUAAWrNG6pVOlfjolQoUV6NdeS47zveAAJBIWsb8VqhSViWJNzIxzvOAQADAgADeQADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y834-2",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y834-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -3630,12 +3649,12 @@
    "src_id": "AQADQSFrG_FaoUl-"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y827-2",
    "photos": [
     "AgACAgIAAxUAAWrNG6vTF2B6Km5SeKZpjl8Gna9vAAJEIWsb8VqhSRDxNrUNIUO0AQADAgADdwADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y827-2",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y827-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -3702,12 +3721,12 @@
    "src_id": "AQADRCFrG_FaoUl8"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y826-2",
    "photos": [
     "AgACAgIAAxUAAWrNG6vbH2OpL60gnOaV7ZEvAk7EAAJFIWsb8VqhSYnk7hcAAVE47wEAAwIAA3cAAz0E"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y826-2",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y826-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -3774,12 +3793,12 @@
    "src_id": "AQADRSFrG_FaoUl8"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y874-2",
    "photos": [
     "AgACAgIAAxUAAWrNG6tBi8Jg5HsG-tK0sL1Qef9_AAJGIWsb8VqhSZ15WfKH9yZZAQADAgADeQADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y874-2",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y874-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -3846,12 +3865,12 @@
    "src_id": "AQADRiFrG_FaoUl-"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y880-2",
    "photos": [
     "AgACAgIAAxUAAWrNG6vzye1CrYaRnwODQRPuzfzrAAJHIWsb8VqhSQPR9rwpYRkTAQADAgADeQADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y880-2",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y880-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -3918,12 +3937,12 @@
    "src_id": "AQADRyFrG_FaoUl-"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y879-2",
    "photos": [
     "AgACAgIAAxUAAWrNG6xSxeJXyhABEh6zaPVrx5NGAAJIIWsb8VqhSR7VxnBE56dAAQADAgADdwADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y879-2",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y879-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -3990,12 +4009,12 @@
    "src_id": "AQADSCFrG_FaoUl8"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y849-2",
    "photos": [
     "AgACAgIAAxUAAWrNG6wiFuYSRWzKRr0NGy1jGwyrAAJKIWsb8VqhSZiWs_iR0vtcAQADAgADeQADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y849-2",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y849-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4062,12 +4081,12 @@
    "src_id": "AQADSiFrG_FaoUl-"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y852-2",
    "photos": [
     "AgACAgIAAxUAAWrNG61P9Mt8CZlt76HeLirbHKhBAAJLIWsb8VqhST5WgQajDJoGAQADAgADeQADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y852-2",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y852-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4134,12 +4153,12 @@
    "src_id": "AQADSyFrG_FaoUl-"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y882-2",
    "photos": [
     "AgACAgIAAxUAAWrNG63QbslJzHAlNqczRXiMQVkXAAJMIWsb8VqhSR1QAAFUIFADjQEAAwIAA3kAAz0E"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y882-2",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y882-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4206,12 +4225,12 @@
    "src_id": "AQADTCFrG_FaoUl-"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y823-2",
    "photos": [
     "AgACAgIAAxUAAWrNG67T2Xz1GGjn5C_qMd_RgawTAAJOIWsb8VqhSec5wzDEyMHkAQADAgADeQADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y823-2",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y823-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4278,12 +4297,12 @@
    "src_id": "AQADTiFrG_FaoUl-"
   },
   {
-   "section": "nb",
+   "section": "nb39",
    "title": "LENON nabor 39 · Y809-2",
    "photos": [
     "AgACAgIAAxUAAWrNG67JpH0iX1kTMaD2I4GAgnthAAJPIWsb8VqhSfzKUkiLznHhAQADAgADeQADPQQ"
    ],
-   "note": "jami: 39шт narxi: 95$ kodi: Y809-2",
+   "note": "Jami: 39шт\nNarxi: 95$\nKodi: Y809-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4350,12 +4369,12 @@
    "src_id": "AQADTyFrG_FaoUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y944-2",
    "photos": [
     "AgACAgIAAxUAAWrNG64Lw4DJ1dGMqELuW_S2ZRbuAALrG2sb7OPBSU0n4s5v79PZAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y944-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y944-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4422,12 +4441,12 @@
    "src_id": "AQAD6xtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y936-2",
    "photos": [
     "AgACAgIAAxUAAWrNG69jzxBlOpKOWfxZkwzOXaGmAALsG2sb7OPBSTu-dDOBKajcAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y936-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y936-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4494,12 +4513,12 @@
    "src_id": "AQAD7BtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y823-2",
    "photos": [
     "AgACAgIAAxUAAWrNG6-xF6PHMqc5670EXQQJ75AEAALvG2sb7OPBSdVBeS4abYuVAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y823-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y823-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4566,12 +4585,12 @@
    "src_id": "AQAD7xtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y938-2",
    "photos": [
     "AgACAgIAAxUAAWrNG69MQC8KMl2pKeNVAlkF8vyIAALwG2sb7OPBSfSLH-Vc5dL_AQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y938-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y938-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4638,12 +4657,12 @@
    "src_id": "AQAD8BtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y809-2",
    "photos": [
     "AgACAgIAAxUAAWrNG6_Ag088nhaibiwJIN2A74F5AALyG2sb7OPBSReNr3BYgyxBAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y809-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y809-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4710,12 +4729,12 @@
    "src_id": "AQAD8htrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y881-2",
    "photos": [
     "AgACAgIAAxUAAWrNG6_vjlAZM9oTSXGh3vrJLwpyAALzG2sb7OPBScj1ix64BNopAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y881-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y881-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4782,12 +4801,12 @@
    "src_id": "AQAD8xtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y875-2",
    "photos": [
     "AgACAgIAAxUAAWrNG7DGAAHy9K3brGty5eymQH-zAgAC9BtrG-zjwUnHrXD8Mj8t6AEAAwIAA3kAAz0E"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y875-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y875-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4854,12 +4873,12 @@
    "src_id": "AQAD9BtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y880-2",
    "photos": [
     "AgACAgIAAxUAAWrNG7DhfqE77dNg28EhpqragW54AAL1G2sb7OPBSTJLHDX23qpOAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y880-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y880-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -4926,12 +4945,12 @@
    "src_id": "AQAD9RtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y838-UW4",
    "photos": [
     "AgACAgIAAxUAAWrNG7AP2QE8CXcZRMgnaUvwmNhxAAL2G2sb7OPBSTolGp75XyCyAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y838-UW4",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y838-UW4",
    "categories": [
     {
      "name": "Asosiy",
@@ -4998,12 +5017,12 @@
    "src_id": "AQAD9htrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y940-2",
    "photos": [
     "AgACAgIAAxUAAWrNG7BPfgAB-VqCReJ6lKuX_HmD8QAC9xtrG-zjwUkVx8HiP6syuQEAAwIAA3kAAz0E"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y940-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y940-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -5070,12 +5089,12 @@
    "src_id": "AQAD9xtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y874-2",
    "photos": [
     "AgACAgIAAxUAAWrNG7CJZxZ7nrwWfqAsMQxfKcPuAAL4G2sb7OPBSTetCCCTx32eAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y874-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y874-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -5142,12 +5161,12 @@
    "src_id": "AQAD-BtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y834-2",
    "photos": [
     "AgACAgIAAxUAAWrNG7EJgCh_wyFlK5pAOWP08qLcAAL5G2sb7OPBSZ-i7bF3mg9QAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y834-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y834-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -5214,12 +5233,12 @@
    "src_id": "AQAD-RtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y827-UW4",
    "photos": [
     "AgACAgIAAxUAAWrNG7G4f2OV78wBXxK7kk43ytqwAAL6G2sb7OPBSdaXPp9HM0wZAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y827-UW4",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y827-UW4",
    "categories": [
     {
      "name": "Asosiy",
@@ -5286,12 +5305,12 @@
    "src_id": "AQAD-htrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y911-UW4",
    "photos": [
     "AgACAgIAAxUAAWrNG7GF8qKZl6idHJWX6aVToUA1AAL7G2sb7OPBSRduVk7Km-xYAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y911-UW4",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y911-UW4",
    "categories": [
     {
      "name": "Asosiy",
@@ -5358,12 +5377,12 @@
    "src_id": "AQAD-xtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y901-2",
    "photos": [
     "AgACAgIAAxUAAWrNG7HoxRbWmpckW3IrmisDZ_O4AAL8G2sb7OPBSRO3U0IonAk5AQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y901-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y901-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -5430,12 +5449,12 @@
    "src_id": "AQAD_BtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y878-UW4",
    "photos": [
     "AgACAgIAAxUAAWrNG7IJ5GaxrFAILOhbs3pukaXGAAL9G2sb7OPBSVsp6MhPEYl9AQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y878-UW4",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y878-UW4",
    "categories": [
     {
      "name": "Asosiy",
@@ -5502,12 +5521,12 @@
    "src_id": "AQAD_RtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y939-2",
    "photos": [
     "AgACAgIAAxUAAWrNG7JnaimCYDVQAviVxIacuR3cAAL-G2sb7OPBSfBw-eFupbZEAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y939-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y939-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -5574,12 +5593,12 @@
    "src_id": "AQAD_htrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y866-2",
    "photos": [
     "AgACAgIAAxUAAWrNG7KxGovdcHRfvwU0aUsZoRGOAAL_G2sb7OPBSWJ9RCLYSWHkAQADAgADeQADPQQ"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y866-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y866-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -5646,12 +5665,12 @@
    "src_id": "AQAD_xtrG-zjwUl-"
   },
   {
-   "section": "nb",
+   "section": "nb33",
    "title": "LENON nabor 33 · Y821-2",
    "photos": [
     "AgACAgIAAxUAAWrNG7NWnBtQvWShioUQMxy4V9KfAAMcaxvs48FJDp8PNOAnG50BAAMCAAN5AAM9BA"
    ],
-   "note": "jami: 33шт narxi: 65$ kodi: Y821-2",
+   "note": "Jami: 33шт\nNarxi: 65$\nKodi: Y821-2",
    "categories": [
     {
      "name": "Asosiy",
@@ -5718,12 +5737,12 @@
    "src_id": "AQAEHGsb7OPBSX4"
   },
   {
-   "section": "nb",
+   "section": "nb44",
    "title": "KLASS nabor 44 · A01-44K",
    "photos": [
     "AgACAgIAAxUAAWrNG7OHo_uI9k2_WrFkhinwN0aTAAJDGWsbOpP4SQABtOnK8Mgy3AEAAwIAA3kAAz0E"
    ],
-   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44K",
+   "note": "Jami: 44шт\nNarxi: 60$\nKodi: A01-44K",
    "categories": [
     {
      "name": "Asosiy",
@@ -5790,12 +5809,12 @@
    "src_id": "AQADQxlrGzqT-El-"
   },
   {
-   "section": "nb",
+   "section": "nb44",
    "title": "KLASS nabor 44 · A01-44G",
    "photos": [
     "AgACAgIAAxUAAWrNG7NpvzfJK7knAXdaJoAHSqpRAAJEGWsbOpP4STHd6Pr_B871AQADAgADeQADPQQ"
    ],
-   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44G",
+   "note": "Jami: 44шт\nNarxi: 60$\nKodi: A01-44G",
    "categories": [
     {
      "name": "Asosiy",
@@ -5862,12 +5881,12 @@
    "src_id": "AQADRBlrGzqT-El-"
   },
   {
-   "section": "nb",
+   "section": "nb44",
    "title": "KLASS nabor 44 · A01-44B",
    "photos": [
     "AgACAgIAAxUAAWrNG7OyfH_SkaOStCkLHhv_roVXAAJFGWsbOpP4Se1lkUslCmwzAQADAgADeQADPQQ"
    ],
-   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44B",
+   "note": "Jami: 44шт\nNarxi: 60$\nKodi: A01-44B",
    "categories": [
     {
      "name": "Asosiy",
@@ -5934,12 +5953,12 @@
    "src_id": "AQADRRlrGzqT-El-"
   },
   {
-   "section": "nb",
+   "section": "nb44",
    "title": "KLASS nabor 44 · A01-44L",
    "photos": [
     "AgACAgIAAxUAAWrNG7ObOvcoHkGgaHKijrHlw0l_AAJGGWsbOpP4Se5ZYvo66QnLAQADAgADeQADPQQ"
    ],
-   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44L",
+   "note": "Jami: 44шт\nNarxi: 60$\nKodi: A01-44L",
    "categories": [
     {
      "name": "Asosiy",
@@ -6006,12 +6025,12 @@
    "src_id": "AQADRhlrGzqT-El-"
   },
   {
-   "section": "nb",
+   "section": "nb44",
    "title": "KLASS nabor 44 · A01-44C",
    "photos": [
     "AgACAgIAAxUAAWrNG7RhaxxIWwzUIav2ioxxRmJkAAJHGWsbOpP4SR1m0o5hX2EsAQADAgADeQADPQQ"
    ],
-   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44C",
+   "note": "Jami: 44шт\nNarxi: 60$\nKodi: A01-44C",
    "categories": [
     {
      "name": "Asosiy",
@@ -6078,12 +6097,12 @@
    "src_id": "AQADRxlrGzqT-El-"
   },
   {
-   "section": "nb",
+   "section": "nb44",
    "title": "KLASS nabor 44 · A01-44D",
    "photos": [
     "AgACAgIAAxUAAWrNG7Rmi0uCU_OYX3QAAsasYXVDAAJIGWsbOpP4Sb0ZpxNBSrNbAQADAgADeQADPQQ"
    ],
-   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44D",
+   "note": "Jami: 44шт\nNarxi: 60$\nKodi: A01-44D",
    "categories": [
     {
      "name": "Asosiy",
@@ -6150,12 +6169,12 @@
    "src_id": "AQADSBlrGzqT-El-"
   },
   {
-   "section": "nb",
+   "section": "nb44",
    "title": "KLASS nabor 44 · A01-44F",
    "photos": [
     "AgACAgIAAxUAAWrNG7TzNWDeh-AJy_ahreqb4EADAAJJGWsbOpP4SWANMELuIMCiAQADAgADeQADPQQ"
    ],
-   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44F",
+   "note": "Jami: 44шт\nNarxi: 60$\nKodi: A01-44F",
    "categories": [
     {
      "name": "Asosiy",
@@ -6222,12 +6241,12 @@
    "src_id": "AQADSRlrGzqT-El-"
   },
   {
-   "section": "nb",
+   "section": "nb44",
    "title": "KLASS nabor 44 · A01-44E",
    "photos": [
     "AgACAgIAAxUAAWrNG7QwfE06wkHTQWLmQ7j6zomwAAJKGWsbOpP4SYf1KRjknFlSAQADAgADeQADPQQ"
    ],
-   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44E",
+   "note": "Jami: 44шт\nNarxi: 60$\nKodi: A01-44E",
    "categories": [
     {
      "name": "Asosiy",
@@ -6294,12 +6313,12 @@
    "src_id": "AQADShlrGzqT-El-"
   },
   {
-   "section": "nb",
+   "section": "nb44",
    "title": "KLASS nabor 44 · A01-44J",
    "photos": [
     "AgACAgIAAxUAAWrNG7Q5tVXMeDRUUJL4zKVSyGLdAAJLGWsbOpP4SdPvVZOtaNzXAQADAgADeQADPQQ"
    ],
-   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44J",
+   "note": "Jami: 44шт\nNarxi: 60$\nKodi: A01-44J",
    "categories": [
     {
      "name": "Asosiy",
@@ -6366,12 +6385,12 @@
    "src_id": "AQADSxlrGzqT-El-"
   },
   {
-   "section": "nb",
+   "section": "nb44",
    "title": "KLASS nabor 44 · A01-44I",
    "photos": [
     "AgACAgIAAxUAAWrNG7Smi3D11b4sv9Gt98vFxTwoAAJMGWsbOpP4SXrSDVSOHCvHAQADAgADeQADPQQ"
    ],
-   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44I",
+   "note": "Jami: 44шт\nNarxi: 60$\nKodi: A01-44I",
    "categories": [
     {
      "name": "Asosiy",
@@ -6438,12 +6457,12 @@
    "src_id": "AQADTBlrGzqT-El-"
   },
   {
-   "section": "nb",
+   "section": "nb44",
    "title": "KLASS nabor 44 · A01-44A",
    "photos": [
     "AgACAgIAAxUAAWrNG7VxFJLD6JDKD_zQ5H3PriWTAAJSGWsbOpP4SXmrg2v-aWHBAQADAgADeQADPQQ"
    ],
-   "note": "Jami: 44шт Narxi: 60$ Kodi: A01-44A",
+   "note": "Jami: 44шт\nNarxi: 60$\nKodi: A01-44A",
    "categories": [
     {
      "name": "Asosiy",

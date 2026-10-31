@@ -209,6 +209,17 @@ async def on_startup(app):
 
     app["bg"] = asyncio.get_event_loop().create_task(background())
     if config.LENONUZ:
+        import naborlar
+        try:
+            r = naborlar.migrate()
+            if r and r[1] and store.settings.get("owner_id"):
+                await bot.send(store.settings["owner_id"],
+                               f"🗂 «Naborlar» bo'limi {len(r[0])} ta bo'limga bo'lindi: {', '.join(r[0])} "
+                               f"({r[1]} ta nabor).\nEndi nabor butunligicha «qolmadi» qilinadi — ichidagi "
+                               "buyumlarga alohida belgi qo'yilmaydi."
+                               + (f"\nQolmadi deb belgilangan naborlar: {', '.join(r[2])}" if r[2] else ""))
+        except Exception as e:  # noqa
+            log.warning("naborlarni bo'lish: %s", e)
         import restore
         try:
             res = restore.apply_fix_file()

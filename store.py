@@ -376,7 +376,7 @@ class Store:
                         for c in d["categories"]
                     ],
                 })
-            item = {"key": s["key"], "title": s["title"], "kind": s["kind"], "designs": ds}
+            item = {"key": s["key"], "title": s["title"], "kind": s["kind"], "designs": ds, "whole": bool(s.get("whole"))}
             if s["kind"] == "nabor":
                 item["template"] = self.s["nabor_templates"].get(s["key"])
             secs.append(item)

@@ -38,9 +38,15 @@ async def post_next(reason="jadval") -> str | None:
     q = sync_queue()
     if not q:
         return None
-    did = q.pop(0)
-    q.append(did)
-    d = store.designs[did]
+    import naborlar
+    for _ in range(len(q)):  # qolmagan naborlar navbatda turadi, lekin guruhga chiqmaydi
+        did = q.pop(0)
+        q.append(did)
+        d = store.designs[did]
+        if not (naborlar.is_whole(d) and not d.get("in_stock", True)):
+            break
+    else:
+        return None
     ids = await publisher.send_copy(did)
     import dedup
     await dedup.after_post(did, ids)

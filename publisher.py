@@ -133,6 +133,12 @@ def design_html(d) -> tuple[str, list]:
     if show:
         parts.append(show)
     parts.append(f"<blockquote><i>{esc(d['title'])}</i></blockquote>")
+    if config.LENONUZ:
+        import naborlar
+        if naborlar.is_whole(d) and not d.get("in_stock", True):
+            parts.append("<p>❌ <b>Bu nabor hozir qolmadi</b></p>")
+        if d.get("note"):
+            parts.append(f"<p>{esc(naborlar.note_line(d['note']))}</p>")
     if item_state(d) == "new":
         parts.append("<p>🆕 <b>Yangi dizayn!</b></p>")
     has_code = any(it.get("code") for c in d["categories"] for it in c["items"])

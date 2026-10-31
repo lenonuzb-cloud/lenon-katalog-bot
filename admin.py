@@ -1162,7 +1162,7 @@ def _nabor_view(sess):
     rows = []
     for d in store.designs_in(sess["section"]):
         st = pend.get(d["id"], d.get("in_stock", True))
-        rows.append(btn(("✅ " if st else "❌ ") + d["title"], f"sk:n:{d['id']}"))
+        rows.append(btn(("✅ " if st else "❌ ") + d["title"].split(" · ")[-1], f"sk:n:{d['id']}"))
     rows = grid(rows, 2)
     rows.append([btn(f"💾 Saqlash ({len(pend)})", "sk:save"), btn("❌ Bekor", "cancel")])
     return f"<b>{esc(store.section(sess['section'])['title'])}</b>\nBosib belgilang: ✅ bor · ❌ qolmadi", ikb(rows)
@@ -1175,7 +1175,7 @@ async def stock_callback(uid, data, cb):
     if act == "sec":
         key = parts[2]
         await bot.answer_cb(cb["id"])
-        if store.section(key)["kind"] == "nabor":
+        if store.section(key)["kind"] == "nabor" or store.section(key).get("whole"):
             sessions[uid] = {"step": "stock", "section": key, "pending": {}}
             text, kb = _nabor_view(sessions[uid])
             await bot.send(uid, text, reply_markup=kb)
@@ -1257,7 +1257,8 @@ async def quick_stock_text(uid, text) -> bool:
     target, word = m.group(1).strip(), m.group(2).lower()
     in_stock = word in ("keldi", "bor")
     sets = [x for x in store.designs.values() if not x.get("deleted")
-            and store.section(x["section"])["kind"] == "nabor" and x["title"].upper() == target.upper()]
+            and (store.section(x["section"])["kind"] == "nabor" or store.section(x["section"]).get("whole"))
+            and target.upper() in (x["title"].upper(), x["title"].split(" · ")[-1].upper())]
     if len(sets) == 1:
         ch = ops.set_stock(sets[0]["id"], None, in_stock)
         await bot.send(uid, ("✅ " if ch else "ℹ️ O'zgarmadi: ") + f"{esc(sets[0]['title'])} — {'bor' if in_stock else 'qolmadi'}")
@@ -1278,7 +1279,7 @@ async def quick_stock_text(uid, text) -> bool:
             target = " ".join(tokens[1:])
     matches = []
     for dd in ([design] if design else store.designs.values()):
-        if dd.get("deleted"):
+        if dd.get("deleted") or (store.section(dd["section"]) or {}).get("whole"):
             continue
         for c in dd["categories"]:
             for it in c["items"]:
@@ -1288,7 +1289,7 @@ async def quick_stock_text(uid, text) -> bool:
         # aqlli qidiruv: "za 5 qolmadi" -> Zaftrik 5
         scored = []
         for dd in ([design] if design else store.designs.values()):
-            if dd.get("deleted"):
+            if dd.get("deleted") or (store.section(dd["section"]) or {}).get("whole"):
                 continue
             for c in dd["categories"]:
                 for it in c["items"]:

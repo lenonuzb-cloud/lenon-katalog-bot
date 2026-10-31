@@ -451,7 +451,8 @@ function renderDesign(){
   if (!q){
     h += heroHtml(d, sec);
     h += `<h1>${esc(d.title)}</h1><div class="orn">${sec.key==="boden"?"BODEN":"LENON"}</div>`;
-    if (d.note) h += `<div class="note">${esc(d.note)}</div>`;
+    if (sec.whole && !d.in_stock) h += `<div class="nabor-info" style="color:var(--red);font-weight:700">❌ Bu nabor hozir qolmadi</div>`;
+    if (d.note) h += `<div class="note"${sec.whole?' style="color:var(--gold-dark)"':''}>${esc(d.note).replace(/\n/g, sec.whole ? " · " : "<br>")}</div>`;
     if (d.agents.length) h += `<div class="agents">${d.agents.filter(a=>a.username).map(a=>`<button data-u="${esc(a.username)}">💬 ${esc(a.name)}</button>`).join("")}</div>`;
   }
   const total = d.categories.reduce((a,c)=>a+c.items.length,0);
@@ -551,7 +552,7 @@ function renderTable(){
   const {sec, d} = f;
   let h = "";
   if (CAT.layout==="table" && d.photos && d.photos.length){
-    h += `<div class="slidewrap"><div class="slides" id="slides">${d.photos.map(p=>`<img loading="lazy" src="${img(p,1000)}">`).join("")}</div>${badges(sec.kind==="design"?{is_new:d.is_new,in_stock:true}:d)}
+    h += `<div class="slidewrap"><div class="slides" id="slides">${d.photos.map(p=>`<img loading="lazy" src="${img(p,1000)}">`).join("")}</div>${badges(sec.kind==="design"&&!sec.whole?{is_new:d.is_new,in_stock:true}:d)}
       ${d.photos.length>1?`<div class="dots">${d.photos.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`:""}</div>`;
   }
   h += `<h1>${esc(d.title)}</h1><div class="orn">${CAT.layout==="table"?"LENON":"JADVAL"}</div>`;
@@ -563,7 +564,8 @@ function renderTable(){
   } else if (sec.kind==="photos"){
     h += `<div class="nabor-info">${esc(d.note).replace(/\n/g,"<br>")}</div>`;
   } else {
-    if (d.note) h += `<div class="note">${esc(d.note)}</div>`;
+    if (sec.whole && !d.in_stock) h += `<div class="nabor-info" style="color:var(--red);font-weight:700">❌ Bu nabor hozir qolmadi</div>`;
+    if (d.note) h += `<div class="note"${sec.whole?' style="color:var(--gold-dark)"':''}>${esc(d.note).replace(/\n/g, sec.whole ? " · " : "<br>")}</div>`;
     if (d.agents.length) h += `<div class="agents">${d.agents.filter(a=>a.username).map(a=>`<button data-u="${esc(a.username)}">💬 ${esc(a.name)}</button>`).join("")}</div>`;
     const hasCode = d.categories.some(c=>c.items.some(i=>i.code));
     let n=0, rows="";
@@ -574,13 +576,15 @@ function renderTable(){
       if (c.name && c.name!=="Asosiy") rows += `<div class="cat">${esc(c.name)}</div>`;
       for (const it of its){
         n++;
-        rows += `<div class="row ${it.in_stock?"":"out"} ${ADMIN?"adm":""}" data-item="${it.id}">
+        const whole = !!sec.whole, sold = whole ? !d.in_stock : !it.in_stock;
+        rows += `<div class="row ${sold?"out":""} ${ADMIN?"adm":""}" data-item="${it.id}">
           <span class="n">${n}</span><span class="nm">${esc(it.name)}${chips(it)}</span>
           <span class="cd">${esc([hasCode?it.code:"", it.qty||""].filter(Boolean).join(" · "))}</span><span class="pr">${esc(it.price)}${it.total?`<small style="display:block;color:var(--hint);font-weight:500">jami ${esc(it.total)}</small>`:""}</span>
-          ${ADMIN?`<button class="sw ${it.in_stock?"on":""}" data-sw="${it.id}" aria-label="bor/qolmadi"></button>`:""}</div>`;
+          ${ADMIN&&!whole?`<button class="sw ${it.in_stock?"on":""}" data-sw="${it.id}" aria-label="bor/qolmadi"></button>`:""}</div>`;
       }
     }
     h += `<div class="tbl">${rows || '<div class="empty-msg">Jadval bo\'sh</div>'}</div>`;
+    if (ADMIN && sec.whole) h += `<button class="btn addbtn ${d.in_stock?"danger":""}" id="nstock">${d.in_stock?"❌ Butun nabor qolmadi":"✅ Nabor keldi"}</button>`;
     if (ADMIN) h += `<button class="btn addbtn" id="additem">➕ Mahsulot qo'shish</button>
                      <button class="btn ghost addbtn" id="reord">↕️ Mahsulotlar tartibini o'zgartirish</button>
                      <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="rename">🔤 Nomini o'zgartirish</button><button class="btn ghost" style="flex:1;color:var(--red)" id="deld">🗑 Dizaynni o'chirish</button></div>`;
