@@ -139,12 +139,13 @@ def design_html(d) -> tuple[str, list]:
         whole = naborlar.is_whole(d)
         sec = store.section(d["section"]) or {}
         tags = " ".join(t for t in (_tag(sec.get("title", "")), _code_tag(d)) if t)
-        parts.append(f"<h3>{esc(d['title'])}</h3>")
-        parts.append(f"<p>📂 Bo'lim: <b>{esc(sec.get('title', ''))}</b>" + (f" · {tags}" if tags else "") + "</p>")
+        parts.append(f"<blockquote><i>{esc(d['title'])}</i></blockquote>")
+        if tags:
+            parts.append(f"<p>{tags}</p>")
         if whole and not d.get("in_stock", True):
             parts.append("<p>❌ <b>Bu nabor hozir qolmadi</b></p>")
         if whole and d.get("note"):
-            parts.append(f"<p>{_note_pretty(d['note'])}</p>")
+            parts.append(f"<p>{esc(naborlar.note_line(d['note']))}</p>")
     else:
         parts.append(f"<blockquote><i>{esc(d['title'])}</i></blockquote>")
     if item_state(d) == "new":
@@ -170,11 +171,6 @@ def design_html(d) -> tuple[str, list]:
     parts.append("<table bordered striped compact>" + "".join(rows) + "</table>")
     if d.get("note") and not whole:
         parts.append(f"<p><b>{esc(d['note'])}</b></p>")
-    if config.LENONUZ:
-        sec = store.section(d["section"]) or {}
-        parts.append("<p>📞 <b>Buyurtma uchun</b> pastdagi agentlardan biriga yozing.<br>"
-                     f"🔎 Shu bo'limdagi barcha postlar: {_tag(sec.get('title', ''))} · "
-                     "📒 Hamma tovarlar — <b>Katalog</b> tugmasida.</p>")
     return "".join(parts), media
 
 
