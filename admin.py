@@ -390,8 +390,15 @@ async def on_menu(uid, text):
         except Exception as e:  # noqa
             text = f"⚠️ Eski botga ulanib bo'lmadi: {esc(e)}"
         await bot.safe_delete(uid, note["message_id"])
-        kb = ikb([[btn("✅ Tasdiqlash", "rs:ok"), btn("❌ Bekor", "cancel")]]) if restore._plan.get(uid) else None
-        await bot.send(uid, text, reply_markup=kb)
+        if any(new for _, new in restore._plan.get(uid) or []):
+            await bot.send(uid, text, reply_markup=ikb([[btn("✅ Tasdiqlash", "rs:ok"), btn("❌ Bekor", "cancel")]]))
+        else:
+            restore._plan.pop(uid, None)
+            await bot.send(uid, "Eski botning bazasida ham jadvallar qisqa ekan." if "Tekshirildi" in text or "To'ldiriladigan tovarlar: 0" in text else text)
+            if restore.start_scan(uid):
+                await bot.send(uid, "🔎 Endi guruhdagi eski postlarning o'zidan to'liq jadvallarni qidiraman. "
+                                    "Bu 30–40 daqiqa oladi, tugagach shu yerga yozaman. Bu chatda bir zum paydo "
+                                    "bo'lib yo'qolayotgan xabarlar — tekshiruv, e'tibor bermang.")
     elif cmd == "/tozala" and config.ROTATION:
         import dedup
         if dedup.start_clean():

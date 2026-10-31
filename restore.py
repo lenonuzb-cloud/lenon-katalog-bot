@@ -173,3 +173,153 @@ def apply(uid) -> int:
         n += 1
     store.save()
     return n
+
+
+# =====================================================================
+#   Guruhdagi eski postlardan tiklash (eski bot ma'lumoti ham qisqa bo'lsa)
+# =====================================================================
+import asyncio  # noqa: E402
+import html as _html  # noqa: E402
+import json  # noqa: E402
+
+from tg import bot  # noqa: E402
+
+_scan = {"task": None}
+MARKS = re.compile(r"❌|✅|🆕|\bNEW\b|\bQolmadi\b|\bKeldi\b", re.I)
+
+
+def _cells(tr_html):
+    out = []
+    for m in re.finditer(r"<(td|th)([^>]*)>(.*?)</\1>", tr_html, re.S | re.I):
+        inner = m.group(3)
+        sold = bool(re.search(r"<s>|❌|qolmadi", inner, re.I))
+        txt = _html.unescape(re.sub(r"<[^>]+>", " ", inner))
+        txt = re.sub(r"\s+", " ", MARKS.sub(" ", txt)).strip()
+        out.append((txt, sold, "colspan" in m.group(2).lower()))
+    return out
+
+
+def html_table(s) -> list:
+    """HTML jadvalni kategoriyalar ro'yxatiga aylantiradi."""
+    cats, cur, cmap = [], None, None
+    for tr in re.findall(r"<tr[^>]*>(.*?)</tr>", s, re.S | re.I):
+        cells = _cells(tr)
+        if not cells:
+            continue
+        texts = [c[0] for c in cells]
+        if len(cells) == 1 and (cells[0][2] or not cmap):
+            cur = {"name": texts[0] or "Asosiy", "items": []}
+            cats.append(cur)
+            continue
+        if _is_header(texts):
+            cmap = _colmap(texts)
+            continue
+        if cmap and "name" in cmap:
+            g = lambda k: texts[cmap[k]] if k in cmap and cmap[k] < len(texts) else ""  # noqa
+            it = {k: g(k) for k in ("name", "code", "qty", "price", "total")}
+            sold = cells[cmap["name"]][1] if cmap["name"] < len(cells) else False
+        else:
+            t = texts[1:] if texts and texts[0].isdigit() else texts
+            it = _guess(t)
+            sold = any(c[1] for c in cells)
+        if not it["name"]:
+            continue
+        it["in_stock"] = not sold
+        if cur is None:
+            cur = {"name": "Asosiy", "items": []}
+            cats.append(cur)
+        cur["items"].append(it)
+    return [c for c in cats if c["items"]]
+
+
+def _strings(o):
+    if isinstance(o, str):
+        yield o
+    elif isinstance(o, dict):
+        for v in o.values():
+            yield from _strings(v)
+    elif isinstance(o, list):
+        for v in o:
+            yield from _strings(v)
+
+
+async def scan_group(uid):
+    """Guruhdagi botning postlarini ko'rib chiqadi va har tovarning eng uzun jadvalini topadi."""
+    import dedup
+    gid = store.settings.get("group_id")
+    me = bot.me.get("id")
+    find = dedup._title_finder()
+    tracked = [i for cs in dedup._st()["posts"].values() for c in cs for i in c["ids"]]
+    end = max(tracked) if tracked else None
+    best, sample_keys, checked = {}, None, 0
+    mid, gap = 1, 0
+    while (mid <= end) if end else (gap < 1000):
+        m, err = await dedup._forward_probe(uid, gid, mid)
+        await asyncio.sleep(dedup._DELAY)
+        mid += 1
+        if m is None:
+            gap += 1
+            if "protected" in err or "can't be forwarded" in err:
+                return "Guruhda «kontentni himoyalash» yoqilgan — postlarni o'qib bo'lmadi."
+            continue
+        gap = 0
+        org = m.get("forward_origin") or {}
+        if ((org.get("sender_user") or {}).get("id") or (m.get("forward_from") or {}).get("id")) != me:
+            continue
+        checked += 1
+        body = json.dumps({k: v for k, v in m.items() if k not in ("chat", "from", "forward_origin")},
+                          ensure_ascii=False)
+        did = find(body)
+        tables = [html_table(s) for s in _strings(m) if "<tr" in s.lower()]
+        tables = [t for t in tables if t]
+        if not tables:
+            if sample_keys is None and did:
+                sample_keys = sorted(m.keys())
+            continue
+        if not did:
+            continue
+        t = max(tables, key=_count)
+        if _count(t) > _count(best.get(did, [])):
+            best[did] = t
+    plan, lines = [], []
+    for did, new in best.items():
+        d = store.designs.get(did)
+        if not d:
+            continue
+        cur_n = sum(1 for c in d["categories"] for it in c["items"] if not _junk(it))
+        if _count(new) > cur_n:
+            plan.append((did, new))
+            lines.append(f"• {publisher.esc(d['title'])}: {cur_n} → <b>{_count(new)}</b>")
+    for d in store.designs.values():
+        if not d.get("deleted") and d["id"] not in best and any(_junk(it) for c in d["categories"] for it in c["items"]):
+            plan.append((d["id"], None))
+    if plan and not lines:
+        plan = []
+    _plan[uid] = plan
+    if not plan:
+        msg = f"Guruhdagi {checked} ta bot posti ko'rildi, to'liqroq jadval topilmadi."
+        if not best and sample_keys:
+            msg += ("\n\n🛠 Postlar ichidagi jadvalni o'qib bo'lmadi. Shu xabarning rasmini dasturchiga yuboring:\n"
+                    f"<code>{publisher.esc(', '.join(sample_keys))}</code>")
+        return msg
+    return (f"🔎 Guruhdagi {checked} ta eski post ko'rib chiqildi.\n\n<b>To'ldiriladigan tovarlar: {len(lines)} ta</b>\n"
+            + "\n".join(lines[:60]) + ("\n…" if len(lines) > 60 else "")
+            + "\n\nOrtiqcha «Nomi | Narxi» qatorlari ham olib tashlanadi. Qolmadi belgilari saqlanadi. Tasdiqlaysizmi?")
+
+
+def start_scan(uid) -> bool:
+    t = _scan.get("task")
+    if t and not t.done():
+        return False
+
+    async def run():
+        from admin import ikb, btn
+        try:
+            text = await scan_group(uid)
+        except Exception as e:  # noqa
+            log.exception("scan")
+            text = f"⚠️ Guruhni tekshirishda xato: {publisher.esc(e)}"
+        kb = ikb([[btn("✅ Tasdiqlash", "rs:ok"), btn("❌ Bekor", "cancel")]]) if _plan.get(uid) else None
+        await bot.send(uid, text, reply_markup=kb)
+    _scan["task"] = asyncio.get_event_loop().create_task(run())
+    return True
