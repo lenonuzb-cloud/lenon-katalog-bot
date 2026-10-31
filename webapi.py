@@ -127,6 +127,9 @@ async def admin_action(request):
             warns = ops.edit_item(body["design"], body["item"], name=body.get("name"), code=body.get("code"),
                                   price=body.get("price"), category=body.get("category"),
                                   size=body.get("size"))
+        elif a == "week_set":
+            import schedule
+            schedule.set_day(int(body["day"]), list(body.get("ids") or []))
         elif a == "post_now":
             if not config.ROTATION:
                 return web.json_response({"ok": False, "error": "Bu guruhda ishlamaydi"}, status=400)
@@ -214,6 +217,10 @@ async def admin_info(request):
     import checker
     import report
     kind = request.query.get("t", "report")
+    if kind == "week":
+        import schedule
+        return web.json_response({"ok": True, "week": schedule.week(), "summary": schedule.summary(),
+                                  "days": schedule.DAYS, "short": schedule.SHORT})
     if kind == "check":
         sc = await checker.self_check()
         probs = checker.audit()

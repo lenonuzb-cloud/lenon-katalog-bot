@@ -673,8 +673,10 @@ function adminPanel(){
     <button class="choice" id="ap_rep"><span>📊</span><div><b>Hisobot</b><small>Qo'shilgan, qolmadi/keldi bo'lgan, tahrirlangan mahsulotlar va hozir qolmaganlar</small></div></button>
     <button class="choice" id="ap_prod"><span>📚</span><div><b>Mahsulotlar ro'yxati</b><small>Barcha mahsulotlar — keraksizini butunlay o'chirish</small></div></button>
     <button class="choice" id="ap_chk"><span>🛠</span><div><b>Tekshirish (nazoratchi)</b><small>Bot holati va jadvallardagi xatolar: narx, kod, takrorlar</small></div></button>
+    ${CAT.rotation?`<button class="choice" id="ap_week"><span>📅</span><div><b>Haftalik post jadvali</b><small>Har bir kunga qaysi tovarlar guruhga chiqishini tanlang — kun bo'yi 08:00–22:00 ga teng bo'linadi</small></div></button>`:""}
     <div class="pinfo2">Adminlar va agentlar sozlamalari — botdagi ⚙️ Sozlamalar menyusida (faqat egasi uchun).</div>`);
   $("#ap_rep").onclick = () => reportSheet(24);
+  const aw = $("#ap_week"); if (aw) aw.onclick = () => weekSheet(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1);
   $("#ap_prod").onclick = () => productsSheet((CAT.sections.find(s=>s.kind==="design")||{}).key);
   $("#ap_chk").onclick = async () => {
     openSheet(`<h3>🛠 Tekshiruv</h3><div class="loading">Tekshirilmoqda…</div>`);
@@ -683,6 +685,79 @@ function adminPanel(){
       const bot = j.bot.length ? j.bot.map(x=>`<li>${esc(x)}</li>`).join("") : "<li>Hammasi joyida ✅</li>";
       const pr = j.problems.length ? j.problems.slice(0,80).map(x=>`<li>${esc(x)}</li>`).join("") : "<li>Xato topilmadi ✅</li>";
       openSheet(`<h3>🛠 Tekshiruv</h3><div class="rep"><b>Bot holati</b><ul>${bot}</ul><b>Jadvallar (${j.problems.length})</b><ul>${pr}</ul></div>`);
+    }catch(e){ toast("⚠️ Internet bilan muammo", true); }
+  };
+}
+// ---------------- Haftalik post jadvali ----------------
+const WEEK = {data:null, sel:null, day:0, open:{}};
+function weekInterval(n){
+  if (!n) return "Tanlanmagan — bu kuni oddiy navbat ishlaydi (soatiga 1 ta)";
+  if (n === 1) return "1 ta post — 08:00 da";
+  const step = 840 / (n - 1);
+  return step >= 60 ? `${n} ta post — har ${Math.floor(step/60)} soat ${Math.round(step%60)} daqiqada`
+                    : `${n} ta post — har ${Math.round(step)} daqiqada`;
+}
+function weekTimes(n){ if(!n) return []; if(n===1) return [0]; return [...Array(n)].map((_,i)=>Math.round(i*840/(n-1))); }
+function hm(m){ m += 480; return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0"); }
+async function weekSheet(day){
+  openSheet(`<h3>📅 Haftalik post jadvali</h3><div class="loading">Yuklanmoqda…</div>`);
+  try{ WEEK.data = await adminInfo("t=week"); }catch(e){ toast("⚠️ Internet bilan muammo", true); return; }
+  WEEK.day = day; WEEK.sel = new Set(WEEK.data.week[String(day)] || []); WEEK.open = {};
+  drawWeek();
+}
+function drawWeek(){
+  const W = WEEK.data, day = WEEK.day, secs = CAT.sections.filter(s=>s.kind==="design");
+  const other = {};
+  for (let i=0;i<7;i++) if (i!==day) for (const id of (W.week[String(i)]||[])) (other[id] = other[id]||[]).push(W.short[i]);
+  const cnt = i => i===day ? WEEK.sel.size : (W.week[String(i)]||[]).length;
+  let h = `<h3>📅 Haftalik post jadvali</h3>
+    <div class="seg" style="flex-wrap:wrap">${W.short.map((d,i)=>`<button data-day="${i}" class="${i===day?"on":""}">${d}${cnt(i)?` · ${cnt(i)}`:""}</button>`).join("")}</div>
+    <div class="pinfo2" style="margin:8px 0 4px"><b>${esc(W.days[day])}</b>: ${esc(weekInterval(WEEK.sel.size))}</div>
+    <div class="pinfo2" style="margin:0 0 10px">Bo'limni belgilasangiz — ichidagi hamma tovar tanlanadi. Bo'lim nomini bosib, tovarlarni bittalab tanlashingiz mumkin.</div>`;
+  for (const s of secs){
+    const ds = s.designs.filter(d=>!d.pinned);
+    if (!ds.length) continue;
+    const n = ds.filter(d=>WEEK.sel.has(d.id)).length;
+    const all = n === ds.length, open = WEEK.open[s.key];
+    h += `<div style="border:1px solid var(--line);border-radius:14px;margin-bottom:8px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px">
+        <input type="checkbox" data-wsec="${s.key}" ${all?"checked":""} style="width:22px;height:22px;flex:none;accent-color:var(--gold)">
+        <button data-open="${s.key}" style="flex:1;text-align:left;background:none;border:0;font:600 15px var(--sans);color:var(--text);padding:0">${esc(s.title)}</button>
+        <span style="color:var(--hint);font-size:13px">${n}/${ds.length} ${open?"▲":"▼"}</span></div>
+      ${open?ds.map(d=>`<label style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-top:1px solid var(--line);margin:0;text-transform:none;letter-spacing:0;font-size:14px;color:var(--text)">
+        <input type="checkbox" data-id="${d.id}" ${WEEK.sel.has(d.id)?"checked":""} style="width:20px;height:20px;flex:none;accent-color:var(--gold)">
+        <span style="flex:1">${esc(d.title)}${d.in_stock?"":` <span class="chip out">QOLMADI</span>`}</span>
+        ${other[d.id]?`<small style="color:var(--hint)">${other[d.id].join(", ")}</small>`:""}</label>`).join(""):""}</div>`;
+  }
+  if (WEEK.sel.size){
+    const order = []; for (const s of secs) for (const d of s.designs) if (WEEK.sel.has(d.id) && !d.pinned) order.push(d);
+    const tm = weekTimes(order.length);
+    h += `<label>Kun tartibi</label><div class="pinfo2" style="line-height:1.7">${order.slice(0,60).map((d,i)=>`${hm(tm[i])} — ${esc(d.title)}`).join("<br>")}</div>`;
+  }
+  h += `<div class="acts"><button class="btn ghost" id="wk_clear">Kunni tozalash</button><button class="btn" id="wk_save">💾 Saqlash</button></div>`;
+  openSheet(h);
+  document.querySelectorAll("#sheet [data-day]").forEach(b => b.onclick = () => { WEEK.day = +b.dataset.day; WEEK.sel = new Set(W.week[b.dataset.day]||[]); drawWeek(); });
+  document.querySelectorAll("#sheet [data-open]").forEach(b => b.onclick = () => { WEEK.open[b.dataset.open] = !WEEK.open[b.dataset.open]; const y=$("#sheet").scrollTop; drawWeek(); $("#sheet").scrollTop=y; });
+  document.querySelectorAll("#sheet [data-wsec]").forEach(c => c.onchange = () => {
+    const s = secs.find(x=>x.key===c.dataset.wsec);
+    for (const d of s.designs) if (!d.pinned) c.checked ? WEEK.sel.add(d.id) : WEEK.sel.delete(d.id);
+    const y=$("#sheet").scrollTop; drawWeek(); $("#sheet").scrollTop=y;
+  });
+  document.querySelectorAll("#sheet input[data-id]").forEach(c => c.onchange = () => {
+    c.checked ? WEEK.sel.add(c.dataset.id) : WEEK.sel.delete(c.dataset.id);
+    const y=$("#sheet").scrollTop; drawWeek(); $("#sheet").scrollTop=y;
+  });
+  $("#wk_clear").onclick = () => { WEEK.sel = new Set(); drawWeek(); };
+  $("#wk_save").onclick = async () => {
+    const secsOrder = []; for (const s of secs) for (const d of s.designs) if (WEEK.sel.has(d.id)) secsOrder.push(d.id);
+    try{
+      const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData},
+        body:JSON.stringify({action:"week_set", day:WEEK.day, ids:secsOrder})});
+      const j = await r.json();
+      if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return; }
+      W.week[String(WEEK.day)] = secsOrder;
+      toast(`✅ ${W.days[WEEK.day]} saqlandi: ${weekInterval(secsOrder.length)}`);
+      drawWeek();
     }catch(e){ toast("⚠️ Internet bilan muammo", true); }
   };
 }

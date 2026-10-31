@@ -361,6 +361,7 @@ class Store:
                     "note": d.get("note", ""),
                     "agents": [{"name": a, "username": self.settings["agents"].get(a, "")} for a in d.get("agents", [])],
                     "in_stock": d.get("in_stock", True),
+                    "pinned": bool(d.get("pinned")),
                     "is_new": d.get("new_until", 0) > t,
                     "is_keldi": d.get("keldi_until", 0) > t,
                     "link": self.post_link(d),

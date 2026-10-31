@@ -59,6 +59,25 @@ async def post_next(reason="jadval") -> str | None:
     return d["title"]
 
 
+async def post_design(did, reason="jadval") -> str:
+    """Tovarni guruhga joylaydi (eski nusxasi o'chadi) va navbatda oxiriga o'tkazadi."""
+    q = sync_queue()
+    if did in q:
+        q.remove(did)
+        q.append(did)
+    d = store.designs[did]
+    ids = await publisher.send_copy(did)
+    import dedup
+    await dedup.after_post(did, ids)
+    r = _rot()
+    r["posted"] = r.get("posted", 0) + 1
+    r["last_title"] = d["title"]
+    r["last_at"] = datetime.now(config.TZ).strftime("%d.%m %H:%M")
+    store.save()
+    store.event("edit", f"Avto-post ({reason}): {d['title']}", did)
+    return d["title"]
+
+
 async def post_now(design_id) -> str:
     """Tanlangan tovarni hozir joylaydi va navbat oxiriga qo'yadi («✅ Guruhga joylash»)."""
     q = sync_queue()
@@ -85,6 +104,19 @@ async def tick():
         await dedup.sweep()
     except Exception as e:  # noqa
         log.warning("Eski postlarni o'chirishda xato: %s", e)
+    import schedule
+    try:
+        if await schedule.tick():
+            return  # bugun haftalik jadval ishlayapti
+    except Exception as e:  # noqa
+        log.warning("Haftalik jadval xatosi: %s", e)
+        owner = store.settings.get("owner_id")
+        if owner:
+            try:
+                await bot.send(owner, f"⚠️ Avto-post xatosi: {publisher.esc(e)}")
+            except Exception:  # noqa
+                pass
+        return
     now = datetime.now(config.TZ)
     if not (config.ROT_FIRST_HOUR <= now.hour <= config.ROT_LAST_HOUR) or now.minute > 20:
         return
@@ -107,6 +139,10 @@ async def tick():
 
 
 def status_text() -> str:
+    import schedule
+    t = schedule.today_text()
+    if t:
+        return t + "\n\nHaftalik jadvalni mini ilovada o'zgartirasiz: 📒 Katalog → ADMIN → 📅 Haftalik post jadvali."
     q = sync_queue()
     r = _rot()
     per_day = config.ROT_LAST_HOUR - config.ROT_FIRST_HOUR + 1

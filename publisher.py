@@ -5,6 +5,7 @@ xuddi guruhdagi hozirgi postlar kabi. Agar ular ishlamasa — zaxira usul:
 rasmlar albomi + jadval rasmi."""
 import asyncio
 import html
+import re
 import logging
 
 import config
@@ -132,13 +133,20 @@ def design_html(d) -> tuple[str, list]:
     show, media = _slideshow(d, d["title"])
     if show:
         parts.append(show)
-    parts.append(f"<blockquote><i>{esc(d['title'])}</i></blockquote>")
+    whole = False
     if config.LENONUZ:
         import naborlar
-        if naborlar.is_whole(d) and not d.get("in_stock", True):
+        whole = naborlar.is_whole(d)
+        sec = store.section(d["section"]) or {}
+        tags = " ".join(t for t in (_tag(sec.get("title", "")), _code_tag(d)) if t)
+        parts.append(f"<h3>{esc(d['title'])}</h3>")
+        parts.append(f"<p>📂 Bo'lim: <b>{esc(sec.get('title', ''))}</b>" + (f" · {tags}" if tags else "") + "</p>")
+        if whole and not d.get("in_stock", True):
             parts.append("<p>❌ <b>Bu nabor hozir qolmadi</b></p>")
-        if d.get("note"):
-            parts.append(f"<p>{esc(naborlar.note_line(d['note']))}</p>")
+        if whole and d.get("note"):
+            parts.append(f"<p>{_note_pretty(d['note'])}</p>")
+    else:
+        parts.append(f"<blockquote><i>{esc(d['title'])}</i></blockquote>")
     if item_state(d) == "new":
         parts.append("<p>🆕 <b>Yangi dizayn!</b></p>")
     has_code = any(it.get("code") for c in d["categories"] for it in c["items"])
@@ -160,9 +168,45 @@ def design_html(d) -> tuple[str, list]:
             total = f"<td>{esc(it.get('total', ''))}</td>" if has_total else ""
             rows.append(f'<tr><td align="center">{no}</td><td>{_name_cell(it, d)}</td>{code}{qty}{price}{total}</tr>')
     parts.append("<table bordered striped compact>" + "".join(rows) + "</table>")
-    if d.get("note"):
+    if d.get("note") and not whole:
         parts.append(f"<p><b>{esc(d['note'])}</b></p>")
+    if config.LENONUZ:
+        sec = store.section(d["section"]) or {}
+        parts.append("<p>📞 <b>Buyurtma uchun</b> pastdagi agentlardan biriga yozing.<br>"
+                     f"🔎 Shu bo'limdagi barcha postlar: {_tag(sec.get('title', ''))} · "
+                     "📒 Hamma tovarlar — <b>Katalog</b> tugmasida.</p>")
     return "".join(parts), media
+
+
+def _tag(text) -> str:
+    """«Nabor 46» -> #Nabor46, «Pela + choynak to'plami» -> #Pela_choynak_toplami."""
+    words = re.findall(r"[0-9A-Za-zА-Яа-яЁёʻʼ']+", text or "")
+    words = [w.replace("'", "").replace("ʻ", "").replace("ʼ", "") for w in words]
+    if not words:
+        return ""
+    if len(words) == 2 and words[1].isdigit():
+        return "#" + words[0] + words[1]
+    return "#" + "_".join(w for w in words if w)
+
+
+def _code_tag(d) -> str:
+    m = re.search(r"kodi\s*[:;]\s*([\w\-]+)", d.get("note") or "", re.I)
+    code = m.group(1) if m else d["title"].split("·")[-1].strip()
+    if not code or " " in code or len(code) > 14 or not re.search(r"\d", code):
+        return ""
+    return "#" + re.sub(r"[^0-9A-Za-z]", "_", code)
+
+
+def _note_pretty(note) -> str:
+    icons = {"jami": "📦", "narxi": "💰", "kodi": "🔖"}
+    out = []
+    for line in (note or "").splitlines():
+        k, _, v = line.partition(":")
+        if v.strip():
+            out.append(f"{icons.get(k.strip().lower(), '•')} {esc(k.strip())}: <b>{esc(v.strip())}</b>")
+        elif line.strip():
+            out.append(esc(line.strip()))
+    return " · ".join(out)
 
 
 def nabor_html(d) -> tuple[str, list]:
