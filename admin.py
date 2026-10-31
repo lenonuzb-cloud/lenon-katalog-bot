@@ -382,6 +382,16 @@ async def on_menu(uid, text):
         await do_check(uid)
     elif cmd in (BTN_SETTINGS, "/sozlamalar"):
         await settings_menu(uid)
+    elif cmd == "/tiklash" and config.LENONUZ:
+        import restore
+        note = await bot.send(uid, "⏳ Eski botdagi jadvallar bilan solishtirilmoqda…")
+        try:
+            text = await restore.build(uid)
+        except Exception as e:  # noqa
+            text = f"⚠️ Eski botga ulanib bo'lmadi: {esc(e)}"
+        await bot.safe_delete(uid, note["message_id"])
+        kb = ikb([[btn("✅ Tasdiqlash", "rs:ok"), btn("❌ Bekor", "cancel")]]) if restore._plan.get(uid) else None
+        await bot.send(uid, text, reply_markup=kb)
     elif cmd == "/tozala" and config.ROTATION:
         import dedup
         if dedup.start_clean():
@@ -1641,7 +1651,8 @@ async def sync_menu_buttons():
                   {"command": "rasm", "description": "Dizayn rasmlarini yuborish (/rasm 01-AL)"},
                   {"command": "arxiv", "description": "Rasmlarni kod bilan ZIP arxivda olish (/arxiv 01-AL)"}]
     if config.ROTATION:
-        admin_cmds += [{"command": "tozala", "description": "Guruhdagi dublikat postlarni o'chirish"},
+        admin_cmds += [{"command": "tiklash", "description": "Qisqarib qolgan jadvallarni eski botdan tiklash"},
+                       {"command": "tozala", "description": "Guruhdagi dublikat postlarni o'chirish"},
                        {"command": "navbat", "description": "Avto-aylantirish holati"},
                        {"command": "aylantir", "description": "Navbatdagi tovarni hozir guruhga joylash"},
                        {"command": "guruhga", "description": "Tanlangan tovarni hozir joylash (/guruhga SR95)"}]
@@ -1814,6 +1825,12 @@ async def on_callback(cb):
         await botextra.search_callback(uid, data, cb, sessions)
     elif pre == "pk":
         await botextra.pick_callback(uid, data, cb, sessions, main_menu)
+    elif pre == "rs" and config.LENONUZ:
+        import restore
+        await bot.answer_cb(cb["id"])
+        n = restore.apply(uid)
+        await bot.send(uid, f"✅ {n} ta tovarning jadvali to'ldirildi. Keyingi postlarda to'liq jadval chiqadi, "
+                            "katalogda hozirdan ko'rinadi.", reply_markup=main_menu())
     elif pre == "rt" and config.ROTATION:
         import rotation
         d = store.designs.get(data.split(":")[2])
