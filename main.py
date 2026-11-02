@@ -27,6 +27,7 @@ import notify
 import publisher
 import report
 import webapi
+import zaxira
 from store import store
 from tg import bot, TelegramError
 
@@ -183,7 +184,6 @@ async def on_startup(app):
 
     # agentlarni bog'lash
     store.backup_hook = backup_to_telegram
-    import zaxira
     zaxira.hook = backup_to_telegram
     bot.sent_hook = publisher.record_sent
     publisher.error_hook = checker.report_error
@@ -226,6 +226,17 @@ async def on_startup(app):
         asyncio.get_event_loop().create_task(admin.apply_privacy())
 
     app["bg"] = asyncio.get_event_loop().create_task(background())
+    # bir martalik: yo'qolgan ma'lumotni qaytarish uchun chatdagi eski zaxiralarni egasiga ko'rsatish
+    if OWNER_ID and store.settings.get("zx_scan") != 1:
+        async def _zx_scan():
+            await asyncio.sleep(20)
+            try:
+                await zaxira.offer_found(OWNER_ID)
+                store.settings["zx_scan"] = 1
+                store.save()
+            except Exception as e:  # noqa
+                log.warning("zaxiralarni ko'rish: %s", e)
+        asyncio.get_event_loop().create_task(_zx_scan())
     if config.LENONUZ:
         import naborlar
         try:

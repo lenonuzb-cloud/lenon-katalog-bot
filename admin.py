@@ -479,6 +479,9 @@ async def on_menu(uid, text):
         await pin_catalog(uid)
     elif cmd == "/joyla":
         await settings_callback(uid, "se:pub", {"id": "x"})
+    elif cmd == "/zaxiralar":
+        import zaxira
+        await zaxira.offer_found(uid, manual=True)
     elif cmd == "/zaxira":
         await bot.call("sendDocument", files={"document": ("baza.json", store.dump_bytes(), "application/json")},
                        chat_id=str(uid), caption="Katalog ma'lumotlari (zaxira nusxa)")
