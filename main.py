@@ -169,7 +169,10 @@ async def webhook(request):
 
 
 async def health(request):
-    return web.json_response({"ok": True, "bot": bot.username, "designs": len(store.designs)})
+    return web.json_response({"ok": True, "bot": bot.username, "designs": len(store.designs),
+                              "photos": zaxira.photo_count(store.s), "auto": store.settings.get("zx_auto"),
+                              "zx_scan": store.settings.get("zx_scan2"),
+                              "commit": (os.getenv("RENDER_GIT_COMMIT") or "")[:7]})
 
 
 async def root(request):
@@ -227,12 +230,12 @@ async def on_startup(app):
 
     app["bg"] = asyncio.get_event_loop().create_task(background())
     # bir martalik: yo'qolgan ma'lumotni qaytarish uchun chatdagi eski zaxiralarni egasiga ko'rsatish
-    if OWNER_ID and store.settings.get("zx_scan") != 1:
+    if OWNER_ID and store.settings.get("zx_scan2") != 1:
         async def _zx_scan():
             await asyncio.sleep(20)
             try:
                 await zaxira.offer_found(OWNER_ID)
-                store.settings["zx_scan"] = 1
+                store.settings["zx_scan2"] = 1
                 store.save()
             except Exception as e:  # noqa
                 log.warning("zaxiralarni ko'rish: %s", e)

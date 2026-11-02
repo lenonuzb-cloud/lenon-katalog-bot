@@ -73,7 +73,7 @@ async def callback(uid, data, cb):
         await bot.send(uid, "❗ Faylni o'qib bo'lmadi, katalog o'zgarmadi.")
         return
     store.settings["owner_id"] = uid
-    store.settings["zx_scan"] = 1
+    store.settings["zx_scan2"] = 1
     store.settings.pop("backup_msg_id", None)   # yangi zaxira xabari yuborilib, mahkamlanadi
     if hook:
         store.backup_hook = hook
@@ -95,6 +95,12 @@ def _stats(st):
     items = [it for d in ds for c in d.get("categories", []) for it in c.get("items", [])]
     out = sum(1 for it in items if not it.get("in_stock", True)) + sum(1 for d in ds if d.get("in_stock") is False)
     return len(ds), len(items), out
+
+
+def photo_count(st) -> int:
+    ds = [d for d in st.get("designs", {}).values() if not d.get("deleted")]
+    return (sum(len(d.get("photos") or []) for d in ds)
+            + sum(1 for d in ds for c in d.get("categories", []) for it in c.get("items", []) if it.get("photo")))
 
 
 async def scan(owner):
@@ -126,7 +132,7 @@ async def scan(owner):
         except Exception:  # noqa
             continue
         res.append({"file_id": doc["file_id"], "saved": float(st.get("saved_at") or pm.get("date") or 0),
-                    "stats": _stats(st)})
+                    "stats": _stats(st), "photos": photo_count(st)})
     res.sort(key=lambda r: -r["saved"])
     return res
 
@@ -136,6 +142,27 @@ async def offer_found(owner, manual=False):
     import config
     found = await scan(owner)
     cur = _stats(store.s)
+    # Avtomatik: rasmlari ko'proq zaxira bo'lsa — hozirgi (boshidan yuklangan) baza o'rniga o'shani tiklaymiz
+    if found and not manual:
+        best = max(found, key=lambda r: (r["photos"], r["stats"][2], r["saved"]))
+        now_ph = photo_count(store.s)
+        if best["photos"] > now_ph:
+            ok = store.load_bytes(await bot.download(best["file_id"]))
+            if ok:
+                store.settings["owner_id"] = owner
+                store.settings["zx_scan2"] = 1
+                store.settings["zx_auto"] = {"from": now_ph, "to": best["photos"]}
+                store.settings.pop("backup_msg_id", None)
+                if hook:
+                    store.backup_hook = hook
+                store.save(backup=False)
+                await store.backup_now()
+                t = datetime.fromtimestamp(best["saved"], config.TZ).strftime("%d.%m.%Y %H:%M")
+                d, n, q = _stats(store.s)
+                await bot.send(owner, f"✅ <b>Katalog avtomatik tiklandi</b> ({t} dagi zaxiradan).\n"
+                                      f"{d} dizayn, {n} mahsulot, {best['photos']} ta rasm, ❌ {q} ta qolmadi.\n\n"
+                                      "Mini app'ni yopib, qayta oching. Boshqa sanadagi holat kerak bo'lsa — /zaxiralar")
+                return
     if len(found) < 2 and not manual:
         return
     if not found:

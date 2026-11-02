@@ -1,0 +1,13 @@
+# Server holatini ko'rish (qo'lda ishga tushiriladi)
+name: Server holati
+on:
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: |
+          for p in health uz/health; do
+            echo "== /$p"; curl -sS -m 120 https://lenon-katalog-bot.onrender.com/$p || true; echo
+          done
