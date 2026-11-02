@@ -270,6 +270,11 @@ async def on_message(m):
         return
 
     # --- adminlar uchun ---
+    if m.get("document"):
+        import zaxira
+        if zaxira.is_backup_doc(m):
+            await zaxira.offer(uid, m)
+            return
     if m.get("photo") or (m.get("document") and str(m["document"].get("mime_type", "")).startswith("image/")):
         await collect_photo(m)
         return
@@ -1832,6 +1837,10 @@ async def on_callback(cb):
         await bot.send(uid, "Bekor qilindi. Asosiy menyu 👇", reply_markup=main_menu())
         return
     pre = data.split(":")[0]
+    if pre == "zx":
+        import zaxira
+        await zaxira.callback(uid, data, cb)
+        return
     if pre == "ph":
         await photo_callback(uid, data, cb)
     elif pre == "nd":

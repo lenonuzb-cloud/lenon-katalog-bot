@@ -69,24 +69,29 @@ async def backup_to_telegram(data: bytes):
     store.save(backup=False)
 
 
-async def restore_from_telegram() -> bool:
+async def restore_from_telegram():
+    """Natija: True — tiklandi; False — zaxira umuman yo'q; None — zaxira bor-yo'qligini aniqlab bo'lmadi (xato)."""
     owner = store.settings.get("owner_id") or OWNER_ID
     if not owner:
         return False
-    try:
-        chat = await bot.call("getChat", chat_id=owner)
-        pm = chat.get("pinned_message") or {}
-        doc = pm.get("document")
-        if not doc or not doc.get("file_name", "").endswith(".json"):
-            return False
-        data = await bot.download(doc["file_id"])
-        ok = store.load_bytes(data)
-        if ok:
-            log.info("Katalog Telegram'dagi zaxiradan tiklandi")
-        return ok
-    except TelegramError as e:
-        log.warning("Zaxiradan tiklab bo'lmadi: %s", e)
-        return False
+    last = None
+    for attempt in range(6):          # server endi uyg'onganda Telegram bilan aloqa birdan ishlamasligi mumkin
+        try:
+            chat = await bot.call("getChat", chat_id=owner)
+            pm = chat.get("pinned_message") or {}
+            doc = pm.get("document")
+            if not doc or not doc.get("file_name", "").endswith(".json"):
+                return False
+            data = await bot.download(doc["file_id"])
+            if store.load_bytes(data):
+                log.info("Katalog Telegram'dagi zaxiradan tiklandi")
+                return True
+            last = "zaxira fayli o'qilmadi"
+        except Exception as e:  # noqa
+            last = str(e)
+        log.warning("Zaxiradan tiklash urinish %d: %s", attempt + 1, last)
+        await asyncio.sleep(5 + attempt * 5)
+    return None
 
 
 # ---------------- fon ishlari ----------------
@@ -178,6 +183,8 @@ async def on_startup(app):
 
     # agentlarni bog'lash
     store.backup_hook = backup_to_telegram
+    import zaxira
+    zaxira.hook = backup_to_telegram
     bot.sent_hook = publisher.record_sent
     publisher.error_hook = checker.report_error
     notify.error_hook = checker.report_error
@@ -186,9 +193,20 @@ async def on_startup(app):
     if not store.load_local():
         if OWNER_ID:
             store.settings["owner_id"] = OWNER_ID
-        if not await restore_from_telegram():
+        res = await restore_from_telegram()
+        if not res:
             store.import_initial()
             log.info("Boshlang'ich katalog yuklandi: %d ta dizayn/nabor", len(store.designs))
+        if res is None:
+            # Zaxira bor bo'lishi mumkin, lekin o'qib bo'lmadi — uni boshlang'ich katalog bilan USTIDAN YOZMAYMIZ.
+            store.backup_hook = None
+            try:
+                await bot.send(OWNER_ID, "⚠️ Server qayta ishga tushdi, lekin katalog zaxirasini o'qib bo'lmadi. "
+                                         "Ma'lumot yo'qolmasligi uchun avtomatik zaxiralash to'xtatildi.\n\n"
+                                         "Shu chatdagi oxirgi «💾 Katalog zaxirasi» faylini menga qayta yuboring "
+                                         "(forward qiling) — katalogni o'shandan tiklayman.")
+            except Exception:  # noqa
+                pass
     if OWNER_ID and store.settings.get("owner_id") != OWNER_ID:
         store.settings["owner_id"] = OWNER_ID
     store.save(backup=False)
