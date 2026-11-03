@@ -13,19 +13,34 @@ from tg import bot, TelegramError
 log = logging.getLogger("guruhdan")
 
 
+SKIP = {"thumbnail", "thumb", "from", "chat", "sender_chat", "forward_origin", "reply_markup", "sticker"}
+
+
+def _is_size(x):
+    return isinstance(x, dict) and "file_id" in x and "width" in x and "height" in x
+
+
+def _add(out, p):
+    if p["file_unique_id" if "file_unique_id" in p else "file_id"] not in {u for _, u in out}:
+        out.append((p["file_id"], p.get("file_unique_id", p["file_id"])))
+
+
 def _photos(obj, out):
-    """Javob ichidagi barcha rasmlarni topadi (har bir rasmning eng katta o'lchami)."""
-    if isinstance(obj, dict):
-        for k, v in obj.items():
-            if k == "photo" and isinstance(v, list) and v and isinstance(v[0], dict) and "file_id" in v[0]:
-                big = max(v, key=lambda p: p.get("width", 0) * p.get("height", 0))
-                if big["file_unique_id"] not in {u for _, u in out}:
-                    out.append((big["file_id"], big["file_unique_id"]))
-            else:
-                _photos(v, out)
-    elif isinstance(obj, list):
+    """Javob ichidagi barcha rasmlarni topadi (har bir rasmning eng katta o'lchami),
+    oddiy rasm ham, jadval-post (boy xabar) ichidagi rasmlar ham."""
+    if isinstance(obj, list):
+        if obj and all(_is_size(x) for x in obj):
+            _add(out, max(obj, key=lambda p: p["width"] * p["height"]))
+            return
         for v in obj:
             _photos(v, out)
+    elif isinstance(obj, dict):
+        if _is_size(obj) and not obj.get("mime_type", "image/").startswith(("video", "audio", "application")):
+            _add(out, obj)
+            return
+        for k, v in obj.items():
+            if k not in SKIP:
+                _photos(v, out)
 
 
 def _texts(obj, out):
@@ -124,6 +139,7 @@ async def run(owner, upto=700, report=True):
         _photos(m, ph)
         _texts(m, tx)
         text = tx[0] if tx else ""
+        full = " ".join(tx)
         g = m.get("media_group_id")
         if g:
             a = albums.setdefault(g, {"photos": [], "text": "", "mid": mid})
@@ -131,9 +147,9 @@ async def run(owner, upto=700, report=True):
             a["text"] = a["text"] or text
             continue
         if ph:
-            d = _match(text)
+            d = _match(text) or (_match(full) if full != text else None)
             if not d and mid > 400:
-                d = _new_design(text, [p for p, _ in ph])
+                d = _new_design(full, [p for p, _ in ph])
                 if d:
                     created.append(html.escape(d["title"]) + f" ({sum(len(c['items']) for c in d['categories'])} ta mahsulot)")
             if d:

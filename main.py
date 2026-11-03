@@ -172,7 +172,8 @@ async def webhook(request):
 async def health(request):
     return web.json_response({"ok": True, "bot": bot.username, "designs": len(store.designs),
                               "photos": zaxira.photo_count(store.s), "auto": store.settings.get("zx_auto"),
-                              "zx_scan": store.settings.get("zx_scan2"), "gr": store.settings.get("gr_photos1"),
+                              "zx_scan": store.settings.get("zx_scan2"), "gr": store.settings.get("gr_photos2"), "group": bool(store.settings.get("group_id")),
+                              "topics": sum(1 for v in (store.settings.get("topics") or {}).values() if v not in (None, -1)),
                               "commit": (os.getenv("RENDER_GIT_COMMIT") or "")[:7]})
 
 
@@ -219,6 +220,15 @@ async def on_startup(app):
                                          "(forward qiling) — katalogni o'shandan tiklayman.")
             except Exception:  # noqa
                 pass
+    # guruh unutilib qolgan bo'lsa (masalan, baza boshidan yuklangan) — ochiq guruh nomidan topamiz
+    if not store.settings.get("group_id") and config.DEFAULT_GROUP_USERNAME:
+        try:
+            g = await bot.call("getChat", chat_id="@" + config.DEFAULT_GROUP_USERNAME)
+            store.settings["group_id"] = g["id"]
+            store.settings["group_username"] = config.DEFAULT_GROUP_USERNAME
+            log.info("Guruh qayta topildi: %s", g["id"])
+        except Exception as e:  # noqa
+            log.warning("guruhni topib bo'lmadi: %s", e)
     if OWNER_ID and store.settings.get("owner_id") != OWNER_ID:
         store.settings["owner_id"] = OWNER_ID
     store.save(backup=False)
@@ -250,13 +260,13 @@ async def on_startup(app):
                 log.warning("zaxiralarni ko'rish: %s", e)
         asyncio.get_event_loop().create_task(_zx_scan())
     # bir martalik: yo'qolgan dizayn rasmlarini guruhdagi postlardan qaytarish (LENON 55)
-    if OWNER_ID and not config.ROTATION and store.settings.get("gr_photos1") != 1:
+    if OWNER_ID and not config.ROTATION and store.settings.get("gr_photos2") != 1:
         async def _gr_photos():
             await asyncio.sleep(90)
             try:
                 import guruhdan
                 await guruhdan.run(OWNER_ID)
-                store.settings["gr_photos1"] = 1
+                store.settings["gr_photos2"] = 1
                 store.save()
             except Exception as e:  # noqa
                 log.warning("guruhdan rasmlar: %s", e)

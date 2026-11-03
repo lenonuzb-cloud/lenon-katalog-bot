@@ -65,6 +65,7 @@ TOPIC_KEYS = {
 if LENONUZ:
     # LENON_UZ guruhida bo'limlar (topic) yo'q — hammasi umumiy chatga
     TOPIC_KEYS = {"umumiy": "Umumiy chat"}
+DEFAULT_GROUP_USERNAME = os.getenv("GROUP_USERNAME", "" if LENONUZ else "lenondokon")
 DEFAULT_GROUP_ID = int(os.getenv("GROUP_ID", "-1002661096776" if LENONUZ else "0") or 0)
 
 # Avto-aylantirish (faqat LENON_UZ): har kuni shu soatlarda, har soat boshida bitta tovar (Toshkent vaqti)
