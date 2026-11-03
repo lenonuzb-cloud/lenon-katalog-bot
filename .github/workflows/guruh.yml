@@ -1,0 +1,21 @@
+# Guruhdagi ochiq postlarni yuklab olish (rasmlarni tiklash uchun, qo'lda ishga tushiriladi)
+name: Guruh postlari
+on:
+  workflow_dispatch:
+    inputs:
+      from: {default: "1"}
+      to: {default: "800"}
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - run: |
+          mkdir out
+          for i in $(seq ${{ inputs.from }} ${{ inputs.to }}); do
+            curl -sS -m 20 -A "Mozilla/5.0" "https://t.me/lenondokon/$i?embed=1&mode=tme" -o out/$i.html || true
+            sleep 0.3
+          done
+          ls out | wc -l
+      - uses: actions/upload-artifact@v4
+        with: {name: posts, path: out}
