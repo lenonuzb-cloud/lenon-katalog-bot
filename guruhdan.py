@@ -183,3 +183,44 @@ async def _cleanup(owner, ids):
                 await bot.call("deleteMessage", chat_id=owner, message_id=i)
             except Exception:  # noqa
                 pass
+
+
+# ---------- vaqtinchalik tekshiruv: forward qilingan postning TUZILISHI (matn/fayl ma'lumotisiz) ----------
+_last_diag = [0.0]
+
+
+def _skeleton(o, depth=0):
+    if depth > 8:
+        return "…"
+    if isinstance(o, dict):
+        return {k: _skeleton(v, depth + 1) for k, v in o.items()}
+    if isinstance(o, list):
+        return [_skeleton(v, depth + 1) for v in o[:3]] + ([f"+{len(o) - 3}"] if len(o) > 3 else [])
+    if isinstance(o, str):
+        return f"str{len(o)}"
+    return type(o).__name__
+
+
+async def diag(request):
+    import time
+    from aiohttp import web
+    if time.time() - _last_diag[0] < 15:
+        return web.json_response({"wait": True}, status=429)
+    _last_diag[0] = time.time()
+    try:
+        mid = int(request.query.get("mid", "0"))
+    except ValueError:
+        mid = 0
+    owner = store.settings.get("owner_id")
+    gid = store.settings.get("group_id")
+    if not (0 < mid < 5000) or not owner or not gid:
+        return web.json_response({"bad": True}, status=400)
+    try:
+        m = await bot.call("forwardMessage", chat_id=owner, from_chat_id=gid, message_id=mid,
+                           disable_notification=True)
+    except Exception as e:  # noqa
+        return web.json_response({"error": str(e)[:200]})
+    await _cleanup(owner, [m["message_id"]])
+    ph = []
+    _photos(m, ph)
+    return web.json_response({"photos_found": len(ph), "skeleton": _skeleton(m)})

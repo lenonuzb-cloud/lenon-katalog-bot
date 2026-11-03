@@ -2,12 +2,15 @@
 name: Server holati
 on:
   workflow_dispatch:
+    inputs:
+      extra: {default: ""}
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 10
     steps:
       - run: |
-          for p in health uz/health; do
-            echo "== /$p"; curl -sS -m 120 https://lenon-katalog-bot.onrender.com/$p || true; echo
+          for p in health uz/health ${{ inputs.extra }}; do
+            echo "== /$p"; curl -sS -m 120 "https://lenon-katalog-bot.onrender.com/$p" || true; echo
+            sleep 16
           done

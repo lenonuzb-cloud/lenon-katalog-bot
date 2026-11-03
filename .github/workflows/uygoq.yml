@@ -1,13 +1,17 @@
-# Bepul Render serveri uxlab qolmasligi uchun har 10 daqiqada /health manzilini ochadi.
+# Har 10 daqiqada: 1) bepul Render serveri uxlab qolmasligi uchun /health ni ochadi;
+# 2) katalogning SHIFRLANGAN zaxirasini olib, «zaxira» tarmog'iga yozadi (har bir holat tarixda qoladi).
 name: Serverni uyg'oq ushlash
 on:
   schedule:
     - cron: "*/10 * * * *"
   workflow_dispatch:
+permissions:
+  contents: write
+concurrency: {group: uygoq, cancel-in-progress: false}
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - name: /health ni ochish
         run: |
@@ -16,3 +20,19 @@ jobs:
             sleep 20
           done
           exit 1
+      - name: Shifrlangan zaxirani saqlash
+        run: |
+          git clone -q --depth 50 -b zaxira "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" z \
+            || (mkdir z && cd z && git init -q && git checkout -q -b zaxira)
+          cd z
+          ok=0
+          for p in "lenon55:" "lenonuz:/uz"; do
+            n=${p%%:*}; path=${p#*:}
+            if curl -fsS -m 90 "https://lenon-katalog-bot.onrender.com$path/zaxira.enc" -o "$n.new" && [ -s "$n.new" ]; then
+              mv "$n.new" "$n.enc"; ok=1
+            else rm -f "$n.new"; fi
+          done
+          [ $ok = 1 ] || exit 0
+          git add -A
+          git -c user.name=lenon-zaxira -c user.email=bot@users.noreply.github.com commit -qm "zaxira $(date -u +%F' '%H:%M)" || exit 0
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" zaxira

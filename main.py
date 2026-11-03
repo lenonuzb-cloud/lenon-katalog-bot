@@ -13,6 +13,7 @@ if __name__ == "__main__" and _os.getenv("BOT_TOKEN_UZ") and not _os.getenv("LEN
 
 import asyncio
 import hashlib
+import json
 import logging
 import os
 import signal
@@ -197,8 +198,16 @@ async def on_startup(app):
         if OWNER_ID:
             store.settings["owner_id"] = OWNER_ID
         res = await restore_from_telegram()
+        # GitHub'dagi zaxira Telegram'dagisidan yangiroq bo'lsa — o'shani olamiz
+        import gitzaxira
+        gst = await gitzaxira.fetch()
+        if gst and (not res or float(gst.get("saved_at") or 0) > float(store.s.get("saved_at") or 0)):
+            store.load_bytes(json.dumps(gst, ensure_ascii=False).encode("utf-8"))
+            log.info("Katalog GitHub zaxirasidan tiklandi")
+            res = True
         if not res:
             store.import_initial()
+            store.settings["fresh_import"] = True
             log.info("Boshlang'ich katalog yuklandi: %d ta dizayn/nabor", len(store.designs))
         if res is None:
             # Zaxira bor bo'lishi mumkin, lekin o'qib bo'lmadi — uni boshlang'ich katalog bilan USTIDAN YOZMAYMIZ.
@@ -338,6 +347,10 @@ def make_app() -> web.Application:
     app = web.Application(client_max_size=10 * 1024 * 1024)
     app.router.add_get("/", root)
     app.router.add_get("/health", health)
+    import gitzaxira
+    app.router.add_get("/zaxira.enc", gitzaxira.handler)
+    import guruhdan
+    app.router.add_get("/diag/fwd", guruhdan.diag)
     app.router.add_post("/tg/{secret}", webhook)
     webapi.routes(app)
     app.on_startup.append(on_startup)

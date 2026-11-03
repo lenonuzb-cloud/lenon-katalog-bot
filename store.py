@@ -89,6 +89,7 @@ class Store:
                 return False
             self.s = st
             self._upgrade()
+            self.s["settings"].pop("fresh_import", None)
             self.save(backup=False)
             return True
         except Exception as e:  # noqa
@@ -321,6 +322,7 @@ class Store:
         return True
 
     def event(self, kind, text, design_id=None):
+        self.s["settings"].pop("fresh_import", None)   # egasi o'zgartirish kiritdi — endi bu haqiqiy holat
         self.s["events"].append({"ts": now(), "kind": kind, "text": text, "design": design_id})
         cutoff = now() - 90 * 86400
         if len(self.s["events"]) > 3000:
