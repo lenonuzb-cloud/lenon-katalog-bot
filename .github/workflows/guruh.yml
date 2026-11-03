@@ -5,6 +5,8 @@ on:
     inputs:
       from: {default: "1"}
       to: {default: "800"}
+permissions:
+  contents: write
 jobs:
   fetch:
     runs-on: ubuntu-latest
@@ -16,6 +18,8 @@ jobs:
             curl -sS -m 20 -A "Mozilla/5.0" "https://t.me/lenondokon/$i?embed=1&mode=tme" -o out/$i.html || true
             sleep 0.3
           done
-          ls out | wc -l
-      - uses: actions/upload-artifact@v4
-        with: {name: posts, path: out}
+          tar czf posts.tgz out
+          git init -q d && cd d && mv ../posts.tgz . && git checkout -q -b guruh-data
+          git -c user.name=bot -c user.email=bot@users.noreply.github.com add . 
+          git -c user.name=bot -c user.email=bot@users.noreply.github.com commit -qm data
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" guruh-data
