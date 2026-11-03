@@ -171,7 +171,7 @@ async def webhook(request):
 async def health(request):
     return web.json_response({"ok": True, "bot": bot.username, "designs": len(store.designs),
                               "photos": zaxira.photo_count(store.s), "auto": store.settings.get("zx_auto"),
-                              "zx_scan": store.settings.get("zx_scan2"),
+                              "zx_scan": store.settings.get("zx_scan2"), "gr": store.settings.get("gr_photos1"),
                               "commit": (os.getenv("RENDER_GIT_COMMIT") or "")[:7]})
 
 
@@ -240,6 +240,18 @@ async def on_startup(app):
             except Exception as e:  # noqa
                 log.warning("zaxiralarni ko'rish: %s", e)
         asyncio.get_event_loop().create_task(_zx_scan())
+    # bir martalik: yo'qolgan dizayn rasmlarini guruhdagi postlardan qaytarish (LENON 55)
+    if OWNER_ID and not config.ROTATION and store.settings.get("gr_photos1") != 1:
+        async def _gr_photos():
+            await asyncio.sleep(90)
+            try:
+                import guruhdan
+                await guruhdan.run(OWNER_ID)
+                store.settings["gr_photos1"] = 1
+                store.save()
+            except Exception as e:  # noqa
+                log.warning("guruhdan rasmlar: %s", e)
+        asyncio.get_event_loop().create_task(_gr_photos())
     if config.LENONUZ:
         import naborlar
         try:

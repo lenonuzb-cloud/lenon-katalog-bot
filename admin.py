@@ -479,6 +479,10 @@ async def on_menu(uid, text):
         await pin_catalog(uid)
     elif cmd == "/joyla":
         await settings_callback(uid, "se:pub", {"id": "x"})
+    elif cmd == "/guruhdan":
+        import guruhdan
+        await bot.send(uid, "🖼 Guruhdagi postlardan rasmlar qidirilmoqda, bir necha daqiqa kuting…")
+        await guruhdan.run(uid)
     elif cmd == "/zaxiralar":
         import zaxira
         await zaxira.offer_found(uid, manual=True)
