@@ -172,7 +172,7 @@ async def webhook(request):
 async def health(request):
     return web.json_response({"ok": True, "bot": bot.username, "designs": len(store.designs),
                               "photos": zaxira.photo_count(store.s), "auto": store.settings.get("zx_auto"),
-                              "zx_scan": store.settings.get("zx_scan2"), "gr": store.settings.get("gr_photos2"), "group": bool(store.settings.get("group_id")),
+                              "zx_scan": store.settings.get("zx_scan2"), "gr": store.settings.get("gr_photos2"), "chat": store.settings.get("chat_photos1"), "group": bool(store.settings.get("group_id")),
                               "topics": sum(1 for v in (store.settings.get("topics") or {}).values() if v not in (None, -1)),
                               "commit": (os.getenv("RENDER_GIT_COMMIT") or "")[:7]})
 
@@ -259,6 +259,19 @@ async def on_startup(app):
             except Exception as e:  # noqa
                 log.warning("zaxiralarni ko'rish: %s", e)
         asyncio.get_event_loop().create_task(_zx_scan())
+    # bir martalik: yo'qolgan rasmlarni egasining bot chatidagi eski rasmlardan qaytarish (LENON 55)
+    if OWNER_ID and not config.ROTATION and store.settings.get("chat_photos1") != 1:
+        async def _chat_photos():
+            await asyncio.sleep(40)
+            try:
+                import chatdan
+                r = await chatdan.run(OWNER_ID)
+                if r is not None:
+                    store.settings["chat_photos1"] = 1
+                    store.save()
+            except Exception as e:  # noqa
+                log.warning("chatdan rasmlar: %s", e)
+        asyncio.get_event_loop().create_task(_chat_photos())
     # bir martalik: yo'qolgan dizayn rasmlarini guruhdagi postlardan qaytarish (LENON 55)
     if OWNER_ID and not config.ROTATION and store.settings.get("gr_photos2") != 1:
         async def _gr_photos():

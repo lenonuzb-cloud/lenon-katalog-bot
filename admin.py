@@ -275,6 +275,20 @@ async def on_message(m):
         if zaxira.is_backup_doc(m):
             await zaxira.offer(uid, m)
             return
+        doc = m["document"]
+        if str(doc.get("file_name", "")).lower().endswith(".pdf"):
+            import pdfdan
+            d = pdfdan.find_design(doc.get("file_name", ""), m.get("caption", ""))
+            if d:
+                await bot.send(uid, f"📄 «{esc(d['title'])}» PDF'idan mahsulot rasmlari olinmoqda…",
+                               disable_notification=True)
+                try:
+                    data = await bot.download(doc["file_id"])
+                    await pdfdan.restore(uid, data, doc.get("file_name", ""), m.get("caption", ""))
+                except Exception as e:  # noqa
+                    log.warning("pdfdan: %s", e)
+                    await bot.send(uid, f"⚠️ PDF'dan rasmlarni olib bo'lmadi: {esc(str(e))[:200]}")
+                return
     if m.get("photo") or (m.get("document") and str(m["document"].get("mime_type", "")).startswith("image/")):
         await collect_photo(m)
         return
@@ -492,6 +506,9 @@ async def on_menu(uid, text):
     elif cmd == "/sayt":
         import sayt
         await sayt.report(uid, text.partition(" ")[2].strip())
+    elif cmd == "/chatdan":
+        import chatdan
+        asyncio.get_event_loop().create_task(chatdan.run(uid))
     elif cmd == "/guruhdan":
         import guruhdan
         await bot.send(uid, "🖼 Guruhdagi postlardan rasmlar qidirilmoqda, bir necha daqiqa kuting…")
