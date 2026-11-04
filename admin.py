@@ -489,6 +489,9 @@ async def on_menu(uid, text):
         await pin_catalog(uid)
     elif cmd == "/joyla":
         await settings_callback(uid, "se:pub", {"id": "x"})
+    elif cmd == "/sayt":
+        import sayt
+        await sayt.report(uid, text.partition(" ")[2].strip())
     elif cmd == "/guruhdan":
         import guruhdan
         await bot.send(uid, "🖼 Guruhdagi postlardan rasmlar qidirilmoqda, bir necha daqiqa kuting…")
@@ -1692,6 +1695,7 @@ async def sync_menu_buttons():
                   {"command": "hisobot", "description": "Hisobot"},
                   {"command": "tekshir", "description": "Nazoratchi tekshiruvi"},
                   {"command": "qolmadi", "description": "Qolmadi / Keldi belgilash"},
+                 {"command": "sayt", "description": "Sayt: kim kirdi, nima ko'rdi, parol"},
                   {"command": "pdf", "description": "Dizayn katalogini PDF qilish (/pdf 01-AL)"},
                   {"command": "rasm", "description": "Dizayn rasmlarini yuborish (/rasm 01-AL)"},
                   {"command": "arxiv", "description": "Rasmlarni kod bilan ZIP arxivda olish (/arxiv 01-AL)"}]
@@ -1854,6 +1858,10 @@ async def on_callback(cb):
         await bot.send(uid, "Bekor qilindi. Asosiy menyu 👇", reply_markup=main_menu())
         return
     pre = data.split(":")[0]
+    if pre == "st":
+        import sayt
+        await sayt.callback(uid, data, cb)
+        return
     if pre == "zx":
         import zaxira
         await zaxira.callback(uid, data, cb)

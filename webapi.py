@@ -91,6 +91,9 @@ def verify_init_data(init_data: str) -> dict | None:
         return None
     if init_data.startswith("S1."):
         return _verify_session(init_data)
+    if init_data.startswith("S2."):
+        import sayt
+        return sayt.verify_token(init_data)
     try:
         pairs = dict(parse_qsl(init_data, keep_blank_values=True))
         recv_hash = pairs.pop("hash", "")
@@ -134,7 +137,7 @@ async def catalog(request):
     if is_private():
         user = verify_init_data(request.headers.get("X-Init-Data", ""))
         import admin as _admin
-        if not user or not await _admin.is_member(user.get("id")):
+        if not user or not (user.get("site") or await _admin.is_member(user.get("id"))):
             return web.json_response({"private": True}, status=403)
     data = store.public_catalog()
     data["bot"] = bot.username
@@ -531,6 +534,8 @@ async def pdf_public(request):
 def routes(app: web.Application):
     app.router.add_get("/app", page)
     app.router.add_get("/sayt", page)
+    import sayt
+    sayt.routes(app)
     app.router.add_post("/api/login/start", login_start)
     app.router.add_get("/api/login/check", login_check)
     app.router.add_get("/app/", page)

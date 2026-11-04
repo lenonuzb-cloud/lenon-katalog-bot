@@ -18,3 +18,10 @@ services:
       # Berilsa, shu bitta xizmatda ikkala bot ishlaydi (bepul 750 soat ikki xizmatga yetmaydi).
       - key: BOT_TOKEN_UZ
         sync: false
+
+  # Qisqa manzil: lenon-katalog.onrender.com -> sayt (bepul statik sahifa, server soatlarini sarflamaydi)
+  - type: web
+    runtime: static
+    name: lenon-katalog
+    buildCommand: "true"
+    staticPublishPath: ./qisqa
