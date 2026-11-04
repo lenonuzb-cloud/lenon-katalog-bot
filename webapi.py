@@ -21,10 +21,76 @@ log = logging.getLogger("webapi")
 _img_locks: dict[str, asyncio.Lock] = {}
 
 
+# ---------------- sayt (brauzer) orqali kirish ----------------
+# Brauzerda Telegram initData yo'q. Shuning uchun: sayt kod oladi -> foydalanuvchi botda /start login_<kod>
+# bosadi -> bot a'zolikni tekshirib tasdiqlaydi -> sayt 60 kunlik imzolangan kalit oladi.
+import base64
+import secrets
+
+_login_codes: dict = {}      # kod -> {"exp": t, "user": {...} | None}
+SESSION_DAYS = 60
+
+
+def _sess_key() -> bytes:
+    return hashlib.sha256(("lenon-sayt:" + config.BOT_TOKEN).encode()).digest()
+
+
+def make_session(user: dict) -> str:
+    name = base64.urlsafe_b64encode((user.get("first_name") or "").encode()[:60]).decode().rstrip("=")
+    body = f"S1.{int(user['id'])}.{int(time.time()) + SESSION_DAYS * 86400}.{name}"
+    sig = hmac.new(_sess_key(), body.encode(), hashlib.sha256).hexdigest()[:32]
+    return f"{body}.{sig}"
+
+
+def _verify_session(tok: str) -> dict | None:
+    try:
+        body, sig = tok.rsplit(".", 1)
+        if not hmac.compare_digest(hmac.new(_sess_key(), body.encode(), hashlib.sha256).hexdigest()[:32], sig):
+            return None
+        _, uid, exp, name = body.split(".", 3)
+        if int(exp) < time.time():
+            return None
+        name = base64.urlsafe_b64decode(name + "=" * (-len(name) % 4)).decode("utf-8", "ignore")
+        return {"id": int(uid), "first_name": name}
+    except Exception:  # noqa
+        return None
+
+
+def login_confirm(code: str, user: dict) -> bool:
+    c = _login_codes.get(code)
+    if not c or c["exp"] < time.time():
+        return False
+    c["user"] = {"id": user["id"], "first_name": user.get("first_name", "")}
+    return True
+
+
+async def login_start(request):
+    now_ = time.time()
+    for k in [k for k, v in _login_codes.items() if v["exp"] < now_]:
+        _login_codes.pop(k, None)
+    if len(_login_codes) > 2000:
+        return web.json_response({"error": "busy"}, status=429)
+    code = secrets.token_urlsafe(9).replace("-", "x").replace("_", "y")
+    _login_codes[code] = {"exp": now_ + 600, "user": None}
+    return web.json_response({"code": code, "bot": bot.username})
+
+
+async def login_check(request):
+    c = _login_codes.get(request.query.get("code", ""))
+    if not c or c["exp"] < time.time():
+        return web.json_response({"expired": True}, status=410)
+    if not c["user"]:
+        return web.json_response({"wait": True})
+    _login_codes.pop(request.query.get("code"), None)
+    return web.json_response({"token": make_session(c["user"]), "name": c["user"]["first_name"]})
+
+
 def verify_init_data(init_data: str) -> dict | None:
-    """Telegram Mini App'dan kelgan initData imzosini tekshiradi. To'g'ri bo'lsa foydalanuvchini qaytaradi."""
+    """Telegram Mini App'dan kelgan initData imzosini (yoki saytning kirish kalitini) tekshiradi."""
     if not init_data:
         return None
+    if init_data.startswith("S1."):
+        return _verify_session(init_data)
     try:
         pairs = dict(parse_qsl(init_data, keep_blank_values=True))
         recv_hash = pairs.pop("hash", "")
@@ -464,6 +530,9 @@ async def pdf_public(request):
 
 def routes(app: web.Application):
     app.router.add_get("/app", page)
+    app.router.add_get("/sayt", page)
+    app.router.add_post("/api/login/start", login_start)
+    app.router.add_get("/api/login/check", login_check)
     app.router.add_get("/app/", page)
     app.router.add_get("/api/catalog", catalog)
     app.router.add_get("/api/me", me)

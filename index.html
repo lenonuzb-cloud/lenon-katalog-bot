@@ -222,7 +222,9 @@ main{padding-bottom:110px}
 <script>
 const tg = window.Telegram ? Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); try{ tg.setHeaderColor("#ffffff"); tg.setBackgroundColor("#ffffff"); }catch(e){} }
-const initData = tg ? tg.initData : "";
+let initData = tg ? tg.initData : "";
+const IN_TG = !!initData;
+if (!IN_TG){ try{ initData = localStorage.getItem("lenon_sess") || ""; }catch(e){} }
 let CAT = null, ADMIN = false, BOT = "";
 let view = {name: "section", key: "lenon"};
 const stack = [];
@@ -280,6 +282,51 @@ function lazyScan(root){
 }
 new MutationObserver(() => lazyScan()).observe(document.documentElement, {childList:true, subtree:true});
 function lockedScreen(){
+  if (!IN_TG){ return loginScreen(); }
+  lockedScreen0();
+}
+async function loginScreen(){
+  try{ localStorage.removeItem("lenon_sess"); }catch(e){}
+  document.body.innerHTML = `<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;font-family:var(--sans,sans-serif);background:#fff">
+    <img src="/static/logo.png" style="width:180px;margin-bottom:28px">
+    <div style="font:600 22px var(--serif,serif);color:#222;margin-bottom:10px">LENON katalogi</div>
+    <div style="color:#777;font-size:15px;line-height:1.55;max-width:340px;margin-bottom:26px">Katalog faqat <b>Lenon 55</b> guruhi a'zolari uchun. Kirish uchun Telegram orqali tasdiqlang.</div>
+    <a id="lgbtn" href="#" target="_blank" rel="noopener" style="display:inline-block;background:#2AABEE;color:#fff;text-decoration:none;font-weight:600;font-size:16px;padding:14px 26px;border-radius:12px">✈️ Telegram orqali kirish</a>
+    <div id="lgmsg" style="color:#999;font-size:13px;margin-top:18px;min-height:20px"></div></div>`;
+  let code = null, timer = null;
+  const msg = t => { const e = document.getElementById("lgmsg"); if (e) e.textContent = t; };
+  async function start(){
+    try{
+      const j = await (await fetch("/api/login/start", {method:"POST"})).json();
+      code = j.code;
+      document.getElementById("lgbtn").href = "https://t.me/" + j.bot + "?start=login_" + code;
+      try{ localStorage.setItem("lenon_login", JSON.stringify({code, href: document.getElementById("lgbtn").href, t: Date.now()})); }catch(e){}
+    }catch(e){ msg("Internet bilan muammo, sahifani yangilang."); }
+  }
+  let saved = null;
+  try{ saved = JSON.parse(localStorage.getItem("lenon_login") || "null"); }catch(e){}
+  if (saved && Date.now() - saved.t < 8*60*1000){ code = saved.code; document.getElementById("lgbtn").href = saved.href; poll(); }
+  else await start();
+  document.getElementById("lgbtn").onclick = (e) => {
+    e.preventDefault();
+    const h = document.getElementById("lgbtn").href;
+    if (!window.open(h, "_blank")) location.href = h;
+    poll();
+  };
+  function poll(){
+    msg("Telegram'da botni oching va «Start» (Boshlash) ni bosing… Keyin shu sahifaga qayting.");
+    clearInterval(timer);
+    timer = setInterval(async () => {
+      try{
+        const r = await fetch("/api/login/check?code=" + encodeURIComponent(code));
+        if (r.status === 410){ clearInterval(timer); try{ localStorage.removeItem("lenon_login"); }catch(e){} msg("Havola eskirdi, tugmani qayta bosing."); start(); return; }
+        const j = await r.json();
+        if (j.token){ clearInterval(timer); try{ localStorage.setItem("lenon_sess", j.token); localStorage.removeItem("lenon_login"); }catch(e){} location.reload(); }
+      }catch(e){}
+    }, 2000);
+  }
+}
+function lockedScreen0(){
   document.body.innerHTML = `<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;font-family:var(--sans,sans-serif);background:#fff">
     <img src="/static/logo.png" style="width:180px;margin-bottom:28px">
     <div style="font-size:44px;margin-bottom:12px">🔒</div>

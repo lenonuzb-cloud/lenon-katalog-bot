@@ -305,6 +305,16 @@ async def cmd_start(m, user):
     st = store.settings
     uname = (user.get("username") or "").lower()
     payload = (m.get("text") or "").partition(" ")[2].strip()
+    if payload.startswith("login_"):
+        import webapi
+        if not await is_member(uid):
+            await bot.send(uid, "🔒 Katalog faqat <b>Lenon 55</b> guruhi a'zolari uchun.")
+            return
+        if webapi.login_confirm(payload[6:], user):
+            await bot.send(uid, "✅ Saytga kirish tasdiqlandi. Endi brauzerdagi sahifaga qayting — katalog o'zi ochiladi.")
+        else:
+            await bot.send(uid, "⌛ Kirish havolasi eskirgan. Saytda «Telegram orqali kirish» tugmasini qayta bosing.")
+        return
     if not st.get("owner_id") and config.OWNER_USERNAME and uname == config.OWNER_USERNAME:
         st["owner_id"] = uid
         store.save()
