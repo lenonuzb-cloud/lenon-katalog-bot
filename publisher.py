@@ -65,8 +65,9 @@ def catalog_url(design_id=None) -> str:
 
 
 def public_links() -> bool:
-    """Katalog hamma uchun ochiq bo'lsa True. Maxfiy rejimda guruhga katalog havolalari qo'yilmaydi."""
-    return bool(bot.username)  # guruh a'zolari katalogni ochishi mumkin — havolalar doim turadi
+    """Guruh postlari ostida «📒 Katalog» tugmalari bo'ladimi. Egasi so'rovi bilan — standart holatda YO'Q
+    (sozlama: settings["catalog_buttons"] = True qilinsa qaytadi)."""
+    return bool(bot.username) and bool(store.settings.get("catalog_buttons", False))
 
 
 def keyboard(d) -> dict | None:
@@ -750,8 +751,11 @@ async def publish_guide(section_key, pin=True):
         except TelegramError:
             pass
         await bot.safe_delete(gid, old)
+    if not public_links():
+        store.save()
+        return          # katalog tugmalari o'chirilgan — yo'riqnoma ham kerak emas
     rows = []
-    if bot.username:
+    if public_links():
         rows.append([{"text": "📒 Katalogni ochish", "url": catalog_url()}])
     m = await bot.send(gid, GUIDE_TEXT, message_thread_id=thread, disable_notification=True,
                        reply_markup={"inline_keyboard": rows} if rows else None)
