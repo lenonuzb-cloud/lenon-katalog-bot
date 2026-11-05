@@ -683,7 +683,17 @@ async def wipe_group(uid=None, scan_back=1500):
             try:
                 m = await bot.call("forwardMessage", chat_id=owner, from_chat_id=gid, message_id=mid,
                                    disable_notification=True, _retries=6)
-            except TelegramError:
+            except TelegramError as e:
+                # himoyalangan (nusxalab bo'lmaydigan) xabar: botniki ekanini tahrirlash orqali bilamiz —
+                # bot faqat o'z xabarini tahrirlay oladi («o'zgarmadi» javobi ham — botniki degani)
+                if "protect" in str(e).lower() or "can't be forwarded" in str(e).lower():
+                    try:
+                        await bot.call("editMessageReplyMarkup", chat_id=gid, message_id=mid,
+                                       reply_markup={"inline_keyboard": []}, _retries=6)
+                        found.add(mid)
+                    except TelegramError as e2:
+                        if "not modified" in str(e2).lower():
+                            found.add(mid)
                 continue
             copies.append(m["message_id"])
             if ((m.get("forward_origin") or {}).get("sender_user") or {}).get("id") == me:

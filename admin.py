@@ -506,6 +506,9 @@ async def on_menu(uid, text):
     elif cmd == "/sayt":
         import sayt
         await sayt.report(uid, text.partition(" ")[2].strip())
+    elif cmd == "/qolmaganlar":
+        import qolmagan
+        await qolmagan.show(uid)
     elif cmd == "/chatdan":
         import chatdan
         asyncio.get_event_loop().create_task(chatdan.run(uid))
@@ -1713,6 +1716,7 @@ async def sync_menu_buttons():
                   {"command": "tekshir", "description": "Nazoratchi tekshiruvi"},
                   {"command": "qolmadi", "description": "Qolmadi / Keldi belgilash"},
                  {"command": "sayt", "description": "Sayt: kim kirdi, nima ko'rdi, parol"},
+                 {"command": "qolmaganlar", "description": "Hozir qolmagan mahsulotlar ro'yxati"},
                   {"command": "pdf", "description": "Dizayn katalogini PDF qilish (/pdf 01-AL)"},
                   {"command": "rasm", "description": "Dizayn rasmlarini yuborish (/rasm 01-AL)"},
                   {"command": "arxiv", "description": "Rasmlarni kod bilan ZIP arxivda olish (/arxiv 01-AL)"}]
@@ -1875,6 +1879,10 @@ async def on_callback(cb):
         await bot.send(uid, "Bekor qilindi. Asosiy menyu 👇", reply_markup=main_menu())
         return
     pre = data.split(":")[0]
+    if pre == "qm":
+        import qolmagan
+        await qolmagan.callback(uid, data, cb)
+        return
     if pre == "st":
         import sayt
         await sayt.callback(uid, data, cb)
