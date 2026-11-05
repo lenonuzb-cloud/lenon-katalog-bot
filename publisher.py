@@ -817,3 +817,40 @@ async def _later(delay, fn, arg):
         pass
     except Exception as e:  # noqa
         await _report(f"Guruhga joylashda xato ({arg})", e)
+
+
+async def strip_catalog_buttons():
+    """Bir martalik: guruhdagi mavjud postlardan «📒 Katalog» tugmalarini olib tashlash va
+    «LENON KATALOGI — qanday foydalaniladi?» yo'riqnomalarini o'chirish (egasi so'rovi bilan)."""
+    gid = store.settings.get("group_id")
+    if not gid:
+        return
+    # 1) yo'riqnoma postlari (mahkamlangan) — o'chiriladi
+    pins = store.s.setdefault("pins", {})
+    for key, mid in list(pins.items()):
+        if mid:
+            try:
+                await bot.call("unpinChatMessage", chat_id=gid, message_id=mid)
+            except TelegramError:
+                pass
+            await bot.safe_delete(gid, mid)
+        pins.pop(key, None)
+    store.save()
+    # 2) bo'lim ro'yxatlari — tugmasiz qilib qayta yoziladi
+    for key in list(store.s.get("index_msgs", {}).keys()):
+        try:
+            await publish_index(key)
+        except Exception as e:  # noqa
+            log.warning("ro'yxat yangilanmadi %s: %s", key, e)
+        await asyncio.sleep(1)
+    # 3) jadval postlari — faqat agent tugmalari qoladi
+    for d in list(store.designs.values()):
+        m = d.get("msg") or {}
+        if not m.get("message_id"):
+            continue
+        try:
+            await bot.call("editMessageReplyMarkup", chat_id=m.get("chat_id", gid), message_id=m["message_id"],
+                           reply_markup=keyboard(d) or {"inline_keyboard": []})
+        except TelegramError:
+            pass
+        await asyncio.sleep(0.4)

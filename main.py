@@ -259,6 +259,17 @@ async def on_startup(app):
             except Exception as e:  # noqa
                 log.warning("zaxiralarni ko'rish: %s", e)
         asyncio.get_event_loop().create_task(_zx_scan())
+    # bir martalik: guruhdagi postlardan katalog tugmalari va yo'riqnomani olib tashlash
+    if store.settings.get("strip_btn1") != 1 and store.settings.get("group_id"):
+        async def _strip():
+            await asyncio.sleep(30)
+            try:
+                await publisher.strip_catalog_buttons()
+                store.settings["strip_btn1"] = 1
+                store.save()
+            except Exception as e:  # noqa
+                log.warning("tugmalarni olib tashlash: %s", e)
+        asyncio.get_event_loop().create_task(_strip())
     # bir martalik: yo'qolgan rasmlarni egasining bot chatidagi eski rasmlardan qaytarish (LENON 55)
     if OWNER_ID and not config.ROTATION and store.settings.get("chat_photos1") != 1:
         async def _chat_photos():
