@@ -152,6 +152,10 @@ def mark_design_photos(design_id, photos: list, replace: bool):
     d["photos"] = list(photos) if replace else (d.get("photos", []) + list(photos))[:20]
     store.event("edit", f"{d['title']}: rasmlar yangilandi", design_id)
     store.save()
+    if d["section"] != "rasmlar":          # «Rasmlar» bo'limining o'z postlari bor
+        import rasmlarga
+        for f in photos:
+            rasmlarga.add(f, d["title"])
 
 
 def set_item_photo(design_id, item_id, file_id, raw=None):
@@ -163,6 +167,8 @@ def set_item_photo(design_id, item_id, file_id, raw=None):
     it["updated"] = __import__("time").time()
     store.event("edit", f"{it['name']} ({d['title']}): rasm qo'yildi", design_id)
     store.save()
+    import rasmlarga
+    rasmlarga.add(file_id, " · ".join(x for x in (it["name"], it.get("code", ""), d["title"]) if x))
 
 
 def add_items(design_id, items: list) -> tuple[int, list]:
