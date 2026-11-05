@@ -260,12 +260,17 @@ async def on_startup(app):
                 log.warning("zaxiralarni ko'rish: %s", e)
         asyncio.get_event_loop().create_task(_zx_scan())
     # bir martalik: guruhdagi postlardan katalog tugmalari va yo'riqnomani olib tashlash
-    if store.settings.get("strip_btn1") != 1 and store.settings.get("group_id"):
+    if store.settings.get("strip_btn2") != 1 and store.settings.get("group_id"):
         async def _strip():
             await asyncio.sleep(30)
             try:
-                await publisher.strip_catalog_buttons()
-                store.settings["strip_btn1"] = 1
+                if store.settings.get("strip_btn1") != 1:
+                    await publisher.strip_catalog_buttons()
+                    store.settings["strip_btn1"] = 1
+                    store.save()
+                n = await publisher.strip_old_buttons()
+                log.info("eski xabarlardan tugmalar olindi: %s", n)
+                store.settings["strip_btn2"] = 1
                 store.save()
             except Exception as e:  # noqa
                 log.warning("tugmalarni olib tashlash: %s", e)

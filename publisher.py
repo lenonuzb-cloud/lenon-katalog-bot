@@ -854,3 +854,34 @@ async def strip_catalog_buttons():
         except TelegramError:
             pass
         await asyncio.sleep(0.4)
+
+
+async def strip_old_buttons(scan_back=2000):
+    """Bir martalik: guruhdagi hisobda yo'q eski bot xabarlaridan (masalan «📢 Katalog yangilandi»)
+    tugmalarni olib tashlash. Jadval va ro'yxat postlariga tegilmaydi (ularda kerakli tugmalar bor)."""
+    gid = store.settings.get("group_id")
+    if not gid:
+        return 0
+    keep = set()
+    for d in store.designs.values():
+        m = d.get("msg") or {}
+        if m.get("message_id"):
+            keep.add(m["message_id"])
+    for info in store.s.get("index_msgs", {}).values():
+        if info and info.get("message_id"):
+            keep.add(info["message_id"])
+    probe = await bot.call("sendMessage", chat_id=gid, text="🧹", disable_notification=True)
+    top = probe["message_id"]
+    await bot.safe_delete(gid, top)
+    n = 0
+    for mid in range(top - 1, max(1, top - scan_back) - 1, -1):
+        if mid in keep:
+            continue
+        try:
+            await bot.call("editMessageReplyMarkup", chat_id=gid, message_id=mid,
+                           reply_markup={"inline_keyboard": []}, _retries=6)
+            n += 1
+        except TelegramError:
+            pass
+        await asyncio.sleep(0.05)
+    return n

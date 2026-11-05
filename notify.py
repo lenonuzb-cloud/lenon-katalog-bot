@@ -73,7 +73,7 @@ async def flush():
         parts.append("🆕 <b>Yangi:</b>\n" + _fmt(_buf["new"]))
     if _buf["edit"]:
         parts.append("✏️ <b>O'zgartirildi:</b>\n" + _fmt(_buf["edit"]))
-    parts.append("Jadval yoki katalog orqali tekshirib oling 👇")
+    parts.append("Jadvaldan tekshirib oling.")
     text = "\n\n".join(parts)
     for v in _buf.values():
         v.clear()
@@ -81,7 +81,9 @@ async def flush():
     gid, thread = st.get("group_id"), st["topics"].get("muhokama")
     if not gid or not thread:
         return
-    markup = {"inline_keyboard": [[{"text": "📒 Katalogni ochish", "url": f"https://t.me/{bot.username}?startapp"}]]}
+    import publisher
+    markup = ({"inline_keyboard": [[{"text": "📒 Katalogni ochish", "url": f"https://t.me/{bot.username}?startapp"}]]}
+              if publisher.public_links() else None)
     try:
         await bot.send(gid, text[:4000], message_thread_id=thread, reply_markup=markup)
         store.event("notify", "Guruhga xabar yuborildi")
