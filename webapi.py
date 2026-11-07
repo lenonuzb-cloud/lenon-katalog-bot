@@ -214,6 +214,17 @@ async def admin_action(request):
             n, warns = ops.add_items(body["design"], body.get("items") or [])
             if not n and not warns:
                 return web.json_response({"ok": False, "error": "Hech narsa tanlanmadi"}, status=400)
+        elif a == "section_add":
+            if not config.LENONUZ:
+                return web.json_response({"ok": False, "error": "Bu katalogda ishlamaydi"}, status=400)
+            key = ops.add_section(body.get("title", ""), bool(body.get("whole")), body.get("after", ""))
+            return web.json_response({"ok": True, "warnings": [], "section": key, "catalog": store.public_catalog()})
+        elif a == "section_rename" and config.LENONUZ:
+            ops.rename_section(body["section"], body.get("title", ""))
+        elif a == "section_delete" and config.LENONUZ:
+            ops.delete_section(body["section"])
+        elif a == "move_design" and config.LENONUZ:
+            ops.move_design(body["design"], body["section"])
         elif a == "add_design":
             did = ops.add_design(body["section"], body.get("title", ""))
             return web.json_response({"ok": True, "warnings": [], "design": did, "catalog": store.public_catalog()})

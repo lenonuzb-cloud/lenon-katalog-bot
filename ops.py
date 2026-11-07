@@ -307,3 +307,63 @@ def _unhide(section_key, name, code):
     hk = registry.hkey(name, code)
     if hidden and hk in hidden:
         hidden.remove(hk)
+
+
+# ---------------- bo'limlar (LENON_UZ) ----------------
+def add_section(title: str, whole: bool = False, after: str = "") -> str:
+    """Katalogga yangi bo'lim qo'shadi. whole=True — nabor kabi butunligicha sotiladi."""
+    import re as _re
+    import secrets
+    title = " ".join((title or "").split())
+    if not title:
+        raise OpError("Bo'lim nomini yozing")
+    if len(title) > 40:
+        raise OpError("Nom juda uzun (40 belgigacha)")
+    secs = store.s["sections"]
+    if any(s["title"].lower() == title.lower() for s in secs):
+        raise OpError("Bunday bo'lim allaqachon bor")
+    base = _re.sub(r"[^a-z0-9]", "", title.lower())[:12] or "bolim"
+    key = base
+    while store.section(key):
+        key = f"{base}{secrets.token_hex(2)}"
+    sec = {"key": key, "title": title, "kind": "design"}
+    if whole:
+        sec["whole"] = True
+    pos = next((i + 1 for i, s in enumerate(secs) if s["key"] == after), len(secs))
+    secs.insert(pos, sec)
+    store.settings.setdefault("topics", {})[key] = -1
+    store.event("edit", f"Yangi bo'lim: {title}")
+    store.save()
+    return key
+
+
+def rename_section(key: str, title: str):
+    s = store.section(key)
+    title = " ".join((title or "").split())
+    if not s:
+        raise OpError("Bo'lim topilmadi")
+    if not title:
+        raise OpError("Nomini yozing")
+    if any(x["title"].lower() == title.lower() and x["key"] != key for x in store.s["sections"]):
+        raise OpError("Bunday bo'lim allaqachon bor")
+    s["title"] = title
+    store.save()
+
+
+def delete_section(key: str):
+    s = store.section(key)
+    if not s:
+        raise OpError("Bo'lim topilmadi")
+    if store.designs_in(key):
+        raise OpError("Bo'limda dizaynlar bor — avval ularni o'chiring yoki boshqa bo'limga o'tkazing")
+    store.s["sections"] = [x for x in store.s["sections"] if x["key"] != key]
+    store.save()
+
+
+def move_design(design_id: str, key: str):
+    d = store.designs.get(design_id)
+    s = store.section(key)
+    if not d or not s or s["kind"] != "design":
+        raise OpError("Topilmadi")
+    d["section"] = key
+    store.save()

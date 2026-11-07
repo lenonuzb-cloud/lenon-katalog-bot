@@ -448,7 +448,11 @@ function sectionView(key){
   if (!sec) return '<div class="empty-msg">Bo\'lim topilmadi</div>';
   if (!sec.designs.length && !ADMIN) return '<div class="empty-msg">Hozircha bo\'sh</div>';
   if (sec.kind==="photos") return `<div class="grid two">${sec.designs.map(d=>cardHtml(d,true)).join("")}</div>`;
-  const add = ADMIN && sec.kind==="design" ? `<button class="newdz" id="newdz" data-sec="${sec.key}">➕ Yangi dizayn qo'shish</button>` : "";
+  let add = ADMIN && sec.kind==="design" ? `<button class="newdz" id="newdz" data-sec="${sec.key}">➕ Yangi dizayn qo'shish</button>` : "";
+  if (ADMIN && CAT.rotation && sec.kind==="design") add = `<div style="display:flex;gap:8px;margin-bottom:18px">
+      <button class="newdz" id="newdz" data-sec="${sec.key}" style="flex:1;margin:0">➕ Yangi dizayn</button>
+      <button class="newdz" id="newsec" data-sec="${sec.key}" style="flex:1;margin:0">🗂 Yangi bo'lim</button>
+      <button class="newdz" id="secset" data-sec="${sec.key}" style="flex:none;width:52px;margin:0" aria-label="Bo'lim sozlamalari">⚙️</button></div>`;
   if (CAT.layout==="table") return add + `<div class="grid two">${sec.designs.map(d=>cardHtml(d,true)).join("")}</div>`;
   return add + `<div class="grid">${sec.designs.map(d=>cardHtml(d,false)).join("")}</div>`;
 }
@@ -482,6 +486,8 @@ function cardHtml(d, small){
 }
 function bindCards(){
   const nd = $("#newdz"); if (nd) nd.onclick = () => newDesignSheet(nd.dataset.sec);
+  const ns = $("#newsec"); if (ns) ns.onclick = () => newSectionSheet(ns.dataset.sec);
+  const ss = $("#secset"); if (ss) ss.onclick = () => sectionSettings(ss.dataset.sec);
   document.querySelectorAll(".card[data-id]").forEach(c => c.onclick = () => go({name:"design", id:c.dataset.id}));
   document.querySelectorAll(".card[data-nab]").forEach(c => c.onclick = () => go({name:"nabor", key:c.dataset.nab}));
 }
@@ -644,7 +650,7 @@ function renderTable(){
     if (ADMIN && sec.whole) h += `<button class="btn addbtn ${d.in_stock?"danger":""}" id="nstock">${d.in_stock?"❌ Butun nabor qolmadi":"✅ Nabor keldi"}</button>`;
     if (ADMIN) h += `<button class="btn addbtn" id="additem">➕ Mahsulot qo'shish</button>
                      <button class="btn ghost addbtn" id="reord">↕️ Mahsulotlar tartibini o'zgartirish</button>
-                     <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="rename">🔤 Nomini o'zgartirish</button><button class="btn ghost" style="flex:1;color:var(--red)" id="deld">🗑 Dizaynni o'chirish</button></div>`;
+                     <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="rename">🔤 Nomini o'zgartirish</button>${CAT.rotation?`<button class="btn ghost" style="flex:1" id="moved">📂 Bo'limini o'zgartirish</button>`:""}<button class="btn ghost" style="flex:1;color:var(--red)" id="deld">🗑 Dizaynni o'chirish</button></div>`;
   }
   if (d.link) h += `<button class="btn ghost addbtn" id="openpost">↗️ Guruhdagi postni ochish</button>`;
   if (ADMIN && CAT.rotation && sec.kind==="design") h += `<button class="btn addbtn" id="postnow">✅ Kanalga joylash</button>
@@ -668,6 +674,7 @@ function renderTable(){
     const ns = $("#nstock"); if (ns) ns.onclick = () => act({action:"stock", design:d.id, in_stock: !d.in_stock}, d.in_stock?"Qolmadi deb belgilandi":"Keldi deb belgilandi");
     const ai = $("#additem"); if (ai) ai.onclick = () => addChooser(d);
     const rn = $("#rename"); if (rn) rn.onclick = () => renameSheet(d);
+    const mv = $("#moved"); if (mv) mv.onclick = () => moveSheet(d);
     const ro = $("#reord"); if (ro) ro.onclick = () => go({name:"reorder", id:d.id});
     const dd = $("#deld"); if (dd) dd.onclick = () => confirmDo(`«${d.title}» katalogdan va guruhdan o'chirilsinmi?`, () => act({action:"delete_design", design:d.id}, "O'chirildi").then(back));
   }
@@ -965,6 +972,55 @@ function newDesignSheet(secKey){
       go({name:"design", id:j.design}); const nd = findDesign(j.design); if (nd) pickSheet(nd.d);
     }catch(e){ toast("⚠️ Internet bilan muammo", true); }
   };
+}
+async function secAct(body, msg){
+  try{
+    const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify(body)});
+    const j = await r.json();
+    if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return null; }
+    Object.assign(CAT, j.catalog); if (msg) toast("✅ "+msg); return j;
+  }catch(e){ toast("⚠️ Internet bilan muammo", true); return null; }
+}
+function openSection(key){ stack.length=0; view={name:"section", key}; $("#q").value=""; renderTabs(); render(); updateBack(); window.scrollTo(0,0);
+  const t = document.querySelector(`.tab[data-k="${key}"]`); if (t) t.scrollIntoView({inline:"center", block:"nearest"}); }
+function newSectionSheet(afterKey){
+  openSheet(`<h3>🗂 Yangi bo'lim</h3>
+    <label>Bo'lim nomi</label><input id="ns_t" placeholder="masalan: Nabor 52 yoki Stakanlar" maxlength="40">
+    <label style="display:flex;align-items:center;gap:10px;text-transform:none;letter-spacing:0;font-size:15px;color:var(--text);margin-top:16px">
+      <input type="checkbox" id="ns_w" style="width:22px;height:22px;flex:none;accent-color:var(--gold)">
+      <span>Nabor bo'limi — butunligicha sotiladi<br><small style="color:var(--hint)">«Qolmadi» ichidagi buyumlarga emas, butun naborga qo'yiladi</small></span></label>
+    <div class="pinfo2" style="margin-top:10px">Bo'lim hozirgi bo'limdan keyin qo'shiladi. Keyin ichiga «➕ Yangi dizayn» bilan dizayn qo'shasiz yoki mavjud dizaynni «📂 Bo'limini o'zgartirish» bilan o'tkazasiz.</div>
+    <div class="acts"><button class="btn ghost" id="ns_c">Bekor</button><button class="btn" id="ns_s">Yaratish</button></div>`);
+  setTimeout(() => $("#ns_t").focus(), 50);
+  $("#ns_c").onclick = closeSheet;
+  $("#ns_s").onclick = async () => {
+    const title = $("#ns_t").value.trim(); if (!title){ toast("Nomini yozing", true); return; }
+    const j = await secAct({action:"section_add", title, whole:$("#ns_w").checked, after:afterKey}, `«${title}» bo'limi yaratildi`);
+    if (j){ closeSheet(); openSection(j.section); }
+  };
+}
+function sectionSettings(key){
+  const sec = CAT.sections.find(x=>x.key===key); if (!sec) return;
+  const n = sec.designs.length;
+  openSheet(`<h3>⚙️ ${esc(sec.title)}</h3>
+    <label>Bo'lim nomi</label><input id="se_t" value="${esc(sec.title)}" maxlength="40">
+    <div class="acts"><button class="btn ghost" id="se_c">Yopish</button><button class="btn" id="se_s">Saqlash</button></div>
+    <button class="btn ghost" id="se_d" style="width:100%;margin-top:12px;color:var(--red)">🗑 Bo'limni o'chirish</button>
+    <div class="pinfo2" style="margin-top:8px">${n ? `Bo'limda ${n} ta dizayn bor — o'chirish uchun avval ularni o'chiring yoki boshqa bo'limga o'tkazing.` : "Bo'lim bo'sh — o'chirish mumkin."}</div>`);
+  $("#se_c").onclick = closeSheet;
+  $("#se_s").onclick = async () => { if (await secAct({action:"section_rename", section:key, title:$("#se_t").value}, "Saqlandi")){ closeSheet(); renderTabs(); render(); } };
+  $("#se_d").onclick = () => confirmDo(`«${sec.title}» bo'limini o'chiraymi?`, async () => {
+    if (await secAct({action:"section_delete", section:key}, "Bo'lim o'chirildi")){ closeSheet(); const f = CAT.sections.find(x=>x.kind==="design"); if (f) openSection(f.key); }
+  });
+}
+function moveSheet(d){
+  const cur = (findDesign(d.id)||{}).sec || {};
+  const secs = CAT.sections.filter(s=>s.kind==="design" && s.key!==cur.key);
+  openSheet(`<h3>📂 Qaysi bo'limga o'tkazamiz?</h3><div class="pinfo2" style="margin:-6px 0 10px">${esc(d.title)} · hozir: ${esc(cur.title||"")}</div>
+    ${secs.map(s=>`<button class="choice" data-mv="${s.key}" style="padding:12px 16px;margin-bottom:8px"><div><b>${esc(s.title)}</b><small>${s.designs.length} ta dizayn</small></div></button>`).join("")}`);
+  document.querySelectorAll("#sheet [data-mv]").forEach(b => b.onclick = async () => {
+    if (await secAct({action:"move_design", design:d.id, section:b.dataset.mv}, "O'tkazildi")){ closeSheet(); renderTabs(); render(); }
+  });
 }
 function renameSheet(d){
   openSheet(`<h3>🔤 Nomini o'zgartirish</h3><input id="r_t" value="${esc(d.title)}">
