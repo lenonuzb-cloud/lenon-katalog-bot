@@ -1,5 +1,6 @@
 """Katalog ustidagi amallar — bot ham, mini ilova ham shularni ishlatadi.
 Har bir amal: ma'lumotni o'zgartiradi -> saqlaydi -> guruhdagi postni yangilaydi -> a'zolarni xabardor qiladi."""
+import re
 import config
 import checker
 import registry

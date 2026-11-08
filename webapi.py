@@ -256,6 +256,15 @@ async def admin_action(request):
         return web.json_response({"ok": False, "error": str(e)}, status=400)
     except KeyError as e:
         return web.json_response({"ok": False, "error": f"Maydon yetishmaydi: {e}"}, status=400)
+    except Exception as e:  # noqa — kutilmagan xato: «Internet bilan muammo» o'rniga aniq xabar
+        log.exception("admin_action %s", a)
+        try:
+            import checker
+            await checker.report_error(f"Mini ilova: «{a}» amalida xato", e)
+        except Exception:  # noqa
+            pass
+        return web.json_response({"ok": False, "error": f"Ichki xato ({type(e).__name__}). Dasturchiga xabar berildi."},
+                                 status=500)
     return web.json_response({"ok": True, "warnings": warns, "catalog": store.public_catalog()})
 
 
