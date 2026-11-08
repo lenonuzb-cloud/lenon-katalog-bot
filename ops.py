@@ -214,7 +214,7 @@ def add_design(section_key, title, whole=None, auto_number=False, new=True) -> s
         raise OpError("Nomini yozing")
     if not store.section(section_key):
         raise OpError("Bo'lim topilmadi")
-    if store.find_design(title, section_key):
+    if store.find_design(title, section_key) and not config.LENONUZ:  # LENON_UZ: bir xil nom bo'laveradi
         if not auto_number:
             raise OpError("Bunday nomli dizayn allaqachon bor")
         base, n = title, 2

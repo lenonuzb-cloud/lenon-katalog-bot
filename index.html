@@ -1039,7 +1039,7 @@ function newDesignSheet(secKey, kind){
   $("#nd_s").onclick = () => {
     const title = $("#nd_t").value.trim(); if (!title){ toast("Nomini yozing", true); return; }
     const same = sec.designs.find(x => x.title.trim().toLowerCase() === title.toLowerCase());
-    if (!same) return create(title, false);
+    if (!same || CAT.rotation) return create(title, false);  // LENON_UZ: nomi takrorlanaversin
     let n = 2; while (sec.designs.some(x => x.title.trim().toLowerCase() === `${title} ${n}`.toLowerCase())) n++;
     openSheet(`<h3>«${esc(title)}» allaqachon bor</h3><div class="pinfo2" style="margin:-6px 0 12px">${esc(sec.title)} bo'limida shu nomli dizayn bor. Nima qilamiz?</div>
       <button class="choice" id="dup_open"><span>📂</span><div><b>Mavjudini ochish</b><small>Mahsulot yoki rasmni o'shanga qo'shasiz</small></div></button>
