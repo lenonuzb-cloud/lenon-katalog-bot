@@ -60,6 +60,48 @@ def interval_text(n: int) -> str:
         else f"{n} ta post — har {round(step)} daqiqada"
 
 
+def day_times(wd: int) -> dict:
+    """Egasi qo'lda qo'ygan vaqtlar: {design_id: daqiqa (08:00 dan)}."""
+    raw = (store.settings.get("week_times") or {}).get(str(wd)) or {}
+    out = {}
+    for did, hm in raw.items():
+        try:
+            h, m = map(int, str(hm).split(":"))
+            out[did] = (h - config.ROT_FIRST_HOUR) * 60 + m
+        except Exception:  # noqa
+            pass
+    return out
+
+
+def plan(wd: int) -> list:
+    """Kun rejasi: [(daqiqa, design_id, qo'lda_qo'yilganmi)] vaqt bo'yicha. Vaqti yozilmaganlar
+    08:00–22:00 ga teng bo'linadi."""
+    lst = day_list(wd)
+    fixed = {k: v for k, v in day_times(wd).items() if k in lst}
+    auto = [x for x in lst if x not in fixed]
+    res = [(t, did, True) for did, t in fixed.items()] + [(t, did, False) for t, did in zip(times(len(auto)), auto)]
+    res.sort(key=lambda r: r[0])
+    return res
+
+
+def set_time(wd: int, did: str, hm: str):
+    """Tovarga aniq vaqt qo'yadi («" — avtomatik»)."""
+    import re as _re
+    wt = store.settings.setdefault("week_times", {}).setdefault(str(wd), {})
+    hm = (hm or "").strip()
+    if not hm:
+        wt.pop(did, None)
+    else:
+        m = _re.fullmatch(r"(\d{1,2})[:.](\d{2})", hm)
+        if not m:
+            raise ValueError("Vaqtni 09:30 ko'rinishida yozing")
+        h, mi = int(m.group(1)), int(m.group(2))
+        if not (config.ROT_FIRST_HOUR <= h <= config.ROT_LAST_HOUR) or mi > 59 or (h == config.ROT_LAST_HOUR and mi > 0):
+            raise ValueError(f"Vaqt {config.ROT_FIRST_HOUR:02d}:00 dan {config.ROT_LAST_HOUR:02d}:00 gacha bo'lsin")
+        wt[did] = f"{h:02d}:{mi:02d}"
+    store.save()
+
+
 def active_today() -> bool:
     return bool(day_list(datetime.now(config.TZ).weekday()))
 
@@ -78,9 +120,8 @@ async def tick() -> bool:
     minute = (now.hour - config.ROT_FIRST_HOUR) * 60 + now.minute
     if minute < 0 or minute > span() + LATE:
         return True
-    tms = times(len(lst))
     done = set(st["done"])
-    for i, (did, t) in enumerate(zip(lst, tms)):
+    for t, did, _ in plan(now.weekday()):
         key = did
         if key in done or t > minute:
             continue
@@ -114,12 +155,11 @@ def today_text() -> str:
     lst = day_list(now.weekday())
     if not lst:
         return ""
-    tms = times(len(lst))
     done = set((store.settings.get("week_state") or {}).get("done", [])) \
         if (store.settings.get("week_state") or {}).get("date") == now.strftime("%Y-%m-%d") else set()
     rows = []
-    for i, (did, t) in enumerate(zip(lst, tms)):
-        mark = "✅" if did in done else "🕒"
+    for t, did, fixed in plan(now.weekday()):
+        mark = "✅" if did in done else ("📌" if fixed else "🕒")
         import publisher
         rows.append(f"{mark} {hhmm(t)} — {publisher.esc(store.designs[did]['title'])}")
     return (f"📅 <b>Bugun ({DAYS[now.weekday()]}) haftalik jadval:</b> {interval_text(len(lst))}\n"

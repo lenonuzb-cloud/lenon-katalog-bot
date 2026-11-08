@@ -852,6 +852,27 @@ async function sectionDaysSheet(key){
     if (await secAct({action:"week_section", section:key, days}, days.length ? `Saqlandi: ${days.map(i=>W.short[i]).join(", ")}` : "Bo'lim haftalik jadvaldan olindi")) closeSheet();
   };
 }
+function timeSheet(did){
+  const W = WEEK.data, day = WEEK.day, f = findDesign(did); if (!f) return;
+  const cur = ((W.times||{})[String(day)]||{})[did] || "";
+  const back = () => { const y = 0; drawWeek(); };
+  openSheet(`<h3>🕒 ${esc(f.d.title)}</h3><div class="pinfo2" style="margin:-6px 0 10px">${esc(W.days[day])} kuni qachon chiqsin? (08:00–22:00)</div>
+    <input type="time" id="tm_v" value="${cur||"09:00"}" min="08:00" max="22:00" step="300" style="font-size:22px;text-align:center">
+    <div class="acts"><button class="btn ghost" id="tm_a">🔄 Avtomatik</button><button class="btn" id="tm_s">💾 Saqlash</button></div>
+    <button class="btn ghost addbtn" id="tm_b">‹ Orqaga</button>`);
+  const save = async (time) => {
+    try{
+      const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify({action:"week_time", day, design:did, time})});
+      const j = await r.json(); if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return; }
+      W.times = W.times || {}; const m = W.times[String(day)] = W.times[String(day)] || {};
+      if (time) m[did] = time; else delete m[did];
+      toast(time ? `✅ ${time} ga qo'yildi` : "✅ Avtomatik vaqt"); drawWeek();
+    }catch(e){ toast("⚠️ Internet bilan muammo", true); }
+  };
+  $("#tm_s").onclick = () => save($("#tm_v").value);
+  $("#tm_a").onclick = () => save("");
+  $("#tm_b").onclick = back;
+}
 function drawWeek(){
   const W = WEEK.data, day = WEEK.day, secs = CAT.sections.filter(s=>s.kind==="design");
   const other = {};
@@ -878,8 +899,13 @@ function drawWeek(){
   }
   if (WEEK.sel.size){
     const order = []; for (const s of secs) for (const d of s.designs) if (WEEK.sel.has(d.id) && !d.pinned) order.push(d);
-    const tm = weekTimes(order.length);
-    h += `<label>Kun tartibi</label><div class="pinfo2" style="line-height:1.7">${order.slice(0,60).map((d,i)=>`${hm(tm[i])} — ${esc(d.title)}`).join("<br>")}</div>`;
+    const fx = (W.times||{})[String(day)] || {};
+    const toMin = t => { const [a,b] = t.split(":").map(Number); return (a-8)*60 + b; };
+    const auto = order.filter(d => !fx[d.id]); const at = weekTimes(auto.length);
+    const plan = order.filter(d => fx[d.id]).map(d => ({t:toMin(fx[d.id]), d, fixed:true})).concat(auto.map((d,i)=>({t:at[i], d, fixed:false}))).sort((a,b)=>a.t-b.t);
+    h += `<label>Kun tartibi — vaqtni o'zgartirish uchun bosing</label><div style="border:1px solid var(--line);border-radius:14px;overflow:hidden">${plan.slice(0,80).map(p=>`<button data-tm="${p.d.id}" style="display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:10px 12px;font:14px var(--sans);color:var(--text)">
+      <b style="flex:none;width:58px;color:${p.fixed?"var(--gold-dark)":"var(--hint)"}">${p.fixed?"📌 ":""}${hm(p.t)}</b><span style="flex:1">${esc(p.d.title)}</span><span style="color:var(--hint)">✏️</span></button>`).join("")}</div>
+      <div class="pinfo2" style="margin-top:6px">📌 — siz qo'ygan aniq vaqt. Qolganlari bo'sh vaqtlarga o'zi teng taqsimlanadi.</div>`;
   }
   h += `<div class="acts"><button class="btn ghost" id="wk_clear">Kunni tozalash</button><button class="btn" id="wk_save">💾 Saqlash</button></div>`;
   openSheet(h);
@@ -896,6 +922,7 @@ function drawWeek(){
     const y=$("#sheet").scrollTop; drawWeek(); $("#sheet").scrollTop=y;
   });
   $("#wk_clear").onclick = () => { WEEK.sel = new Set(); drawWeek(); };
+  document.querySelectorAll("#sheet [data-tm]").forEach(b => b.onclick = () => timeSheet(b.dataset.tm));
   $("#wk_save").onclick = async () => {
     const secsOrder = []; for (const s of secs) for (const d of s.designs) if (WEEK.sel.has(d.id)) secsOrder.push(d.id);
     try{

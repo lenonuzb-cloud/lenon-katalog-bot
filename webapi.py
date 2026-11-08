@@ -197,6 +197,12 @@ async def admin_action(request):
             warns = ops.edit_item(body["design"], body["item"], name=body.get("name"), code=body.get("code"),
                                   price=body.get("price"), category=body.get("category"),
                                   size=body.get("size"), qty=body.get("qty"), pack=body.get("pack"))
+        elif a == "week_time":
+            import schedule
+            try:
+                schedule.set_time(int(body["day"]), body["design"], body.get("time", ""))
+            except ValueError as e:
+                return web.json_response({"ok": False, "error": str(e)}, status=400)
         elif a == "week_section":
             import schedule
             schedule.set_section_days(body["section"], [int(x) for x in body.get("days") or []])
@@ -351,6 +357,7 @@ async def admin_info(request):
     if kind == "week":
         import schedule
         return web.json_response({"ok": True, "week": schedule.week(), "summary": schedule.summary(),
+                                  "times": store.settings.get("week_times") or {},
                                   "days": schedule.DAYS, "short": schedule.SHORT})
     if kind == "check":
         sc = await checker.self_check()

@@ -107,7 +107,9 @@ async def self_check() -> list[str]:
             else:
                 if not me.get("can_delete_messages"):
                     out.append("⚠️ Botda xabar o'chirish huquqi yo'q.")
-                if not me.get("can_manage_topics"):
+                if not me.get("can_pin_messages") and config.LENONUZ:
+                    out.append("⚠️ Botda xabarni qadash (pin) huquqi yo'q — 📌 qadalgan postlar ishlamaydi.")
+                if not me.get("can_manage_topics") and not config.LENONUZ:
                     out.append("⚠️ Botda bo'limlarni boshqarish huquqi yo'q (yopiq bo'limlarga yozish uchun kerak bo'lishi mumkin).")
         except TelegramError as e:
             out.append(f"❗ Guruhni tekshirib bo'lmadi: {e.description}")
