@@ -41,7 +41,7 @@ def set_stock(design_id, item_id, in_stock: bool) -> bool:
     return changed
 
 
-def add_item(design_id, category, name, code, price, qty="", pack="") -> tuple[dict, list]:
+def add_item(design_id, category, name, code, price, qty="", pack="", new=True) -> tuple[dict, list]:
     d = _design(design_id)
     name, code, price, warns = checker.validate_new_item(d, name, code, price)
     if not name:
@@ -52,6 +52,8 @@ def add_item(design_id, category, name, code, price, qty="", pack="") -> tuple[d
     _unhide(d["section"], name, code)
     is_new = not registry.known(d["section"], name, code, category)
     it = store.add_item(d, category, name, code, price)
+    if not new:
+        it["new_until"] = 0
     if qty:
         it["qty"] = str(qty).strip()
     if pack:
@@ -206,15 +208,20 @@ def add_items(design_id, items: list) -> tuple[int, list]:
     return n, warns
 
 
-def add_design(section_key, title, whole=None) -> str:
+def add_design(section_key, title, whole=None, auto_number=False, new=True) -> str:
     title = " ".join((title or "").split())
     if not title:
         raise OpError("Nomini yozing")
     if not store.section(section_key):
         raise OpError("Bo'lim topilmadi")
     if store.find_design(title, section_key):
-        raise OpError("Bunday nomli dizayn allaqachon bor")
-    did = store.add_design(section_key, title)
+        if not auto_number:
+            raise OpError("Bunday nomli dizayn allaqachon bor")
+        base, n = title, 2
+        while store.find_design(f"{base} {n}", section_key):
+            n += 1
+        title = f"{base} {n}"
+    did = store.add_design(section_key, title, mark_new=bool(new))
     if whole is not None and config.LENONUZ:
         store.designs[did]["whole"] = bool(whole)
     store.save()

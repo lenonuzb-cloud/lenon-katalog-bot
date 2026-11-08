@@ -211,7 +211,8 @@ async def admin_action(request):
         elif a == "add_item":
             _, warns = ops.add_item(body["design"], body.get("category", ""), body.get("name", ""),
                                     body.get("code", ""), body.get("price", ""),
-                                    qty=body.get("qty", ""), pack=body.get("pack", ""))
+                                    qty=body.get("qty", ""), pack=body.get("pack", ""),
+                                    new=body.get("new", True) is not False)
         elif a == "add_items":
             n, warns = ops.add_items(body["design"], body.get("items") or [])
             if not n and not warns:
@@ -240,7 +241,8 @@ async def admin_action(request):
         elif a == "move_design" and config.LENONUZ:
             ops.move_design(body["design"], body["section"])
         elif a == "add_design":
-            did = ops.add_design(body["section"], body.get("title", ""), body.get("whole"))
+            did = ops.add_design(body["section"], body.get("title", ""), body.get("whole"), bool(body.get("auto_number")),
+                                 new=body.get("new", True) is not False)
             return web.json_response({"ok": True, "warnings": [], "design": did, "catalog": store.public_catalog()})
         elif a == "reorder":
             ops.reorder(body["design"], body.get("layout") or [])

@@ -950,6 +950,7 @@ function editSheet(d, it){
     ${CAT.rotation?`<div style="display:flex;gap:8px"><div style="flex:1"><label>Karobka soni</label><input id="f_qty" value="${esc(it&&it.qty?it.qty:"")}" placeholder="masalan: 120шт"></div>
       <div style="flex:1"><label>Pochka soni</label><input id="f_pack" value="${esc(it&&it.pack?it.pack:"")}" placeholder="masalan: 6шт"></div></div>`:""}
     <label>O'lchami <small style="font-weight:400;color:#999">(rasm tagiga yoziladi, ixtiyoriy)</small></label><input id="f_size" value="${esc(it&&it.size?it.size:"")}" placeholder="masalan: 23sm">
+    ${isNew&&CAT.rotation?`<label>🆕 NEW belgisi qo'yilsinmi?</label><div class="seg" id="f_new" style="margin-top:4px"><button data-n="1">Ha, NEW qo'yilsin</button><button data-n="0" class="on">Yo'q</button></div>`:""}
     <label>Guruhi <small style="font-weight:400;color:#999">(ixtiyoriy — bo'sh qolsa jadvalda sarlavha chiqmaydi)</small></label><input id="f_cat" list="cats" value="${esc(it?(["Asosiy","Aralash"].includes(it.cat)&&CAT.rotation?"":it.cat):(CAT.rotation?"":(cats[cats.length-1]||"")))}"><datalist id="cats">${cats.map(c=>`<option value="${esc(c)}">`).join("")}</datalist>
     <div class="acts"><button class="btn ghost" id="f_cancel">Bekor</button><button class="btn" id="f_save">Saqlash</button></div>
     ${isNew?"":`<button class="btn ghost addbtn" id="f_del" style="color:var(--red)">🗑 Jadvaldan o'chirish</button>`}`);
@@ -957,10 +958,12 @@ function editSheet(d, it){
   $("#f_save").onclick = async () => {
     const body = {design:d.id, name:$("#f_name").value, code:$("#f_code").value, price:$("#f_price").value, category:$("#f_cat").value, size:$("#f_size").value};
     if ($("#f_qty")){ body.qty = $("#f_qty").value; body.pack = $("#f_pack").value; }
+    const fn = document.querySelector("#f_new button.on"); if (fn) body.new = fn.dataset.n === "1";
     if (!body.name.trim() || !body.price.trim()){ toast("Nomi va narxini yozing", true); return; }
     if (isNew) body.action="add_item"; else { body.action="edit_item"; body.item=it.id; }
-    if (await act(body, isNew?"Qo'shildi (NEW belgisi bilan)":"Saqlandi")) closeSheet();
+    if (await act(body, isNew?(body.new===false?"Qo'shildi":"Qo'shildi (NEW belgisi bilan)"):"Saqlandi")) closeSheet();
   };
+  document.querySelectorAll("#f_new button").forEach(b => b.onclick = () => document.querySelectorAll("#f_new button").forEach(x=>x.classList.toggle("on", x===b)));
   const del = $("#f_del");
   if (del) del.onclick = () => confirmDo(`«${it.name}» jadvaldan o'chirilsinmi?`, async () => { if (await act({action:"delete_item", design:d.id, item:it.id}, "O'chirildi")) closeSheet(); });
 }
@@ -1017,19 +1020,34 @@ function newDesignSheet(secKey, kind){
   const whole = kind === true;
   openSheet(`<h3>${CAT.rotation ? (whole ? "📦 Yangi nabor" : "🔢 Yangi donalik mahsulot") : "➕ Yangi dizayn"}</h3><div class="pinfo2" style="margin:-6px 0 6px">${esc(sec.title)} bo'limiga</div>
     <label>${whole ? "Nabor nomi" : "Dizayn nomi"}</label><input id="nd_t" placeholder="${whole ? "masalan: LENON nabor 46 · P830" : (secKey==="boden"?"masalan: 008":"masalan: Kovrik arzon")}">
+    ${CAT.rotation?`<label>🆕 NEW belgisi qo'yilsinmi?</label><div class="seg" id="nd_new" style="margin-top:4px"><button data-n="1">Ha, NEW qo'yilsin</button><button data-n="0" class="on">Yo'q</button></div>`:""}
     <div class="pinfo2" style="margin-top:8px">${whole ? "Keyingi oynada narxi va ichidagilarni yozasiz. Rasmini botga yuborasiz." : "Keyin mahsulotlarni jadvalga qo'shasiz. Dizayn rasmini botga yuborasiz."}</div>
     <div class="acts"><button class="btn ghost" id="nd_c">${CAT.rotation ? "‹ Orqaga" : "Bekor"}</button><button class="btn" id="nd_s">Yaratish</button></div>`);
-  setTimeout(() => $("#nd_t").focus(), 50);
+  setTimeout(() => { const t = $("#nd_t"); if (t) t.focus(); }, 50);
   $("#nd_c").onclick = () => CAT.rotation ? newDesignSheet(secKey) : closeSheet();
-  $("#nd_s").onclick = async () => {
-    const title = $("#nd_t").value.trim(); if (!title){ toast("Nomini yozing", true); return; }
+  let newPick = !CAT.rotation;
+  document.querySelectorAll("#nd_new button").forEach(b => b.onclick = () => { newPick = b.dataset.n === "1"; document.querySelectorAll("#nd_new button").forEach(x=>x.classList.toggle("on", x===b)); });
+  const create = async (title, autoNum) => {
     try{
-      const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify({action:"add_design", section:secKey, title, whole: CAT.rotation ? whole : undefined})});
+      const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify({action:"add_design", section:secKey, title, whole: CAT.rotation ? whole : undefined, auto_number: !!autoNum, new: newPick})});
       const j = await r.json();
       if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return; }
       Object.assign(CAT, j.catalog); closeSheet(); toast(whole ? "✅ Nabor yaratildi. Endi narxi va ichidagilarni yozing" : "✅ Yaratildi. Endi mahsulotlarni qo'shing");
       go({name:"design", id:j.design}); const nd = findDesign(j.design); if (nd) (nd.d.whole ? naborEditSheet(nd.d) : (CAT.rotation ? editSheet(nd.d, null) : pickSheet(nd.d)));
     }catch(e){ toast("⚠️ Internet bilan muammo", true); }
+  };
+  $("#nd_s").onclick = () => {
+    const title = $("#nd_t").value.trim(); if (!title){ toast("Nomini yozing", true); return; }
+    const same = sec.designs.find(x => x.title.trim().toLowerCase() === title.toLowerCase());
+    if (!same) return create(title, false);
+    let n = 2; while (sec.designs.some(x => x.title.trim().toLowerCase() === `${title} ${n}`.toLowerCase())) n++;
+    openSheet(`<h3>«${esc(title)}» allaqachon bor</h3><div class="pinfo2" style="margin:-6px 0 12px">${esc(sec.title)} bo'limida shu nomli dizayn bor. Nima qilamiz?</div>
+      <button class="choice" id="dup_open"><span>📂</span><div><b>Mavjudini ochish</b><small>Mahsulot yoki rasmni o'shanga qo'shasiz</small></div></button>
+      <button class="choice" id="dup_new"><span>➕</span><div><b>Baribir yangisini qo'shish</b><small>«${esc(title)} ${n}» nomi bilan alohida dizayn bo'ladi (masalan boshqa rangi)</small></div></button>
+      <button class="btn ghost addbtn" id="dup_back">‹ Nomini o'zgartirish</button>`);
+    $("#dup_open").onclick = () => { closeSheet(); go({name:"design", id:same.id}); };
+    $("#dup_new").onclick = () => create(title, true);
+    $("#dup_back").onclick = () => { newDesignSheet(secKey, whole); setTimeout(() => { $("#nd_t").value = title; }, 60); };
   };
 }
 async function secAct(body, msg){

@@ -154,7 +154,8 @@ def design_html(d) -> tuple[str, list]:
     else:
         parts.append(f"<blockquote><i>{esc(d['title'])}</i></blockquote>")
     if item_state(d) == "new":
-        parts.append("<p>🆕 <b>Yangi dizayn!</b></p>")
+        if not config.LENONUZ:
+            parts.append("<p>🆕 <b>Yangi dizayn!</b></p>")
     has_code = any(it.get("code") for c in d["categories"] for it in c["items"])
     has_qty = any(it.get("qty") for c in d["categories"] for it in c["items"])
     has_price = any(it.get("price") for c in d["categories"] for it in c["items"])
