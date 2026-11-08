@@ -219,6 +219,12 @@ async def admin_action(request):
                 return web.json_response({"ok": False, "error": "Bu katalogda ishlamaydi"}, status=400)
             key = ops.add_section(body.get("title", ""), bool(body.get("whole")), body.get("after", ""))
             return web.json_response({"ok": True, "warnings": [], "section": key, "catalog": store.public_catalog()})
+        elif a == "nabor_edit" and config.LENONUZ:
+            import naborlar
+            naborlar.set_nabor(body["design"], body.get("jami", ""), body.get("narxi", ""), body.get("kodi", ""),
+                               body.get("contents"))
+            import publisher
+            publisher.queue_update(body["design"])
         elif a == "section_rename" and config.LENONUZ:
             ops.rename_section(body["section"], body.get("title", ""))
         elif a == "section_delete" and config.LENONUZ:

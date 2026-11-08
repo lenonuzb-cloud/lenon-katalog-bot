@@ -66,3 +66,56 @@ def migrate():
     st["nb_split_v1"] = True
     store.save()
     return [t for _, t, _ in GROUPS], moved, out
+
+
+# ---------------- 1 nabor = 1 mahsulot ----------------
+def fields(note: str) -> dict:
+    """«Jami: 46шт\\nNarxi: 115$\\nKodi: P823» -> {"jami": .., "narxi": .., "kodi": ..}."""
+    out = {}
+    for line in (note or "").splitlines():
+        k, _, v = line.partition(":")
+        k = k.strip().lower()
+        if k in ("jami", "narxi", "kodi") and v.strip():
+            out[k] = v.strip()
+    if not out:
+        for k, v in re.findall(r"(jami|narxi|kodi)\s*[:;]\s*([^\s;]+)", note or "", re.I):
+            out[k.lower()] = v
+    return out
+
+
+def make_note(jami="", narxi="", kodi="") -> str:
+    return "\n".join(f"{k}: {v.strip()}" for k, v in (("Jami", jami), ("Narxi", narxi), ("Kodi", kodi)) if v and v.strip())
+
+
+def contents(d) -> list:
+    """Nabor ichidagilar: [(nomi, soni), ...]."""
+    return [(it["name"], it.get("qty") or "") for c in d.get("categories") or [] for it in c["items"]]
+
+
+def contents_text(d) -> str:
+    return "\n".join(f"{n} — {q}" if q else n for n, q in contents(d))
+
+
+def parse_contents(text: str) -> list:
+    """«Pela — 6 ta» / «Pela - 6шт» / «Pela 6» qatorlarini [(nomi, soni)] ga aylantiradi."""
+    out = []
+    for line in (text or "").splitlines():
+        line = re.sub(r"^[\s•\-–—*\d.)]+(?=\D)", "", line).strip()
+        if not line:
+            continue
+        m = re.match(r"^(.*?)\s*[—–\-:|]\s*(\S.*)$", line)
+        if m and m.group(1).strip():
+            out.append((m.group(1).strip(), m.group(2).strip()))
+            continue
+        m = re.match(r"^(.*\D)\s+(\d+\s*(?:ta|шт|dona|pcs))$", line, re.I)
+        out.append((m.group(1).strip(), m.group(2).strip()) if m else (line, ""))
+    return out
+
+
+def set_nabor(design_id, jami="", narxi="", kodi="", text=None):
+    d = store.designs[design_id]
+    d["note"] = make_note(jami, narxi, kodi)
+    if text is not None:
+        items = [store._mk_item(n, "", "", new=False, qty=q, total="") for n, q in parse_contents(text)]
+        d["categories"] = [{"name": "Asosiy", "items": items}] if items else []
+    store.save()

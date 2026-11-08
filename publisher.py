@@ -130,6 +130,10 @@ def _name_cell(it, d=None) -> str:
 
 
 def design_html(d) -> tuple[str, list]:
+    if config.LENONUZ:
+        import naborlar
+        if naborlar.is_whole(d):
+            return nabor_post_html(d)
     parts = []
     show, media = _slideshow(d, d["title"])
     if show:
@@ -204,6 +208,37 @@ def _note_pretty(note) -> str:
         elif line.strip():
             out.append(esc(line.strip()))
     return " · ".join(out)
+
+
+def nabor_post_html(d) -> tuple[str, list]:
+    """LENON_UZ: nabor = 1 yaxlit mahsulot — 1 rasm, narxi, jami, ichidagilar ro'yxati (jadvalsiz)."""
+    import naborlar
+    one = dict(d, photos=(d.get("photos") or [])[:1])
+    parts = []
+    show, media = _slideshow(one, d["title"])
+    if show:
+        parts.append(show)
+    parts.append(f"<blockquote><i>{esc(d['title'])}</i></blockquote>")
+    sec = store.section(d["section"]) or {}
+    tags = " ".join(t for t in (_tag(sec.get("title", "")), _code_tag(d)) if t)
+    if tags:
+        parts.append(f"<p>{tags}</p>")
+    if not d.get("in_stock", True):
+        parts.append("<p>❌ <b>Bu nabor hozir qolmadi</b></p>")
+    f = naborlar.fields(d.get("note"))
+    info = []
+    if f.get("narxi"):
+        info.append(f"💰 Narxi: <b>{esc(f['narxi'])}</b>")
+    if f.get("jami"):
+        info.append(f"📦 Jami: <b>{esc(f['jami'])}</b>")
+    if f.get("kodi"):
+        info.append(f"🔖 Kodi: <b>{esc(f['kodi'])}</b>")
+    if info:
+        parts.append("<p>" + " · ".join(info) + "</p>")
+    lines = [f"• {esc(n)}" + (f" — {esc(q)}" if q else "") for n, q in naborlar.contents(d)]
+    if lines:
+        parts.append("<p><b>Ichida:</b><br>" + "<br>".join(lines) + "</p>")
+    return "".join(parts), media
 
 
 def nabor_html(d) -> tuple[str, list]:

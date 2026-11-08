@@ -626,6 +626,17 @@ function renderTable(){
     if (ADMIN) h += `<button class="btn addbtn ${d.in_stock?"danger":""}" id="nstock">${d.in_stock?"❌ Qolmadi deb belgilash":"✅ Keldi deb belgilash"}</button>`;
   } else if (sec.kind==="photos"){
     h += `<div class="nabor-info">${esc(d.note).replace(/\n/g,"<br>")}</div>`;
+  } else if (sec.whole){
+    const f = naborFields(d.note);
+    if (!d.in_stock) h += `<div class="nabor-info" style="color:var(--red);font-weight:700">❌ Bu nabor hozir qolmadi</div>`;
+    const info = [f.narxi?`💰 Narxi: <b>${esc(f.narxi)}</b>`:"", f.jami?`📦 Jami: <b>${esc(f.jami)}</b>`:"", f.kodi?`🔖 Kodi: <b>${esc(f.kodi)}</b>`:""].filter(Boolean);
+    if (info.length) h += `<div class="nabor-info" style="font-size:16px;line-height:1.8">${info.join(" &nbsp;·&nbsp; ")}</div>`;
+    if (d.agents.length) h += `<div class="agents">${d.agents.filter(a=>a.username).map(a=>`<button data-u="${esc(a.username)}">💬 ${esc(a.name)}</button>`).join("")}</div>`;
+    const its = d.categories.flatMap(c=>c.items);
+    h += `<div class="cat" style="margin-top:6px">Ichida</div><div class="tbl ${d.in_stock?"":"outall"}">${its.length ? its.map(it=>`<div class="row" style="grid-template-columns:1fr auto${d.in_stock?"":";opacity:.55"}"><span class="nm">• ${esc(it.name)}</span><span class="cd">${esc(it.qty||"")}</span></div>`).join("") : '<div class="empty-msg">Ichidagilar yozilmagan</div>'}</div>`;
+    if (ADMIN) h += `<button class="btn addbtn ${d.in_stock?"danger":""}" id="nstock">${d.in_stock?"❌ Nabor qolmadi":"✅ Nabor keldi"}</button>
+      <button class="btn addbtn" id="nedit">✏️ Narxi va ichidagilarni o'zgartirish</button>
+      <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="rename">🔤 Nomini o'zgartirish</button><button class="btn ghost" style="flex:1" id="moved">📂 Bo'limini o'zgartirish</button><button class="btn ghost" style="flex:1;color:var(--red)" id="deld">🗑 O'chirish</button></div>`;
   } else {
     if (sec.whole && !d.in_stock) h += `<div class="nabor-info" style="color:var(--red);font-weight:700">❌ Bu nabor hozir qolmadi</div>`;
     if (d.note) h += `<div class="note"${sec.whole?' style="color:var(--gold-dark)"':''}>${esc(d.note).replace(/\n/g, sec.whole ? " · " : "<br>")}</div>`;
@@ -673,6 +684,7 @@ function renderTable(){
     document.querySelectorAll("[data-item]").forEach(r => r.onclick = () => editSheet(d, findItem(d, r.dataset.item)));
     const ns = $("#nstock"); if (ns) ns.onclick = () => act({action:"stock", design:d.id, in_stock: !d.in_stock}, d.in_stock?"Qolmadi deb belgilandi":"Keldi deb belgilandi");
     const ai = $("#additem"); if (ai) ai.onclick = () => addChooser(d);
+    const ne = $("#nedit"); if (ne) ne.onclick = () => naborEditSheet(d);
     const rn = $("#rename"); if (rn) rn.onclick = () => renameSheet(d);
     const mv = $("#moved"); if (mv) mv.onclick = () => moveSheet(d);
     const ro = $("#reord"); if (ro) ro.onclick = () => go({name:"reorder", id:d.id});
@@ -969,7 +981,7 @@ function newDesignSheet(secKey){
       const j = await r.json();
       if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return; }
       Object.assign(CAT, j.catalog); closeSheet(); toast("✅ Dizayn yaratildi. Endi mahsulotlarni qo'shing");
-      go({name:"design", id:j.design}); const nd = findDesign(j.design); if (nd) pickSheet(nd.d);
+      go({name:"design", id:j.design}); const nd = findDesign(j.design); if (nd) (nd.sec.whole ? naborEditSheet(nd.d) : pickSheet(nd.d));
     }catch(e){ toast("⚠️ Internet bilan muammo", true); }
   };
 }
@@ -983,6 +995,29 @@ async function secAct(body, msg){
 }
 function openSection(key){ stack.length=0; view={name:"section", key}; $("#q").value=""; renderTabs(); render(); updateBack(); window.scrollTo(0,0);
   const t = document.querySelector(`.tab[data-k="${key}"]`); if (t) t.scrollIntoView({inline:"center", block:"nearest"}); }
+function naborFields(note){
+  const o = {};
+  for (const line of String(note||"").split("\n")){ const i = line.indexOf(":"); if (i<0) continue;
+    const k = line.slice(0,i).trim().toLowerCase(), v = line.slice(i+1).trim(); if (["jami","narxi","kodi"].includes(k) && v) o[k]=v; }
+  if (!Object.keys(o).length){ const re=/(jami|narxi|kodi)\s*[:;]\s*([^\s;]+)/gi; let m; while((m=re.exec(note||""))) o[m[1].toLowerCase()]=m[2]; }
+  return o;
+}
+function naborEditSheet(d){
+  const f = naborFields(d.note);
+  const txt = d.categories.flatMap(c=>c.items).map(it => it.qty ? `${it.name} — ${it.qty}` : it.name).join("\n");
+  openSheet(`<h3>✏️ ${esc(d.title)}</h3>
+    <div style="display:flex;gap:8px"><div style="flex:1"><label>Narxi</label><input id="ne_n" value="${esc(f.narxi||"")}" placeholder="115$"></div>
+      <div style="flex:1"><label>Jami</label><input id="ne_j" value="${esc(f.jami||"")}" placeholder="46 dona"></div>
+      <div style="flex:1"><label>Kodi</label><input id="ne_k" value="${esc(f.kodi||"")}" placeholder="P823"></div></div>
+    <label>Ichida — har bir narsa alohida qatorda</label>
+    <textarea id="ne_t" rows="9" style="width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;font:15px/1.5 var(--sans);background:var(--bg2);color:var(--text)" placeholder="Pela — 6 ta&#10;Kosa — 6 ta&#10;Tarelka 25 / 20 / 15 sm — 3 xil, 6 tadan&#10;Choynak — 1 ta">${esc(txt)}</textarea>
+    <div class="pinfo2" style="margin-top:6px">Ko'rinishi: <b>Nomi — soni</b>. Soni shart emas.</div>
+    <div class="acts"><button class="btn ghost" id="ne_c">Bekor</button><button class="btn" id="ne_s">💾 Saqlash</button></div>`);
+  $("#ne_c").onclick = closeSheet;
+  $("#ne_s").onclick = async () => {
+    if (await secAct({action:"nabor_edit", design:d.id, narxi:$("#ne_n").value, jami:$("#ne_j").value, kodi:$("#ne_k").value, contents:$("#ne_t").value}, "Saqlandi")){ closeSheet(); render(); }
+  };
+}
 function newSectionSheet(afterKey){
   openSheet(`<h3>🗂 Yangi bo'lim</h3>
     <label>Bo'lim nomi</label><input id="ns_t" placeholder="masalan: Nabor 52 yoki Stakanlar" maxlength="40">

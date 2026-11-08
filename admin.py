@@ -1023,7 +1023,12 @@ async def design_preview(uid, sess, warns):
 async def design_create(uid, sess):
     did = store.add_design(sess["section"], sess["title"], photos=sess.get("photos") or [])
     d = store.designs[did]
+    whole_ = bool((store.section(d["section"]) or {}).get("whole"))
     for c in sess.get("categories", []):
+        if whole_:  # nabor: «Nomi | Soni» — ikkinchi ustun soni, narx emas
+            for i in c["items"]:
+                if not i.get("qty"):
+                    i["qty"], i["price"] = i.get("price", ""), ""
         d["categories"].append({"name": c["name"], "items": [
             store._mk_item(i["name"], i.get("code", ""), i["price"], new=True,
                            qty=i.get("qty", ""), total=i.get("total", "")) for i in c["items"]]})
