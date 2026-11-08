@@ -40,6 +40,8 @@ def fix_format(data: bytes) -> Image.Image:
     im = Image.open(io.BytesIO(data))
     im = ImageOps.exif_transpose(im)
     im = im.convert("RGB")
+    if config.LENONUZ:
+        return _natural_square(im)
 
     # yengil sifat tuzatish: kontrast va tiniqlik
     im = ImageOps.autocontrast(im, cutoff=0.5)
@@ -64,6 +66,27 @@ def fix_format(data: bytes) -> Image.Image:
     fg.thumbnail((SIZE, SIZE), Image.LANCZOS)
     bg.paste(fg, ((SIZE - fg.width) // 2, (SIZE - fg.height) // 2))
     return bg
+
+
+NATURAL_SIZE = 2048  # Telegram rasmni 2560 gacha saqlaydi — tiniqroq bo'lishi uchun kattaroq
+
+
+def _natural_square(im: Image.Image) -> Image.Image:
+    """LENON_UZ: rang va yorug'likka tegmaymiz (tabiiy ko'rinish), faqat kvadrat qilamiz va
+    kichraytirgandan keyin yengil tiniqlashtiramiz."""
+    S = min(NATURAL_SIZE, max(im.size))
+    w, h = im.size
+    if 0.9 <= w / h <= 1.1:
+        side = min(w, h)
+        left, top = (w - side) // 2, (h - side) // 2
+        out = im.crop((left, top, left + side, top + side)).resize((S, S), Image.LANCZOS)
+    else:
+        out = ImageOps.fit(im, (S, S), Image.LANCZOS).filter(ImageFilter.GaussianBlur(40))
+        out = ImageEnhance.Brightness(out).enhance(0.9)
+        fg = im.copy()
+        fg.thumbnail((S, S), Image.LANCZOS)
+        out.paste(fg, ((S - fg.width) // 2, (S - fg.height) // 2))
+    return out.filter(ImageFilter.UnsharpMask(radius=1.0, percent=45, threshold=3))
 
 
 # ---------------- 2-agent: logo qo'yish ----------------
@@ -92,7 +115,10 @@ def add_logo(im: Image.Image) -> Image.Image:
 
 def to_jpeg(im: Image.Image, quality=90) -> bytes:
     buf = io.BytesIO()
-    im.convert("RGB").save(buf, "JPEG", quality=quality, optimize=True)
+    if config.LENONUZ:  # ranglar xiralashmasin: to'liq rang (4:4:4) va yuqori sifat
+        im.convert("RGB").save(buf, "JPEG", quality=max(quality, 93), optimize=True, subsampling=0)
+    else:
+        im.convert("RGB").save(buf, "JPEG", quality=quality, optimize=True)
     return buf.getvalue()
 
 
@@ -145,6 +171,10 @@ def process(data: bytes, logo: bool = True, label: list | None = None) -> bytes:
 def thumbnail(data: bytes, width: int) -> bytes:
     im = Image.open(io.BytesIO(data)).convert("RGB")
     im.thumbnail((width, width), Image.LANCZOS)
+    if config.LENONUZ:
+        buf = io.BytesIO()
+        im.save(buf, "JPEG", quality=88, optimize=True, subsampling=0)
+        return buf.getvalue()
     return to_jpeg(im, 82)
 
 

@@ -57,7 +57,7 @@ main{padding:18px 16px 100px;max-width:560px;margin:0 auto}
 .slidewrap{position:relative;margin:-2px -16px 0}
 .slides{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;background:var(--ivory);scrollbar-width:none}
 .slides::-webkit-scrollbar{display:none}
-.slides img{flex:none;width:100%;aspect-ratio:4/5;object-fit:cover;scroll-snap-align:center}
+.slides img{flex:none;width:100%;aspect-ratio:1/1;object-fit:contain;scroll-snap-align:center}
 .dots{position:absolute;bottom:12px;left:0;right:0;text-align:center}
 .dots i{display:inline-block;width:6px;height:6px;border-radius:3px;background:#fff;opacity:.55;margin:0 3px;transition:.2s}
 .dots i.on{opacity:1;width:18px}
@@ -494,7 +494,7 @@ function bindCards(){
 
 function heroHtml(d, sec){
   if (!d.photos.length) return "";
-  return `<div class="slidewrap"><div class="slides" id="slides">${d.photos.map(p=>`<img loading="lazy" src="${img(p,1000)}">`).join("")}</div>${badges(sec.kind==="design"?{is_new:d.is_new,in_stock:true}:d)}
+  return `<div class="slidewrap"><div class="slides" id="slides">${d.photos.map(p=>`<img loading="lazy" src="${img(p,1280)}">`).join("")}</div>${badges(sec.kind==="design"?{is_new:d.is_new,in_stock:true}:d)}
     ${d.photos.length>1?`<div class="dots">${d.photos.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`:""}</div>`;
 }
 function prodCardHtml(it){
@@ -592,10 +592,10 @@ async function shrink(file){
   try{
     let bmp;
     try { bmp = await createImageBitmap(file); } catch(e) { bmp = await loadImg(file); }
-    const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const k = Math.min(1, 2560 / Math.max(bmp.width, bmp.height));
     const c = document.createElement("canvas"); c.width = Math.round(bmp.width*k); c.height = Math.round(bmp.height*k);
     c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
-    const b = await new Promise(r => c.toBlob(r, "image/jpeg", 0.9));
+    const b = await new Promise(r => c.toBlob(r, "image/jpeg", 0.95));
     return b && b.size > 1000 ? b : file;
   }catch(e){ return file; }
 }
@@ -643,7 +643,7 @@ function renderTable(){
   const {sec, d} = f;
   let h = "";
   if (CAT.layout==="table" && d.photos && d.photos.length){
-    h += `<div class="slidewrap"><div class="slides" id="slides">${d.photos.map(p=>`<img loading="lazy" src="${img(p,1000)}">`).join("")}</div>${badges(sec.kind==="design"&&!d.whole?{is_new:d.is_new,in_stock:true}:d)}
+    h += `<div class="slidewrap"><div class="slides" id="slides">${d.photos.map(p=>`<img loading="lazy" src="${img(p,1280)}">`).join("")}</div>${badges(sec.kind==="design"&&!d.whole?{is_new:d.is_new,in_stock:true}:d)}
       ${d.photos.length>1?`<div class="dots">${d.photos.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`:""}</div>`;
   }
   h += photoButtons(d);
