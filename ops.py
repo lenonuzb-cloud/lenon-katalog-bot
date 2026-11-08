@@ -349,7 +349,7 @@ def add_section(title: str, whole: bool = False, after: str = "") -> str:
     return key
 
 
-def rename_section(key: str, title: str):
+def rename_section(key: str, title: str, whole=None):
     s = store.section(key)
     title = " ".join((title or "").split())
     if not s:
@@ -359,6 +359,13 @@ def rename_section(key: str, title: str):
     if any(x["title"].lower() == title.lower() and x["key"] != key for x in store.s["sections"]):
         raise OpError("Bunday bo'lim allaqachon bor")
     s["title"] = title
+    if whole is not None and bool(whole) != bool(s.get("whole")):
+        if whole:
+            s["whole"] = True
+        else:
+            s.pop("whole", None)
+        for d in store.designs_in(key):
+            publisher.queue_update(d["id"])
     store.save()
 
 

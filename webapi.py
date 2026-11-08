@@ -227,7 +227,7 @@ async def admin_action(request):
             import publisher
             publisher.queue_update(body["design"])
         elif a == "section_rename" and config.LENONUZ:
-            ops.rename_section(body["section"], body.get("title", ""))
+            ops.rename_section(body["section"], body.get("title", ""), body.get("whole"))
         elif a == "section_delete" and config.LENONUZ:
             ops.delete_section(body["section"])
         elif a == "move_design" and config.LENONUZ:

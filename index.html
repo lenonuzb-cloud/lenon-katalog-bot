@@ -1042,11 +1042,14 @@ function sectionSettings(key){
   const n = sec.designs.length;
   openSheet(`<h3>⚙️ ${esc(sec.title)}</h3>
     <label>Bo'lim nomi</label><input id="se_t" value="${esc(sec.title)}" maxlength="40">
+    <label style="display:flex;align-items:center;gap:10px;text-transform:none;letter-spacing:0;font-size:15px;color:var(--text);margin-top:16px">
+      <input type="checkbox" id="se_w" ${sec.whole?"checked":""} style="width:22px;height:22px;flex:none;accent-color:var(--gold)">
+      <span>Nabor bo'limi — butunligicha sotiladi<br><small style="color:var(--hint)">Belgini olib tashlasangiz — oddiy bo'lim bo'ladi: jadval, «➕ Mahsulot qo'shish», har mahsulotga alohida qolmadi</small></span></label>
     <div class="acts"><button class="btn ghost" id="se_c">Yopish</button><button class="btn" id="se_s">Saqlash</button></div>
     <button class="btn ghost" id="se_d" style="width:100%;margin-top:12px;color:var(--red)">🗑 Bo'limni o'chirish</button>
     <div class="pinfo2" style="margin-top:8px">${n ? `Bo'limda ${n} ta dizayn bor — o'chirish uchun avval ularni o'chiring yoki boshqa bo'limga o'tkazing.` : "Bo'lim bo'sh — o'chirish mumkin."}</div>`);
   $("#se_c").onclick = closeSheet;
-  $("#se_s").onclick = async () => { if (await secAct({action:"section_rename", section:key, title:$("#se_t").value}, "Saqlandi")){ closeSheet(); renderTabs(); render(); } };
+  $("#se_s").onclick = async () => { if (await secAct({action:"section_rename", section:key, title:$("#se_t").value, whole:$("#se_w").checked}, "Saqlandi")){ closeSheet(); renderTabs(); render(); } };
   $("#se_d").onclick = () => confirmDo(`«${sec.title}» bo'limini o'chiraymi?`, async () => {
     if (await secAct({action:"section_delete", section:key}, "Bo'lim o'chirildi")){ closeSheet(); const f = CAT.sections.find(x=>x.kind==="design"); if (f) openSection(f.key); }
   });
