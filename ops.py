@@ -1,5 +1,6 @@
 """Katalog ustidagi amallar — bot ham, mini ilova ham shularni ishlatadi.
 Har bir amal: ma'lumotni o'zgartiradi -> saqlaydi -> guruhdagi postni yangilaydi -> a'zolarni xabardor qiladi."""
+import config
 import checker
 import registry
 import notify
@@ -39,17 +40,21 @@ def set_stock(design_id, item_id, in_stock: bool) -> bool:
     return changed
 
 
-def add_item(design_id, category, name, code, price) -> tuple[dict, list]:
+def add_item(design_id, category, name, code, price, qty="", pack="") -> tuple[dict, list]:
     d = _design(design_id)
     name, code, price, warns = checker.validate_new_item(d, name, code, price)
     if not name:
         raise OpError("Mahsulot nomi bo'sh")
-    category = (category or "Aralash").strip()
+    category = (category or ("Asosiy" if config.LENONUZ else "Aralash")).strip()
     if registry.find_duplicate(d, name, code, category):
         raise OpError(f"«{name}» bu dizaynda ({category}) allaqachon bor — takrorlanmaydi")
     _unhide(d["section"], name, code)
     is_new = not registry.known(d["section"], name, code, category)
     it = store.add_item(d, category, name, code, price)
+    if qty:
+        it["qty"] = str(qty).strip()
+    if pack:
+        it["pack"] = str(pack).strip()
     if is_new:
         store.event("new", f"Ro'yxatga yangi mahsulot: {name}", design_id)
         warns = list(warns) + [f"📚 «{name}» mavjud mahsulotlar ro'yxatiga ham qo'shildi"]
@@ -59,7 +64,8 @@ def add_item(design_id, category, name, code, price) -> tuple[dict, list]:
     return it, warns
 
 
-def edit_item(design_id, item_id, name=None, code=None, price=None, category=None, size=None) -> list:
+def edit_item(design_id, item_id, name=None, code=None, price=None, category=None, size=None,
+              qty=None, pack=None) -> list:
     d = _design(design_id)
     cat, it = _item(d, item_id)
     new_name = it["name"] if name is None else name
@@ -80,6 +86,10 @@ def edit_item(design_id, item_id, name=None, code=None, price=None, category=Non
     if dup:
         raise OpError(f"«{new_name}» bu dizaynda allaqachon bor — takrorlanmaydi")
     it.update(name=new_name, code=new_code, price=new_price)
+    for key, val, label in (("qty", qty, "karobka soni"), ("pack", pack, "pochka soni")):
+        if val is not None and str(val).strip() != it.get(key, ""):
+            changes.append(f"{label}: {it.get(key) or '—'} → {str(val).strip() or '—'}")
+            it[key] = str(val).strip()
     if size is not None:
         size = re.sub(r"\s+", "", str(size)).lower()
         if size and size.replace(".", "").replace(",", "").isdigit():
@@ -87,6 +97,8 @@ def edit_item(design_id, item_id, name=None, code=None, price=None, category=Non
         if size != it.get("size", ""):
             changes.append(f"o'lchami: {it.get('size') or '—'} → {size or '—'}")
             it["size"] = size
+    if config.LENONUZ and category is not None and not category.strip() and cat["name"] not in ("Asosiy", "Aralash"):
+        category = "Asosiy"  # guruh o'chirildi — sarlavhasiz qismga o'tadi
     if category and category.strip().lower() != cat["name"].lower():
         cat["items"].remove(it)
         target = next((c for c in d["categories"] if c["name"].lower() == category.strip().lower()), None)

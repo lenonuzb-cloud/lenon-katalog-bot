@@ -159,17 +159,20 @@ def design_html(d) -> tuple[str, list]:
     has_qty = any(it.get("qty") for c in d["categories"] for it in c["items"])
     has_price = any(it.get("price") for c in d["categories"] for it in c["items"])
     has_total = any(it.get("total") for c in d["categories"] for it in c["items"])
-    ncol = 2 + has_code + has_qty + has_price + has_total
+    has_pack = any(it.get("pack") for c in d["categories"] for it in c["items"])
+    ncol = 2 + has_code + has_qty + has_pack + has_price + has_total
     rows = ["<tr><th>No.</th><th>Nomi</th>" + ("<th>Kodi</th>" if has_code else "") + ("<th>Soni</th>" if has_qty else "")
+            + ("<th>Pochka</th>" if has_pack else "")
             + ("<th>Narxi</th>" if has_price else "") + ("<th>Jami</th>" if has_total else "") + "</tr>"]
     no = 0
     for c in d["categories"]:
-        if c["name"] and c["name"] != "Asosiy":
+        if c["name"] and c["name"] != "Asosiy" and not (config.LENONUZ and c["name"] == "Aralash"):
             rows.append(f'<tr><th colspan="{ncol}" align="center">{esc(c["name"])}</th></tr>')
         for it in c["items"]:
             no += 1
             code = f"<td>{esc(it['code'])}</td>" if has_code else ""
             qty = f"<td>{esc(it.get('qty', ''))}</td>" if has_qty else ""
+            qty += f"<td>{esc(it.get('pack', ''))}</td>" if has_pack else ""
             price = f"<td>{esc(it['price'])}</td>" if has_price else ""
             total = f"<td>{esc(it.get('total', ''))}</td>" if has_total else ""
             rows.append(f'<tr><td align="center">{no}</td><td>{_name_cell(it, d)}</td>{code}{qty}{price}{total}</tr>')

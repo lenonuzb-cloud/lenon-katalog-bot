@@ -195,7 +195,7 @@ async def admin_action(request):
         elif a == "edit_item":
             warns = ops.edit_item(body["design"], body["item"], name=body.get("name"), code=body.get("code"),
                                   price=body.get("price"), category=body.get("category"),
-                                  size=body.get("size"))
+                                  size=body.get("size"), qty=body.get("qty"), pack=body.get("pack"))
         elif a == "week_set":
             import schedule
             schedule.set_day(int(body["day"]), list(body.get("ids") or []))
@@ -209,7 +209,8 @@ async def admin_action(request):
                                "hide" if body.get("mode") == "hide" else "all")
         elif a == "add_item":
             _, warns = ops.add_item(body["design"], body.get("category", ""), body.get("name", ""),
-                                    body.get("code", ""), body.get("price", ""))
+                                    body.get("code", ""), body.get("price", ""),
+                                    qty=body.get("qty", ""), pack=body.get("pack", ""))
         elif a == "add_items":
             n, warns = ops.add_items(body["design"], body.get("items") or [])
             if not n and not warns:

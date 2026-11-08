@@ -297,7 +297,7 @@ class Store:
                 cat = c
                 break
         if cat is None:
-            cat = {"name": category.strip() or "Aralash", "items": []}
+            cat = {"name": category.strip() or ("Asosiy" if config.LENONUZ else "Aralash"), "items": []}
             design["categories"].append(cat)
         it = self._mk_item(name, code, price, new=True)
         cat["items"].append(it)
@@ -370,7 +370,7 @@ class Store:
                     "categories": [
                         {"name": c["name"], "items": [
                             {"id": it["id"], "name": it["name"], "code": it["code"], "price": it["price"], "size": it.get("size", ""),
-                             "qty": it.get("qty", ""), "total": it.get("total", ""),
+                             "qty": it.get("qty", ""), "pack": it.get("pack", ""), "total": it.get("total", ""),
                              "photo": it.get("photo", ""),
                              "in_stock": it.get("in_stock", True),
                              "is_new": it.get("new_until", 0) > t,

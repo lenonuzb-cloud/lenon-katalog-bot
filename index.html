@@ -647,13 +647,13 @@ function renderTable(){
     for (const c of d.categories){
       const its = tq ? c.items.filter(it=>matchQ(tq, it.name, it.code)) : c.items;
       if (!its.length) continue;
-      if (c.name && c.name!=="Asosiy") rows += `<div class="cat">${esc(c.name)}</div>`;
+      if (c.name && c.name!=="Asosiy" && !(CAT.rotation && c.name==="Aralash")) rows += `<div class="cat">${esc(c.name)}</div>`;
       for (const it of its){
         n++;
         const whole = !!sec.whole, sold = whole ? !d.in_stock : !it.in_stock;
         rows += `<div class="row ${sold?"out":""} ${ADMIN?"adm":""}" data-item="${it.id}">
           <span class="n">${n}</span><span class="nm">${esc(it.name)}${chips(it)}</span>
-          <span class="cd">${esc([hasCode?it.code:"", it.qty||""].filter(Boolean).join(" · "))}</span><span class="pr">${esc(it.price)}${it.total?`<small style="display:block;color:var(--hint);font-weight:500">jami ${esc(it.total)}</small>`:""}</span>
+          <span class="cd">${esc([hasCode?it.code:"", it.qty||"", it.pack?"pochka "+it.pack:""].filter(Boolean).join(" · "))}</span><span class="pr">${esc(it.price)}${it.total?`<small style="display:block;color:var(--hint);font-weight:500">jami ${esc(it.total)}</small>`:""}</span>
           ${ADMIN&&!whole?`<button class="sw ${it.in_stock?"on":""}" data-sw="${it.id}" aria-label="bor/qolmadi"></button>`:""}</div>`;
       }
     }
@@ -913,13 +913,16 @@ function editSheet(d, it){
     <label>Nomi</label><input id="f_name" value="${esc(it?it.name:"")}" placeholder="masalan: Aval kv 15">
     <label>Kodi</label><input id="f_code" value="${esc(it?it.code:"")}" placeholder="masalan: YA5999" style="text-transform:uppercase">
     <label>Narxi</label><input id="f_price" value="${esc(it?it.price:"")}" placeholder="masalan: 17$" inputmode="decimal">
+    ${CAT.rotation?`<div style="display:flex;gap:8px"><div style="flex:1"><label>Karobka soni</label><input id="f_qty" value="${esc(it&&it.qty?it.qty:"")}" placeholder="masalan: 120шт"></div>
+      <div style="flex:1"><label>Pochka soni</label><input id="f_pack" value="${esc(it&&it.pack?it.pack:"")}" placeholder="masalan: 6шт"></div></div>`:""}
     <label>O'lchami <small style="font-weight:400;color:#999">(rasm tagiga yoziladi, ixtiyoriy)</small></label><input id="f_size" value="${esc(it&&it.size?it.size:"")}" placeholder="masalan: 23sm">
-    <label>Guruhi</label><input id="f_cat" list="cats" value="${esc(it?it.cat:(cats[cats.length-1]||""))}"><datalist id="cats">${cats.map(c=>`<option value="${esc(c)}">`).join("")}</datalist>
+    <label>Guruhi <small style="font-weight:400;color:#999">(ixtiyoriy — bo'sh qolsa jadvalda sarlavha chiqmaydi)</small></label><input id="f_cat" list="cats" value="${esc(it?(["Asosiy","Aralash"].includes(it.cat)&&CAT.rotation?"":it.cat):(CAT.rotation?"":(cats[cats.length-1]||"")))}"><datalist id="cats">${cats.map(c=>`<option value="${esc(c)}">`).join("")}</datalist>
     <div class="acts"><button class="btn ghost" id="f_cancel">Bekor</button><button class="btn" id="f_save">Saqlash</button></div>
     ${isNew?"":`<button class="btn ghost addbtn" id="f_del" style="color:var(--red)">🗑 Jadvaldan o'chirish</button>`}`);
   $("#f_cancel").onclick = closeSheet;
   $("#f_save").onclick = async () => {
     const body = {design:d.id, name:$("#f_name").value, code:$("#f_code").value, price:$("#f_price").value, category:$("#f_cat").value, size:$("#f_size").value};
+    if ($("#f_qty")){ body.qty = $("#f_qty").value; body.pack = $("#f_pack").value; }
     if (!body.name.trim() || !body.price.trim()){ toast("Nomi va narxini yozing", true); return; }
     if (isNew) body.action="add_item"; else { body.action="edit_item"; body.item=it.id; }
     if (await act(body, isNew?"Qo'shildi (NEW belgisi bilan)":"Saqlandi")) closeSheet();
