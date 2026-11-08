@@ -190,7 +190,8 @@ async def admin_action(request):
     try:
         if a == "stock":
             d_ = store.designs.get(body["design"]) or {}
-            whole = (store.section(d_.get("section")) or {}).get("whole")
+            import naborlar
+            whole = config.LENONUZ and naborlar.is_whole(d_)
             ops.set_stock(body["design"], None if whole else body.get("item"), bool(body["in_stock"]))
         elif a == "edit_item":
             warns = ops.edit_item(body["design"], body["item"], name=body.get("name"), code=body.get("code"),
@@ -230,10 +231,16 @@ async def admin_action(request):
             ops.rename_section(body["section"], body.get("title", ""), body.get("whole"))
         elif a == "section_delete" and config.LENONUZ:
             ops.delete_section(body["section"])
+        elif a == "design_kind" and config.LENONUZ:
+            d_ = store.designs[body["design"]]
+            d_["whole"] = bool(body.get("whole"))
+            store.save()
+            import publisher
+            publisher.queue_update(d_["id"])
         elif a == "move_design" and config.LENONUZ:
             ops.move_design(body["design"], body["section"])
         elif a == "add_design":
-            did = ops.add_design(body["section"], body.get("title", ""))
+            did = ops.add_design(body["section"], body.get("title", ""), body.get("whole"))
             return web.json_response({"ok": True, "warnings": [], "design": did, "catalog": store.public_catalog()})
         elif a == "reorder":
             ops.reorder(body["design"], body.get("layout") or [])

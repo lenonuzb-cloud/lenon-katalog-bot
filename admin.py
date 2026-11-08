@@ -55,6 +55,13 @@ def main_menu():
     return {"keyboard": rows, "resize_keyboard": True, "is_persistent": True}
 
 
+def _is_whole(d) -> bool:
+    if not config.LENONUZ:
+        return False
+    import naborlar
+    return naborlar.is_whole(d)
+
+
 def ikb(rows):
     return {"inline_keyboard": rows}
 
@@ -1023,7 +1030,8 @@ async def design_preview(uid, sess, warns):
 async def design_create(uid, sess):
     did = store.add_design(sess["section"], sess["title"], photos=sess.get("photos") or [])
     d = store.designs[did]
-    whole_ = bool((store.section(d["section"]) or {}).get("whole"))
+    import naborlar
+    whole_ = naborlar.is_whole(d)
     for c in sess.get("categories", []):
         if whole_:  # nabor: «Nomi | Soni» — ikkinchi ustun soni, narx emas
             for i in c["items"]:
@@ -1307,7 +1315,7 @@ async def quick_stock_text(uid, text) -> bool:
     target, word = m.group(1).strip(), m.group(2).lower()
     in_stock = word in ("keldi", "bor")
     sets = [x for x in store.designs.values() if not x.get("deleted")
-            and (store.section(x["section"])["kind"] == "nabor" or store.section(x["section"]).get("whole"))
+            and (store.section(x["section"])["kind"] == "nabor" or _is_whole(x))
             and target.upper() in (x["title"].upper(), x["title"].split(" · ")[-1].upper())]
     if len(sets) == 1:
         ch = ops.set_stock(sets[0]["id"], None, in_stock)
@@ -1329,7 +1337,7 @@ async def quick_stock_text(uid, text) -> bool:
             target = " ".join(tokens[1:])
     matches = []
     for dd in ([design] if design else store.designs.values()):
-        if dd.get("deleted") or (store.section(dd["section"]) or {}).get("whole"):
+        if dd.get("deleted") or _is_whole(dd):
             continue
         for c in dd["categories"]:
             for it in c["items"]:
@@ -1339,7 +1347,7 @@ async def quick_stock_text(uid, text) -> bool:
         # aqlli qidiruv: "za 5 qolmadi" -> Zaftrik 5
         scored = []
         for dd in ([design] if design else store.designs.values()):
-            if dd.get("deleted") or (store.section(dd["section"]) or {}).get("whole"):
+            if dd.get("deleted") or _is_whole(dd):
                 continue
             for c in dd["categories"]:
                 for it in c["items"]:

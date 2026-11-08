@@ -205,7 +205,7 @@ def add_items(design_id, items: list) -> tuple[int, list]:
     return n, warns
 
 
-def add_design(section_key, title) -> str:
+def add_design(section_key, title, whole=None) -> str:
     title = " ".join((title or "").split())
     if not title:
         raise OpError("Nomini yozing")
@@ -214,6 +214,8 @@ def add_design(section_key, title) -> str:
     if store.find_design(title, section_key):
         raise OpError("Bunday nomli dizayn allaqachon bor")
     did = store.add_design(section_key, title)
+    if whole is not None and config.LENONUZ:
+        store.designs[did]["whole"] = bool(whole)
     store.save()
     notify.add("new", f"{store.designs[did]['title']} — yangi dizayn")
     return did

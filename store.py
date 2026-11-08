@@ -364,6 +364,7 @@ class Store:
                     "agents": [{"name": a, "username": self.settings["agents"].get(a, "")} for a in d.get("agents", [])],
                     "in_stock": d.get("in_stock", True),
                     "pinned": bool(d.get("pinned")),
+                    "whole": (bool(d["whole"]) if d.get("whole") is not None else bool(s.get("whole"))),
                     "is_new": d.get("new_until", 0) > t,
                     "is_keldi": d.get("keldi_until", 0) > t,
                     "link": self.post_link(d),

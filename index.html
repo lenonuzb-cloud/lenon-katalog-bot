@@ -514,8 +514,8 @@ function renderDesign(){
   if (!q){
     h += heroHtml(d, sec);
     h += `<h1>${esc(d.title)}</h1><div class="orn">${sec.key==="boden"?"BODEN":"LENON"}</div>`;
-    if (sec.whole && !d.in_stock) h += `<div class="nabor-info" style="color:var(--red);font-weight:700">❌ Bu nabor hozir qolmadi</div>`;
-    if (d.note) h += `<div class="note"${sec.whole?' style="color:var(--gold-dark)"':''}>${esc(d.note).replace(/\n/g, sec.whole ? " · " : "<br>")}</div>`;
+    if (d.whole && !d.in_stock) h += `<div class="nabor-info" style="color:var(--red);font-weight:700">❌ Bu nabor hozir qolmadi</div>`;
+    if (d.note) h += `<div class="note"${d.whole?' style="color:var(--gold-dark)"':''}>${esc(d.note).replace(/\n/g, d.whole ? " · " : "<br>")}</div>`;
     if (d.agents.length) h += `<div class="agents">${d.agents.filter(a=>a.username).map(a=>`<button data-u="${esc(a.username)}">💬 ${esc(a.name)}</button>`).join("")}</div>`;
   }
   const total = d.categories.reduce((a,c)=>a+c.items.length,0);
@@ -615,7 +615,7 @@ function renderTable(){
   const {sec, d} = f;
   let h = "";
   if (CAT.layout==="table" && d.photos && d.photos.length){
-    h += `<div class="slidewrap"><div class="slides" id="slides">${d.photos.map(p=>`<img loading="lazy" src="${img(p,1000)}">`).join("")}</div>${badges(sec.kind==="design"&&!sec.whole?{is_new:d.is_new,in_stock:true}:d)}
+    h += `<div class="slidewrap"><div class="slides" id="slides">${d.photos.map(p=>`<img loading="lazy" src="${img(p,1000)}">`).join("")}</div>${badges(sec.kind==="design"&&!d.whole?{is_new:d.is_new,in_stock:true}:d)}
       ${d.photos.length>1?`<div class="dots">${d.photos.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div>`:""}</div>`;
   }
   h += `<h1>${esc(d.title)}</h1><div class="orn">${CAT.layout==="table"?"LENON":"JADVAL"}</div>`;
@@ -626,7 +626,7 @@ function renderTable(){
     if (ADMIN) h += `<button class="btn addbtn ${d.in_stock?"danger":""}" id="nstock">${d.in_stock?"❌ Qolmadi deb belgilash":"✅ Keldi deb belgilash"}</button>`;
   } else if (sec.kind==="photos"){
     h += `<div class="nabor-info">${esc(d.note).replace(/\n/g,"<br>")}</div>`;
-  } else if (sec.whole){
+  } else if (sec.kind==="design" && d.whole){
     const f = naborFields(d.note);
     if (!d.in_stock) h += `<div class="nabor-info" style="color:var(--red);font-weight:700">❌ Bu nabor hozir qolmadi</div>`;
     const info = [f.narxi?`💰 Narxi: <b>${esc(f.narxi)}</b>`:"", f.jami?`📦 Jami: <b>${esc(f.jami)}</b>`:"", f.kodi?`🔖 Kodi: <b>${esc(f.kodi)}</b>`:""].filter(Boolean);
@@ -636,10 +636,11 @@ function renderTable(){
     h += `<div class="cat" style="margin-top:6px">Ichida</div><div class="tbl ${d.in_stock?"":"outall"}">${its.length ? its.map(it=>`<div class="row" style="grid-template-columns:1fr auto${d.in_stock?"":";opacity:.55"}"><span class="nm">• ${esc(it.name)}</span><span class="cd">${esc(it.qty||"")}</span></div>`).join("") : '<div class="empty-msg">Ichidagilar yozilmagan</div>'}</div>`;
     if (ADMIN) h += `<button class="btn addbtn ${d.in_stock?"danger":""}" id="nstock">${d.in_stock?"❌ Nabor qolmadi":"✅ Nabor keldi"}</button>
       <button class="btn addbtn" id="nedit">✏️ Narxi va ichidagilarni o'zgartirish</button>
+      <button class="btn ghost addbtn" id="dkind">🔁 Turini o'zgartirish → 🔢 Donalik</button>
       <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="rename">🔤 Nomini o'zgartirish</button><button class="btn ghost" style="flex:1" id="moved">📂 Bo'limini o'zgartirish</button><button class="btn ghost" style="flex:1;color:var(--red)" id="deld">🗑 O'chirish</button></div>`;
   } else {
-    if (sec.whole && !d.in_stock) h += `<div class="nabor-info" style="color:var(--red);font-weight:700">❌ Bu nabor hozir qolmadi</div>`;
-    if (d.note) h += `<div class="note"${sec.whole?' style="color:var(--gold-dark)"':''}>${esc(d.note).replace(/\n/g, sec.whole ? " · " : "<br>")}</div>`;
+    if (d.whole && !d.in_stock) h += `<div class="nabor-info" style="color:var(--red);font-weight:700">❌ Bu nabor hozir qolmadi</div>`;
+    if (d.note) h += `<div class="note"${d.whole?' style="color:var(--gold-dark)"':''}>${esc(d.note).replace(/\n/g, d.whole ? " · " : "<br>")}</div>`;
     if (d.agents.length) h += `<div class="agents">${d.agents.filter(a=>a.username).map(a=>`<button data-u="${esc(a.username)}">💬 ${esc(a.name)}</button>`).join("")}</div>`;
     const hasCode = d.categories.some(c=>c.items.some(i=>i.code));
     let n=0, rows="";
@@ -650,7 +651,7 @@ function renderTable(){
       if (c.name && c.name!=="Asosiy" && !(CAT.rotation && c.name==="Aralash")) rows += `<div class="cat">${esc(c.name)}</div>`;
       for (const it of its){
         n++;
-        const whole = !!sec.whole, sold = whole ? !d.in_stock : !it.in_stock;
+        const whole = !!d.whole, sold = whole ? !d.in_stock : !it.in_stock;
         rows += `<div class="row ${sold?"out":""} ${ADMIN?"adm":""}" data-item="${it.id}">
           <span class="n">${n}</span><span class="nm">${esc(it.name)}${chips(it)}</span>
           <span class="cd">${esc([hasCode?it.code:"", it.qty||"", it.pack?"pochka "+it.pack:""].filter(Boolean).join(" · "))}</span><span class="pr">${esc(it.price)}${it.total?`<small style="display:block;color:var(--hint);font-weight:500">jami ${esc(it.total)}</small>`:""}</span>
@@ -658,7 +659,8 @@ function renderTable(){
       }
     }
     h += `<div class="tbl">${rows || '<div class="empty-msg">Jadval bo\'sh</div>'}</div>`;
-    if (ADMIN && sec.whole) h += `<button class="btn addbtn ${d.in_stock?"danger":""}" id="nstock">${d.in_stock?"❌ Butun nabor qolmadi":"✅ Nabor keldi"}</button>`;
+    if (ADMIN && CAT.rotation) h += `<button class="btn ghost addbtn" id="dkind">🔁 Turini o'zgartirish → ${d.whole?"🔢 Donalik":"📦 Nabor"}</button>`;
+    if (ADMIN && d.whole) h += `<button class="btn addbtn ${d.in_stock?"danger":""}" id="nstock">${d.in_stock?"❌ Butun nabor qolmadi":"✅ Nabor keldi"}</button>`;
     if (ADMIN) h += `<button class="btn addbtn" id="additem">➕ Mahsulot qo'shish</button>
                      <button class="btn ghost addbtn" id="reord">↕️ Mahsulotlar tartibini o'zgartirish</button>
                      <div style="display:flex;gap:8px;margin-top:8px"><button class="btn ghost" style="flex:1" id="rename">🔤 Nomini o'zgartirish</button>${CAT.rotation?`<button class="btn ghost" style="flex:1" id="moved">📂 Bo'limini o'zgartirish</button>`:""}<button class="btn ghost" style="flex:1;color:var(--red)" id="deld">🗑 Dizaynni o'chirish</button></div>`;
@@ -685,6 +687,8 @@ function renderTable(){
     const ns = $("#nstock"); if (ns) ns.onclick = () => act({action:"stock", design:d.id, in_stock: !d.in_stock}, d.in_stock?"Qolmadi deb belgilandi":"Keldi deb belgilandi");
     const ai = $("#additem"); if (ai) ai.onclick = () => addChooser(d);
     const ne = $("#nedit"); if (ne) ne.onclick = () => naborEditSheet(d);
+    const dk = $("#dkind"); if (dk) dk.onclick = () => confirmDo(d.whole ? `«${d.title}» donalik bo'lsinmi? (jadval, har mahsulotga alohida qolmadi)` : `«${d.title}» nabor bo'lsinmi? (butunligicha sotiladi)`,
+      async () => { if (await secAct({action:"design_kind", design:d.id, whole:!d.whole}, "Turi o'zgartirildi")) render(); });
     const rn = $("#rename"); if (rn) rn.onclick = () => renameSheet(d);
     const mv = $("#moved"); if (mv) mv.onclick = () => moveSheet(d);
     const ro = $("#reord"); if (ro) ro.onclick = () => go({name:"reorder", id:d.id});
@@ -974,17 +978,22 @@ function newDesignSheet(secKey){
   const sec = CAT.sections.find(x=>x.key===secKey);
   openSheet(`<h3>➕ Yangi dizayn</h3><div class="pinfo2" style="margin:-6px 0 6px">${esc(sec.title)} bo'limiga</div>
     <label>Dizayn nomi</label><input id="nd_t" placeholder="${secKey==="boden"?"masalan: 008":"masalan: 15-OL"}">
+    ${CAT.rotation?`<label>Turi</label><div class="seg" id="nd_kind" style="margin-top:4px">
+      <button data-w="1" class="${sec.whole?"on":""}">📦 Nabor<br><small>butunligicha sotiladi</small></button>
+      <button data-w="0" class="${sec.whole?"":"on"}">🔢 Donalik<br><small>jadval, har biri alohida</small></button></div>`:""}
     <div class="pinfo2" style="margin-top:8px">Keyin mahsulotlarni «📚 Mavjud mahsulotlardan» tez qo'shasiz. Dizayn rasmini botga yuborasiz.</div>
     <div class="acts"><button class="btn ghost" id="nd_c">Bekor</button><button class="btn" id="nd_s">Yaratish</button></div>`);
   $("#nd_c").onclick = closeSheet;
+  document.querySelectorAll("#nd_kind button").forEach(b => b.onclick = () => { document.querySelectorAll("#nd_kind button").forEach(x=>x.classList.toggle("on", x===b)); });
   $("#nd_s").onclick = async () => {
     const title = $("#nd_t").value.trim(); if (!title){ toast("Nomini yozing", true); return; }
     try{
-      const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify({action:"add_design", section:secKey, title})});
+      const kb = document.querySelector("#nd_kind button.on");
+      const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify({action:"add_design", section:secKey, title, whole: kb ? kb.dataset.w==="1" : undefined})});
       const j = await r.json();
       if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return; }
       Object.assign(CAT, j.catalog); closeSheet(); toast("✅ Dizayn yaratildi. Endi mahsulotlarni qo'shing");
-      go({name:"design", id:j.design}); const nd = findDesign(j.design); if (nd) (nd.sec.whole ? naborEditSheet(nd.d) : pickSheet(nd.d));
+      go({name:"design", id:j.design}); const nd = findDesign(j.design); if (nd) (nd.d.whole ? naborEditSheet(nd.d) : pickSheet(nd.d));
     }catch(e){ toast("⚠️ Internet bilan muammo", true); }
   };
 }

@@ -15,6 +15,9 @@ GROUPS = [  # (kalit, bo'lim nomi, nom boshlanishi)
 
 
 def is_whole(d) -> bool:
+    """Nabor (butunligicha sotiladi)mi? Dizaynning o'z belgisi bo'lsa — o'sha, bo'lmasa bo'lim turi."""
+    if d.get("whole") is not None:
+        return bool(d["whole"])
     s = store.section(d.get("section")) or {}
     return bool(s.get("whole"))
 
