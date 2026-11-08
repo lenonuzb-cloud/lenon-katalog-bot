@@ -32,6 +32,9 @@ def normalize_price(p: str) -> str:
 
 
 def normalize_code(c: str) -> str:
+    if config.LENONUZ:  # LENON_UZ: kod qanday yozilsa shunday qoladi (probel, kichik harf mumkin)
+        import re as _re
+        return _re.sub(r"\s+", " ", (c or "").strip())
     return (c or "").strip().upper().replace(" ", "")
 
 

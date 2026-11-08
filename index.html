@@ -983,7 +983,7 @@ function editSheet(d, it){
   const isNew = !it;
   openSheet(`<h3>${isNew?"➕ Yangi mahsulot":"✏️ "+esc(it.name)}</h3>
     <label>Nomi</label><input id="f_name" value="${esc(it?it.name:"")}" placeholder="masalan: Aval kv 15">
-    <label>Kodi</label><input id="f_code" value="${esc(it?it.code:"")}" placeholder="masalan: YA5999" style="text-transform:uppercase">
+    <label>Kodi</label><input id="f_code" value="${esc(it?it.code:"")}" placeholder="masalan: YA5999" ${CAT.rotation?'autocapitalize="off"':'style="text-transform:uppercase"'}>
     <label>Narxi</label><input id="f_price" value="${esc(it?it.price:"")}" placeholder="masalan: 17$" inputmode="decimal">
     ${CAT.rotation?`<div style="display:flex;gap:8px"><div style="flex:1"><label>Karobka soni</label><input id="f_qty" value="${esc(it&&it.qty?it.qty:"")}" placeholder="masalan: 120 (шт o'zi qo'shiladi)"></div>
       <div style="flex:1"><label>Pochka soni</label><input id="f_pack" value="${esc(it&&it.pack?it.pack:"")}" placeholder="masalan: 6"></div></div>`:""}

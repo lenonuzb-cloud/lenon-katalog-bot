@@ -203,7 +203,7 @@ class Store:
         return {
             "id": new_id(),
             "name": name.strip(),
-            "code": (code or "").strip().upper(),
+            "code": (code or "").strip() if config.LENONUZ else (code or "").strip().upper(),
             "qty": (qty or "").strip(),
             "total": (total or "").strip(),
             "price": (price or "").strip(),
