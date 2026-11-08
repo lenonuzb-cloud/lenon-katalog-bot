@@ -13,6 +13,14 @@ class OpError(Exception):
     pass
 
 
+def _sht(v) -> str:
+    """LENON_UZ: «120» -> «120шт» (faqat raqam yozilsa birlik o'zi qo'shiladi)."""
+    v = re.sub(r"\s+", " ", str(v or "")).strip()
+    if config.LENONUZ and re.fullmatch(r"\d+(?:[.,]\d+)?", v):
+        return v + "шт"
+    return v
+
+
 def _design(design_id) -> dict:
     d = store.designs.get(design_id)
     if not d or d.get("deleted"):
@@ -55,9 +63,9 @@ def add_item(design_id, category, name, code, price, qty="", pack="", new=True) 
     if not new:
         it["new_until"] = 0
     if qty:
-        it["qty"] = str(qty).strip()
+        it["qty"] = _sht(qty)
     if pack:
-        it["pack"] = str(pack).strip()
+        it["pack"] = _sht(pack)
     if is_new:
         store.event("new", f"Ro'yxatga yangi mahsulot: {name}", design_id)
         warns = list(warns) + [f"📚 «{name}» mavjud mahsulotlar ro'yxatiga ham qo'shildi"]
@@ -90,9 +98,9 @@ def edit_item(design_id, item_id, name=None, code=None, price=None, category=Non
         raise OpError(f"«{new_name}» bu dizaynda allaqachon bor — takrorlanmaydi")
     it.update(name=new_name, code=new_code, price=new_price)
     for key, val, label in (("qty", qty, "karobka soni"), ("pack", pack, "pochka soni")):
-        if val is not None and str(val).strip() != it.get(key, ""):
-            changes.append(f"{label}: {it.get(key) or '—'} → {str(val).strip() or '—'}")
-            it[key] = str(val).strip()
+        if val is not None and _sht(val) != it.get(key, ""):
+            changes.append(f"{label}: {it.get(key) or '—'} → {_sht(val) or '—'}")
+            it[key] = _sht(val)
     if size is not None:
         size = re.sub(r"\s+", "", str(size)).lower()
         if size and size.replace(".", "").replace(",", "").isdigit():

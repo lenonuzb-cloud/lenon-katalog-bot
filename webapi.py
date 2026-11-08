@@ -197,6 +197,9 @@ async def admin_action(request):
             warns = ops.edit_item(body["design"], body["item"], name=body.get("name"), code=body.get("code"),
                                   price=body.get("price"), category=body.get("category"),
                                   size=body.get("size"), qty=body.get("qty"), pack=body.get("pack"))
+        elif a == "week_section":
+            import schedule
+            schedule.set_section_days(body["section"], [int(x) for x in body.get("days") or []])
         elif a == "week_set":
             import schedule
             schedule.set_day(int(body["day"]), list(body.get("ids") or []))

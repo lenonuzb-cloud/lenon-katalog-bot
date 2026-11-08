@@ -452,6 +452,7 @@ function sectionView(key){
   if (ADMIN && CAT.rotation && sec.kind==="design") add = `<div style="display:flex;gap:8px;margin-bottom:18px">
       <button class="newdz" id="newdz" data-sec="${sec.key}" style="flex:1;margin:0">➕ Yangi qo'shish</button>
       <button class="newdz" id="newsec" data-sec="${sec.key}" style="flex:1;margin:0">🗂 Yangi bo'lim</button>
+      <button class="newdz" id="secdays" data-sec="${sec.key}" style="flex:none;width:52px;margin:0" aria-label="Haftalik kunlar">📅</button>
       <button class="newdz" id="secset" data-sec="${sec.key}" style="flex:none;width:52px;margin:0" aria-label="Bo'lim sozlamalari">⚙️</button></div>`;
   if (CAT.layout==="table") return add + `<div class="grid two">${sec.designs.map(d=>cardHtml(d,true)).join("")}</div>`;
   return add + `<div class="grid">${sec.designs.map(d=>cardHtml(d,false)).join("")}</div>`;
@@ -488,6 +489,7 @@ function bindCards(){
   const nd = $("#newdz"); if (nd) nd.onclick = () => newDesignSheet(nd.dataset.sec);
   const ns = $("#newsec"); if (ns) ns.onclick = () => newSectionSheet(ns.dataset.sec);
   const ss = $("#secset"); if (ss) ss.onclick = () => sectionSettings(ss.dataset.sec);
+  const sd = $("#secdays"); if (sd) sd.onclick = () => sectionDaysSheet(sd.dataset.sec);
   document.querySelectorAll(".card[data-id]").forEach(c => c.onclick = () => go({name:"design", id:c.dataset.id}));
   document.querySelectorAll(".card[data-nab]").forEach(c => c.onclick = () => go({name:"nabor", key:c.dataset.nab}));
 }
@@ -815,12 +817,47 @@ async function weekSheet(day){
   WEEK.day = day; WEEK.sel = new Set(WEEK.data.week[String(day)] || []); WEEK.open = {};
   drawWeek();
 }
+function weekOverview(W, cur){
+  const secOf = {}; for (const s of CAT.sections) for (const d of s.designs) secOf[d.id] = s.title;
+  const rows = W.days.map((name,i)=>{
+    const ids = (i===cur && WEEK.sel) ? [...WEEK.sel] : (W.week[String(i)]||[]);
+    const by = {}; for (const id of ids) if (secOf[id]) by[secOf[id]] = (by[secOf[id]]||0) + 1;
+    const parts = Object.entries(by).map(([t,n])=>`${esc(t)} — <b>${n} ta</b>`).join(", ");
+    return `<button data-ov="${i}" style="display:flex;gap:10px;width:100%;text-align:left;background:${i===cur?"var(--ivory)":"none"};border:0;border-bottom:1px solid var(--line);padding:10px 8px;font:14px/1.45 var(--sans);color:var(--text)">
+      <b style="flex:none;width:28px;color:var(--gold-dark)">${W.short[i]}</b>
+      <span style="flex:1">${ids.length ? `${parts}<br><small style="color:var(--hint)">${esc(weekInterval(ids.length))}</small>` : `<small style="color:var(--hint)">Tanlanmagan — oddiy navbat (soatiga 1 ta)</small>`}</span></button>`;
+  }).join("");
+  return `<div style="border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:4px 0 14px"><div style="padding:8px 10px;font-weight:700;background:var(--bg2)">📋 Butun hafta</div>${rows}</div>`;
+}
+async function sectionDaysSheet(key){
+  const sec = CAT.sections.find(x=>x.key===key); if (!sec) return;
+  openSheet(`<h3>📅 ${esc(sec.title)}</h3><div class="loading">Yuklanmoqda…</div>`);
+  let W; try{ W = await adminInfo("t=week"); }catch(e){ toast("⚠️ Internet bilan muammo", true); return; }
+  const ids = sec.designs.filter(d=>!d.pinned).map(d=>d.id);
+  const state = W.days.map((_,i)=>{ const day = new Set(W.week[String(i)]||[]); const n = ids.filter(x=>day.has(x)).length; return ids.length && n===ids.length ? "all" : (n ? "some" : "none"); });
+  const pick = new Set(state.map((s,i)=>s==="all"?i:-1).filter(i=>i>=0));
+  const draw = () => {
+    $("#sheet .sdays").innerHTML = W.days.map((name,i)=>`<button data-sd="${i}" class="choice" style="padding:12px 16px;margin-bottom:8px;${pick.has(i)?"border-color:var(--gold);background:var(--ivory)":""}">
+      <span>${pick.has(i)?"✅":"⬜"}</span><div><b>${esc(name)}</b><small>${state[i]==="some"&&!pick.has(i)?"Bu bo'limning bir qismi shu kunda turibdi":(pick.has(i)?`${esc(sec.title)} — ${ids.length} ta`:"")}</small></div></button>`).join("");
+    document.querySelectorAll("#sheet [data-sd]").forEach(b => b.onclick = () => { const i=+b.dataset.sd; pick.has(i)?pick.delete(i):pick.add(i); draw(); });
+  };
+  openSheet(`<h3>📅 ${esc(sec.title)} — qaysi kunlari chiqsin?</h3>
+    <div class="pinfo2" style="margin:-6px 0 12px">Belgilangan kunlarda shu bo'limning hamma ${ids.length} ta tovari guruhga chiqadi (o'sha kungi boshqa tovarlar bilan birga, 08:00–22:00 ga teng bo'linadi).</div>
+    <div class="sdays"></div>
+    <div class="acts"><button class="btn ghost" id="sd_c">Bekor</button><button class="btn" id="sd_s">💾 Saqlash</button></div>`);
+  draw();
+  $("#sd_c").onclick = closeSheet;
+  $("#sd_s").onclick = async () => {
+    const days = [...pick].sort();
+    if (await secAct({action:"week_section", section:key, days}, days.length ? `Saqlandi: ${days.map(i=>W.short[i]).join(", ")}` : "Bo'lim haftalik jadvaldan olindi")) closeSheet();
+  };
+}
 function drawWeek(){
   const W = WEEK.data, day = WEEK.day, secs = CAT.sections.filter(s=>s.kind==="design");
   const other = {};
   for (let i=0;i<7;i++) if (i!==day) for (const id of (W.week[String(i)]||[])) (other[id] = other[id]||[]).push(W.short[i]);
   const cnt = i => i===day ? WEEK.sel.size : (W.week[String(i)]||[]).length;
-  let h = `<h3>📅 Haftalik post jadvali</h3>
+  let h = `<h3>📅 Haftalik post jadvali</h3>${weekOverview(W, day)}
     <div class="seg" style="flex-wrap:wrap">${W.short.map((d,i)=>`<button data-day="${i}" class="${i===day?"on":""}">${d}${cnt(i)?` · ${cnt(i)}`:""}</button>`).join("")}</div>
     <div class="pinfo2" style="margin:8px 0 4px"><b>${esc(W.days[day])}</b>: ${esc(weekInterval(WEEK.sel.size))}</div>
     <div class="pinfo2" style="margin:0 0 10px">Bo'limni belgilasangiz — ichidagi hamma tovar tanlanadi. Bo'lim nomini bosib, tovarlarni bittalab tanlashingiz mumkin.</div>`;
@@ -847,6 +884,7 @@ function drawWeek(){
   h += `<div class="acts"><button class="btn ghost" id="wk_clear">Kunni tozalash</button><button class="btn" id="wk_save">💾 Saqlash</button></div>`;
   openSheet(h);
   document.querySelectorAll("#sheet [data-day]").forEach(b => b.onclick = () => { WEEK.day = +b.dataset.day; WEEK.sel = new Set(W.week[b.dataset.day]||[]); drawWeek(); });
+  document.querySelectorAll("#sheet [data-ov]").forEach(b => b.onclick = () => { WEEK.day = +b.dataset.ov; WEEK.sel = new Set(W.week[b.dataset.ov]||[]); drawWeek(); });
   document.querySelectorAll("#sheet [data-open]").forEach(b => b.onclick = () => { WEEK.open[b.dataset.open] = !WEEK.open[b.dataset.open]; const y=$("#sheet").scrollTop; drawWeek(); $("#sheet").scrollTop=y; });
   document.querySelectorAll("#sheet [data-wsec]").forEach(c => c.onchange = () => {
     const s = secs.find(x=>x.key===c.dataset.wsec);
@@ -947,8 +985,8 @@ function editSheet(d, it){
     <label>Nomi</label><input id="f_name" value="${esc(it?it.name:"")}" placeholder="masalan: Aval kv 15">
     <label>Kodi</label><input id="f_code" value="${esc(it?it.code:"")}" placeholder="masalan: YA5999" style="text-transform:uppercase">
     <label>Narxi</label><input id="f_price" value="${esc(it?it.price:"")}" placeholder="masalan: 17$" inputmode="decimal">
-    ${CAT.rotation?`<div style="display:flex;gap:8px"><div style="flex:1"><label>Karobka soni</label><input id="f_qty" value="${esc(it&&it.qty?it.qty:"")}" placeholder="masalan: 120шт"></div>
-      <div style="flex:1"><label>Pochka soni</label><input id="f_pack" value="${esc(it&&it.pack?it.pack:"")}" placeholder="masalan: 6шт"></div></div>`:""}
+    ${CAT.rotation?`<div style="display:flex;gap:8px"><div style="flex:1"><label>Karobka soni</label><input id="f_qty" value="${esc(it&&it.qty?it.qty:"")}" placeholder="masalan: 120 (шт o'zi qo'shiladi)"></div>
+      <div style="flex:1"><label>Pochka soni</label><input id="f_pack" value="${esc(it&&it.pack?it.pack:"")}" placeholder="masalan: 6"></div></div>`:""}
     <label>O'lchami <small style="font-weight:400;color:#999">(rasm tagiga yoziladi, ixtiyoriy)</small></label><input id="f_size" value="${esc(it&&it.size?it.size:"")}" placeholder="masalan: 23sm">
     ${isNew&&CAT.rotation?`<label>🆕 NEW belgisi qo'yilsinmi?</label><div class="seg" id="f_new" style="margin-top:4px"><button data-n="1">Ha, NEW qo'yilsin</button><button data-n="0" class="on">Yo'q</button></div>`:""}
     <label>Guruhi <small style="font-weight:400;color:#999">(ixtiyoriy — bo'sh qolsa jadvalda sarlavha chiqmaydi)</small></label><input id="f_cat" list="cats" value="${esc(it?(["Asosiy","Aralash"].includes(it.cat)&&CAT.rotation?"":it.cat):(CAT.rotation?"":(cats[cats.length-1]||"")))}"><datalist id="cats">${cats.map(c=>`<option value="${esc(c)}">`).join("")}</datalist>

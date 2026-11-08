@@ -124,3 +124,27 @@ def today_text() -> str:
         rows.append(f"{mark} {hhmm(t)} — {publisher.esc(store.designs[did]['title'])}")
     return (f"📅 <b>Bugun ({DAYS[now.weekday()]}) haftalik jadval:</b> {interval_text(len(lst))}\n"
             + "\n".join(rows[:40]))
+
+
+def section_days(key: str) -> list:
+    """Bo'lim qaysi kunlarda turibdi: har kun uchun «all» / «some» / «none»."""
+    ids = [d["id"] for d in store.designs_in(key) if not d.get("pinned")]
+    out = []
+    for i in range(7):
+        day = set(week()[str(i)])
+        n = sum(1 for x in ids if x in day)
+        out.append("all" if ids and n == len(ids) else ("some" if n else "none"))
+    return out
+
+
+def set_section_days(key: str, days: list):
+    """Bo'limning hamma tovarini tanlangan kunlarga qo'yadi, qolgan kunlardan olib tashlaydi."""
+    ids = [d["id"] for d in store.designs_in(key) if not d.get("pinned")]
+    idset = set(ids)
+    w = week()
+    for i in range(7):
+        cur = [x for x in w[str(i)] if x not in idset]
+        if i in days:
+            cur += ids
+        w[str(i)] = cur
+    store.save()
