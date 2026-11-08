@@ -450,7 +450,7 @@ function sectionView(key){
   if (sec.kind==="photos") return `<div class="grid two">${sec.designs.map(d=>cardHtml(d,true)).join("")}</div>`;
   let add = ADMIN && sec.kind==="design" ? `<button class="newdz" id="newdz" data-sec="${sec.key}">➕ Yangi dizayn qo'shish</button>` : "";
   if (ADMIN && CAT.rotation && sec.kind==="design") add = `<div style="display:flex;gap:8px;margin-bottom:18px">
-      <button class="newdz" id="newdz" data-sec="${sec.key}" style="flex:1;margin:0">➕ Yangi dizayn</button>
+      <button class="newdz" id="newdz" data-sec="${sec.key}" style="flex:1;margin:0">➕ Yangi qo'shish</button>
       <button class="newdz" id="newsec" data-sec="${sec.key}" style="flex:1;margin:0">🗂 Yangi bo'lim</button>
       <button class="newdz" id="secset" data-sec="${sec.key}" style="flex:none;width:52px;margin:0" aria-label="Bo'lim sozlamalari">⚙️</button></div>`;
   if (CAT.layout==="table") return add + `<div class="grid two">${sec.designs.map(d=>cardHtml(d,true)).join("")}</div>`;
@@ -974,26 +974,31 @@ function pickSheet(d){
   };
   draw();
 }
-function newDesignSheet(secKey){
+function newDesignSheet(secKey, kind){
   const sec = CAT.sections.find(x=>x.key===secKey);
-  openSheet(`<h3>➕ Yangi dizayn</h3><div class="pinfo2" style="margin:-6px 0 6px">${esc(sec.title)} bo'limiga</div>
-    <label>Dizayn nomi</label><input id="nd_t" placeholder="${secKey==="boden"?"masalan: 008":"masalan: 15-OL"}">
-    ${CAT.rotation?`<label>Turi</label><div class="seg" id="nd_kind" style="margin-top:4px">
-      <button data-w="1" class="${sec.whole?"on":""}">📦 Nabor<br><small>butunligicha sotiladi</small></button>
-      <button data-w="0" class="${sec.whole?"":"on"}">🔢 Donalik<br><small>jadval, har biri alohida</small></button></div>`:""}
-    <div class="pinfo2" style="margin-top:8px">Keyin mahsulotlarni «📚 Mavjud mahsulotlardan» tez qo'shasiz. Dizayn rasmini botga yuborasiz.</div>
-    <div class="acts"><button class="btn ghost" id="nd_c">Bekor</button><button class="btn" id="nd_s">Yaratish</button></div>`);
-  $("#nd_c").onclick = closeSheet;
-  document.querySelectorAll("#nd_kind button").forEach(b => b.onclick = () => { document.querySelectorAll("#nd_kind button").forEach(x=>x.classList.toggle("on", x===b)); });
+  if (CAT.rotation && kind === undefined){   // 1-qadam: nima qo'shamiz?
+    openSheet(`<h3>➕ Nima qo'shasiz?</h3><div class="pinfo2" style="margin:-6px 0 12px">${esc(sec.title)} bo'limiga</div>
+      <button class="choice" id="nk_n"><span>📦</span><div><b>Nabor qo'shish</b><small>Butunligicha sotiladi: 1 rasm, narxi, ichida nimalar borligi. «Qolmadi» butun naborga qo'yiladi.</small></div></button>
+      <button class="choice" id="nk_d"><span>🔢</span><div><b>Donalik mahsulot qo'shish</b><small>Jadval: nomi, kodi, karobka va pochka soni, narxi. Har bir mahsulotga alohida «qolmadi».</small></div></button>`);
+    $("#nk_n").onclick = () => newDesignSheet(secKey, true);
+    $("#nk_d").onclick = () => newDesignSheet(secKey, false);
+    return;
+  }
+  const whole = kind === true;
+  openSheet(`<h3>${CAT.rotation ? (whole ? "📦 Yangi nabor" : "🔢 Yangi donalik mahsulot") : "➕ Yangi dizayn"}</h3><div class="pinfo2" style="margin:-6px 0 6px">${esc(sec.title)} bo'limiga</div>
+    <label>${whole ? "Nabor nomi" : "Dizayn nomi"}</label><input id="nd_t" placeholder="${whole ? "masalan: LENON nabor 46 · P830" : (secKey==="boden"?"masalan: 008":"masalan: Kovrik arzon")}">
+    <div class="pinfo2" style="margin-top:8px">${whole ? "Keyingi oynada narxi va ichidagilarni yozasiz. Rasmini botga yuborasiz." : "Keyin mahsulotlarni jadvalga qo'shasiz. Dizayn rasmini botga yuborasiz."}</div>
+    <div class="acts"><button class="btn ghost" id="nd_c">${CAT.rotation ? "‹ Orqaga" : "Bekor"}</button><button class="btn" id="nd_s">Yaratish</button></div>`);
+  setTimeout(() => $("#nd_t").focus(), 50);
+  $("#nd_c").onclick = () => CAT.rotation ? newDesignSheet(secKey) : closeSheet();
   $("#nd_s").onclick = async () => {
     const title = $("#nd_t").value.trim(); if (!title){ toast("Nomini yozing", true); return; }
     try{
-      const kb = document.querySelector("#nd_kind button.on");
-      const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify({action:"add_design", section:secKey, title, whole: kb ? kb.dataset.w==="1" : undefined})});
+      const r = await fetch("/api/admin", {method:"POST", headers:{"Content-Type":"application/json","X-Init-Data":initData}, body:JSON.stringify({action:"add_design", section:secKey, title, whole: CAT.rotation ? whole : undefined})});
       const j = await r.json();
       if (!j.ok){ toast("⚠️ "+(j.error||"Xato"), true); return; }
-      Object.assign(CAT, j.catalog); closeSheet(); toast("✅ Dizayn yaratildi. Endi mahsulotlarni qo'shing");
-      go({name:"design", id:j.design}); const nd = findDesign(j.design); if (nd) (nd.d.whole ? naborEditSheet(nd.d) : pickSheet(nd.d));
+      Object.assign(CAT, j.catalog); closeSheet(); toast(whole ? "✅ Nabor yaratildi. Endi narxi va ichidagilarni yozing" : "✅ Yaratildi. Endi mahsulotlarni qo'shing");
+      go({name:"design", id:j.design}); const nd = findDesign(j.design); if (nd) (nd.d.whole ? naborEditSheet(nd.d) : (CAT.rotation ? editSheet(nd.d, null) : pickSheet(nd.d)));
     }catch(e){ toast("⚠️ Internet bilan muammo", true); }
   };
 }
