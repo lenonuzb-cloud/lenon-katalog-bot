@@ -259,6 +259,27 @@ async def admin_action(request):
     return web.json_response({"ok": True, "warnings": warns, "catalog": store.public_catalog()})
 
 
+async def _design_photo(user, design_id, raw, replace):
+    """Mini ilovadan butun jadval (dizayn) rasmi: logo qo'yiladi va postning asosiy rasmiga qo'shiladi."""
+    if design_id not in store.designs:
+        return web.json_response({"ok": False, "error": "Dizayn topilmadi"}, status=400)
+    try:
+        out = await asyncio.get_event_loop().run_in_executor(None, images.process, raw, True, None)
+    except Exception as e:  # noqa
+        import checker
+        await checker.report_error(f"Mini ilova: jadval rasmi o'qilmadi ({len(raw)} bayt)", e)
+        return web.json_response({"ok": False, "error": "Rasmni o'qib bo'lmadi. JPG/PNG qilib qayta yuboring."}, status=400)
+    owner = store.settings.get("owner_id") or user["id"]
+    m = await bot.call("sendPhoto", files={"photo": ("rasm.jpg", out, "image/jpeg")},
+                       chat_id=str(owner), disable_notification="true")
+    fid = m["photo"][-1]["file_id"]
+    await bot.safe_delete(owner, m["message_id"])
+    ops.mark_design_photos(design_id, [fid], replace)
+    import publisher
+    publisher.queue_update(design_id)
+    return web.json_response({"ok": True, "catalog": store.public_catalog()})
+
+
 async def admin_photo(request):
     """Mini ilovadan mahsulot rasmini yuklash: tahrirlash -> logo -> Telegram'ga saqlash."""
     user = verify_init_data(request.headers.get("X-Init-Data", ""))
@@ -267,6 +288,8 @@ async def admin_photo(request):
     form = await request.post()
     design_id, item_id = form.get("design"), form.get("item")
     f = form.get("file")
+    if design_id and not item_id and f is not None and hasattr(f, "file"):
+        return await _design_photo(user, design_id, f.file.read(), form.get("replace") == "1")
     if not design_id or not item_id or f is None or not hasattr(f, "file"):
         return web.json_response({"ok": False, "error": "Rasm topilmadi"}, status=400)
     raw = f.file.read()
