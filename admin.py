@@ -418,6 +418,8 @@ async def on_menu(uid, text):
         await do_check(uid)
     elif cmd in (BTN_SETTINGS, "/sozlamalar"):
         await settings_menu(uid)
+    elif cmd == "/ibox" and config.LENONUZ:
+        await ibox_menu(uid)
     elif cmd in ("/qada", "/qadama") and config.ROTATION:
         import rotation
         q = text.partition(" ")[2].strip()
@@ -1740,6 +1742,7 @@ async def sync_menu_buttons():
         admin_cmds += [{"command": "qada", "description": "Tovarni guruh tepasiga qadash (/qada Oq torix)"},
                        {"command": "qadama", "description": "Qadalgan tovarni aylantirishga qaytarish"},
                        {"command": "tiklash", "description": "Qisqarib qolgan jadvallarni eski botdan tiklash"},
+                       {"command": "ibox", "description": "iBox: qoldiq, narx va rasmlarni olish"},
                        {"command": "tozala", "description": "Guruhdagi dublikat postlarni o'chirish"},
                        {"command": "navbat", "description": "Avto-aylantirish holati"},
                        {"command": "aylantir", "description": "Navbatdagi tovarni hozir guruhga joylash"},
@@ -1925,6 +1928,9 @@ async def on_callback(cb):
         await botextra.search_callback(uid, data, cb, sessions)
     elif pre == "pk":
         await botextra.pick_callback(uid, data, cb, sessions, main_menu)
+    elif pre == "ib" and config.LENONUZ:
+        await bot.answer_cb(cb["id"])
+        await ibox_callback(uid, data.split(":")[1:])
     elif pre == "rs" and config.LENONUZ:
         import restore
         await bot.answer_cb(cb["id"])
@@ -1955,3 +1961,89 @@ async def on_message(m):
     if (frm.get("is_bot") and frm.get("id") != ANON_BOT_ID) or m.get("pinned_message"):
         return None
     return await _orig_on_message(m)
+
+
+# ---------------- iBox ulanishi (LENON_UZ) ----------------
+async def ibox_menu(uid):
+    import ibox
+    if not ibox.TOKEN:
+        await bot.send(uid, "🔗 <b>iBox ulanmagan.</b>\n\nRender → lenon-katalog-bot → Environment ga qo'shing:\n"
+                            "• <code>IBOX_TOKEN</code> — iBox'da yaratilgan access token\n"
+                            "• <code>IBOX_URL</code> — masalan <code>https://torix.ibox.io</code>\n"
+                            "Keyin Save, rebuild and deploy va yana /ibox yozing.")
+        return
+    s = ibox.st()
+    cnt = s.get("last_counts") or {}
+    from datetime import datetime as _dt
+    last = _dt.fromtimestamp(s["last_sync"], config.TZ).strftime("%d.%m %H:%M") if s.get("last_sync") else "hali bo'lmagan"
+    on = lambda k: "✅" if s.get(k) else "⬜"  # noqa
+    text = (f"🔗 <b>iBox ulanishi</b> ({esc(ibox.BASE)})\n\n"
+            f"🏬 Ombor: <b>{esc(s.get('warehouse_name') or 'tanlanmagan')}</b>\n"
+            f"💲 Narx turi: <b>{esc(s.get('price_type_name') or 'tanlanmagan')}</b>\n"
+            f"🔄 Oxirgi sinxronlash: {last}\n"
+            + (f"🔗 Bog'langan: <b>{cnt.get('linked', 0)}</b> · topilmagan: <b>{cnt.get('missing', 0)}</b> "
+               f"(iBox'da {cnt.get('ibox', 0)} ta mahsulot)\n" if cnt else "")
+            + "\nHar 15 daqiqada iBox'dan o'qiladi (iBox'da hech narsa o'zgarmaydi).")
+    rows = [[btn("🏬 Omborni tanlash", "ib:wh"), btn("💲 Narx turi", "ib:pt")],
+            [btn(f"{on('stock')} Qoldiq", "ib:t:stock"), btn(f"{on('prices')} Narx", "ib:t:prices"),
+             btn(f"{on('images')} Rasm", "ib:t:images")],
+            [btn("🔄 Hozir sinxronlash", "ib:sync"), btn("❓ Topilmaganlar", "ib:miss")],
+            [btn("🧪 Namuna (dasturchi uchun)", "ib:sample")]]
+    await bot.send(uid, text, reply_markup=ikb(rows))
+
+
+async def ibox_callback(uid, parts):
+    import ibox
+    s = ibox.st()
+    try:
+        if parts[0] == "wh" and len(parts) == 1:
+            ws = await ibox.warehouses()
+            if not ws:
+                await bot.send(uid, "iBox'da ombor topilmadi.")
+                return
+            await bot.send(uid, "🏬 Qaysi ombor qoldig'i bo'yicha «qolmadi/keldi» qilinsin?",
+                           reply_markup=ikb([[btn(w["name"], f"ib:wh:{w['id']}")] for w in ws[:30]]))
+        elif parts[0] == "wh":
+            ws = {str(w["id"]): w for w in await ibox.warehouses()}
+            w = ws.get(parts[1])
+            s["warehouse_id"], s["warehouse_name"] = int(parts[1]), (w or {}).get("name", parts[1])
+            store.save()
+            await bot.send(uid, f"✅ Ombor: <b>{esc(s['warehouse_name'])}</b>")
+            if not s.get("price_type_id"):
+                await ibox_callback(uid, ["pt"])
+            else:
+                await ibox_menu(uid)
+        elif parts[0] == "pt" and len(parts) == 1:
+            pts = await ibox.price_types()
+            await bot.send(uid, "💲 Katalogda qaysi narx ko'rsatilsin?",
+                           reply_markup=ikb([[btn(p["name"], f"ib:pt:{p['id']}")] for p in pts[:30]]))
+        elif parts[0] == "pt":
+            pts = {str(p["id"]): p for p in await ibox.price_types()}
+            p = pts.get(parts[1])
+            s["price_type_id"], s["price_type_name"] = int(parts[1]), (p or {}).get("name", parts[1])
+            store.save()
+            await bot.send(uid, f"✅ Narx turi: <b>{esc(s['price_type_name'])}</b>")
+            await ibox_menu(uid)
+        elif parts[0] == "t":
+            s[parts[1]] = not s.get(parts[1])
+            store.save()
+            await ibox_menu(uid)
+        elif parts[0] == "sync":
+            if not s.get("warehouse_id"):
+                await bot.send(uid, "Avval 🏬 omborni tanlang.")
+                return
+            await bot.send(uid, "⏳ iBox'dan o'qilmoqda…")
+            await bot.send(uid, await ibox.sync(report=True))
+        elif parts[0] == "miss":
+            miss = s.get("missing") or []
+            if not miss:
+                await bot.send(uid, "✅ Hamma mahsulot iBox bilan bog'langan (yoki hali sinxronlash bo'lmagan).")
+                return
+            lines = [f"• {esc(n)} — kod: <code>{esc(c or '—')}</code>" for _, n, c in miss[:80]]
+            total = (s.get("last_counts") or {}).get("missing", len(miss))
+            await bot.send(uid, f"❓ <b>iBox'da topilmagan: {total} ta</b> (birinchi {min(80, len(miss))} tasi)\nKatalogdagi kodni iBox'dagi SKU bilan bir xil "
+                                "qilsangiz, keyingi sinxronlashda o'zi bog'lanadi.\n\n" + "\n".join(lines))
+        elif parts[0] == "sample":
+            await bot.send(uid, "<code>" + esc(await ibox.sample_text()) + "</code>")
+    except Exception as e:  # noqa
+        await bot.send(uid, f"⚠️ iBox: {esc(e)}")

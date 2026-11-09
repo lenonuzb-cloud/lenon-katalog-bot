@@ -322,6 +322,9 @@ async def on_startup(app):
             log.warning("jadval tuzatish: %s", e)
         import rotation
         asyncio.get_event_loop().create_task(rotation.pin_once())
+    if config.LENONUZ:
+        import ibox
+        asyncio.get_event_loop().create_task(ibox.loop())
     if config.ROTATION:
         import dedup
         asyncio.get_event_loop().create_task(dedup.auto_clean_once())
