@@ -259,6 +259,18 @@ async def on_startup(app):
             except Exception as e:  # noqa
                 log.warning("zaxiralarni ko'rish: %s", e)
         asyncio.get_event_loop().create_task(_zx_scan())
+    # bir martalik: naborlarni iBox bilan tenglashtirish (+ nabor 46 bo'limi, rasmsiz naborlarga iBox rasmi)
+    if OWNER_ID and not config.ROTATION and store.settings.get("nabor_ibox1") != 1:
+        async def _nabor_ibox():
+            await asyncio.sleep(60)
+            try:
+                import naborlar_ibox
+                await naborlar_ibox.run(OWNER_ID)
+                store.settings["nabor_ibox1"] = 1
+                store.save()
+            except Exception as e:  # noqa
+                log.warning("naborlar iBox: %s", e)
+        asyncio.get_event_loop().create_task(_nabor_ibox())
     # bir martalik: guruhdagi postlardan katalog tugmalari va yo'riqnomani olib tashlash
     if store.settings.get("strip_btn2") != 1 and store.settings.get("group_id") and not config.ROTATION:
         async def _strip():

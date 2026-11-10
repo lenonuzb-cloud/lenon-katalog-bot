@@ -138,7 +138,7 @@ def _topic_key_by_name(name: str):
         if n == v.lower():
             return k
     # yumshoq moslash: "LENON nabor 44 talik", "📦 BODEN" va h.k.
-    for num in ("44", "33", "39"):
+    for num in ("44", "33", "39", "46"):
         if "nabor" in n and num in n:
             return "nabor" + num
     for k in ("muhokama", "rasmlar", "boden", "lenon"):

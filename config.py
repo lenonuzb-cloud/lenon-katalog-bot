@@ -59,6 +59,7 @@ TOPIC_KEYS = {
     "nabor44": "LENON nabor 44",
     "nabor33": "LENON nabor 33",
     "nabor39": "LENON nabor 39",
+    "nabor46": "LENON nabor 46",
     "muhokama": "Muhokama",
 }
 

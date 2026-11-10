@@ -179,6 +179,9 @@ def mark_design_photos(design_id, photos: list, replace: bool):
         import rasmlarga
         for f in photos:
             rasmlarga.add(f, d["title"])
+    if photos and (store.section(d["section"]) or {}).get("kind") == "nabor":
+        import iboxrasm                     # naborning birinchi rasmi iBox'dagi o'sha naborga
+        iboxrasm.add(design_id, None, list(photos)[0])
 
 
 def set_item_photo(design_id, item_id, file_id, raw=None):

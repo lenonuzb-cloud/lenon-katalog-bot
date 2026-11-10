@@ -142,7 +142,7 @@ def _match(p, tag, kind, code) -> bool:
 
 async def find_product(s, d, it):
     tag, kind = design_tag(d)
-    code = item_code(d, it)
+    code = item_code(d, it) if it is not None else d["title"].strip()
     if not tag or not code:
         return None, f"kod yoki dizayn belgisi aniqlanmadi ({d['title']})"
     params = [("search", code), ("search_by[]", "name"), ("search_by[]", "sku"),
@@ -191,15 +191,16 @@ def _body(j, photo_id):
     }
 
 
-async def upload_one(s, d, it, only_missing=False) -> str:
+async def upload_one(s, d, it, only_missing=False, file_id=None) -> str:
     p, err = await find_product(s, d, it)
     if not p:
         return "❓ " + err
     if only_missing and p.get("photo_id"):
         return ""
-    data = await bot.download(it["photo"])
+    data = await bot.download(file_id or it["photo"])
     form = FormData()
-    form.add_field("photo", data, filename=f"{item_code(d, it) or 'rasm'}.jpg", content_type="image/jpeg")
+    form.add_field("photo", data, filename=f"{(item_code(d, it) if it else d['title']) or 'rasm'}.jpg",
+                   content_type="image/jpeg")
     async with await _req(s, "POST", "/api/core/photo", data=form) as r:
         if r.status >= 400:
             return f"⚠️ {it['name']}: rasm yuklanmadi ({r.status})"
@@ -212,12 +213,12 @@ async def upload_one(s, d, it, only_missing=False) -> str:
     return f"✅ {j['name'].split('  ')[0].strip()}"
 
 
-def add(design_id, item_id):
-    """Rasm qo'yilganda chaqiriladi."""
+def add(design_id, item_id, file_id=None):
+    """Rasm qo'yilganda chaqiriladi (item_id=None — naborning o'z rasmi)."""
     global _task
     if not enabled():
         return
-    _queue.append((design_id, item_id))
+    _queue.append((design_id, item_id, file_id))
     try:
         loop = asyncio.get_event_loop()
     except RuntimeError:
@@ -231,17 +232,21 @@ async def _worker():
     lines = []
     async with ClientSession(timeout=ClientTimeout(total=120)) as s:
         while _queue:
-            did, iid = _queue.pop(0)
+            did, iid, fid = _queue.pop(0)
             d = store.designs.get(did)
             if not d:
                 continue
-            _, it = store.find_item(d, iid)
-            if not it or not it.get("photo"):
+            it = None
+            if iid:
+                _, it = store.find_item(d, iid)
+                if not it or not it.get("photo"):
+                    continue
+            elif not fid:
                 continue
             try:
-                res = await upload_one(s, d, it)
+                res = await upload_one(s, d, it, file_id=fid)
             except Exception as e:  # noqa
-                res = f"⚠️ {it['name']}: {e}"
+                res = f"⚠️ {(it or {}).get('name') or d['title']}: {e}"
             lines.append(res)
             await asyncio.sleep(1)
             if not _queue:
