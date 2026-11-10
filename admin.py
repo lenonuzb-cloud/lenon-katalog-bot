@@ -314,6 +314,10 @@ async def on_message(m):
     if await quick_stock_text(uid, text):
         return
     if text:
+        import yordamchi
+        if yordamchi.enabled() and store.is_owner(uid):
+            await yordamchi.handle(uid, text)
+            return
         await botextra.show_search(uid, text)
         return
     await bot.send(uid, "Menyudan tanlang 👇 yoki rasm yuboring.\n\n"
@@ -515,6 +519,9 @@ async def on_menu(uid, text):
     elif cmd == "/sayt":
         import sayt
         await sayt.report(uid, text.partition(" ")[2].strip())
+    elif cmd in ("/ai_yoq", "/ai_ochir"):
+        import yordamchi
+        await yordamchi.toggle(uid, cmd == "/ai_yoq")
     elif cmd == "/iboxga":
         import iboxrasm
         arg = text.partition(" ")[2].strip()
@@ -1744,6 +1751,8 @@ async def sync_menu_buttons():
                  {"command": "sayt", "description": "Sayt: kim kirdi, nima ko'rdi, parol"},
                  {"command": "qolmaganlar", "description": "Hozir qolmagan mahsulotlar ro'yxati"},
                  {"command": "iboxga", "description": "Dizayn rasmlarini iBox'ga yuklash (masalan /iboxga 07-DL)"},
+                 {"command": "ai_ochir", "description": "Sun'iy intellekt yordamchisini o'chirish"},
+                 {"command": "ai_yoq", "description": "Sun'iy intellekt yordamchisini yoqish"},
                   {"command": "pdf", "description": "Dizayn katalogini PDF qilish (/pdf 01-AL)"},
                   {"command": "rasm", "description": "Dizayn rasmlarini yuborish (/rasm 01-AL)"},
                   {"command": "arxiv", "description": "Rasmlarni kod bilan ZIP arxivda olish (/arxiv 01-AL)"}]
@@ -1907,6 +1916,10 @@ async def on_callback(cb):
         await bot.send(uid, "Bekor qilindi. Asosiy menyu 👇", reply_markup=main_menu())
         return
     pre = data.split(":")[0]
+    if pre == "ai":
+        import yordamchi
+        await yordamchi.callback(uid, data, cb)
+        return
     if pre == "qm":
         import qolmagan
         await qolmagan.callback(uid, data, cb)
