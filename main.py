@@ -172,7 +172,7 @@ async def webhook(request):
 async def health(request):
     return web.json_response({"ok": True, "bot": bot.username, "designs": len(store.designs),
                               "photos": zaxira.photo_count(store.s), "auto": store.settings.get("zx_auto"),
-                              "zx_scan": store.settings.get("zx_scan2"), "gr": store.settings.get("gr_photos2"), "chat": store.settings.get("chat_photos1"), "ibox": bool(os.getenv("IBOX_TOKEN")), "group": bool(store.settings.get("group_id")),
+                              "zx_scan": store.settings.get("zx_scan2"), "gr": store.settings.get("gr_photos2"), "chat": store.settings.get("chat_photos1"), "ibox": bool(os.getenv("IBOX_TOKEN") or (os.getenv("IBOX_LOGIN") and os.getenv("IBOX_PASSWORD"))), "group": bool(store.settings.get("group_id")),
                               "topics": sum(1 for v in (store.settings.get("topics") or {}).values() if v not in (None, -1)),
                               "commit": (os.getenv("RENDER_GIT_COMMIT") or "")[:7]})
 

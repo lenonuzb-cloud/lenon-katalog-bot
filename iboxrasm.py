@@ -25,6 +25,9 @@ from tg import bot
 
 log = logging.getLogger("iboxrasm")
 TOKEN = os.getenv("IBOX_TOKEN", "").strip()
+LOGIN = os.getenv("IBOX_LOGIN", "").strip()          # API kalit bo'lmasa — iBox foydalanuvchisi bilan kirish
+PASSWORD = os.getenv("IBOX_PASSWORD", "")
+_sess_token = {"t": ""}
 BASE = os.getenv("IBOX_URL", "https://torix.ibox.io").strip().rstrip("/")
 FILIAL = os.getenv("IBOX_FILIAL", "1").strip() or "1"
 _queue: list = []        # (design_id, item_id)
@@ -33,11 +36,62 @@ _report: list = []
 
 
 def enabled() -> bool:
-    return bool(TOKEN) and not config.ROTATION
+    return bool(TOKEN or (LOGIN and PASSWORD)) and not config.ROTATION
+
+
+def _find_token(j):
+    """Kirish javobidan tokenni topadi (maydon nomi qanday bo'lishidan qat'i nazar)."""
+    if isinstance(j, dict):
+        for k in ("access_token", "token", "api_token", "plainTextToken"):
+            v = j.get(k)
+            if isinstance(v, str) and len(v) > 20:
+                return v
+        for v in j.values():
+            t = _find_token(v)
+            if t:
+                return t
+    return ""
+
+
+async def _login(s):
+    if TOKEN:
+        _sess_token["t"] = TOKEN
+        return
+    last = ""
+    for field in ("login", "username", "email", "phone"):
+        async with s.post(BASE + "/api/user/login", json={field: LOGIN, "password": PASSWORD},
+                          headers={"Accept": "application/json"}) as r:
+            txt = await r.text()
+            if r.status < 400:
+                try:
+                    t = _find_token(json.loads(txt))
+                except Exception:  # noqa
+                    t = ""
+                if t:
+                    _sess_token["t"] = t
+                    return
+            last = f"{r.status} {txt[:150]}"
+    raise RuntimeError(f"iBox'ga kirib bo'lmadi (login/parolni tekshiring): {last}")
+
+
+async def _req(s, method, path, **kw):
+    """iBox so'rovi: token yo'q yoki eskirgan bo'lsa — qayta kiradi."""
+    if not _sess_token["t"]:
+        await _login(s)
+    for attempt in (1, 2):
+        h = dict(kw.pop("headers", {}) or {})
+        h.update(_h(isinstance(kw.get("data"), str)))
+        r = await s.request(method, BASE + path, headers=h, **kw)
+        if r.status == 401 and attempt == 1 and not TOKEN:
+            r.release()
+            _sess_token["t"] = ""
+            await _login(s)
+            continue
+        return r
 
 
 def _h(json_body=False):
-    h = {"Authorization": f"Bearer {TOKEN}", "Accept": "application/json", "Filial-Id": FILIAL}
+    h = {"Authorization": f"Bearer {_sess_token['t'] or TOKEN}", "Accept": "application/json", "Filial-Id": FILIAL}
     if json_body:
         h["Content-Type"] = "application/json"
     return h
@@ -93,9 +147,9 @@ async def find_product(s, d, it):
         return None, f"kod yoki dizayn belgisi aniqlanmadi ({d['title']})"
     params = [("search", code), ("search_by[]", "name"), ("search_by[]", "sku"),
               ("filters", '{"active":[true]}'), ("page", "1"), ("per_page", "100")]
-    async with s.get(BASE + "/api/product/product", params=params, headers=_h()) as r:
+    async with await _req(s, "GET", "/api/product/product", params=params) as r:
         if r.status == 401:
-            raise RuntimeError("iBox kaliti (IBOX_TOKEN) noto'g'ri yoki bu amalga ruxsati yo'q")
+            raise RuntimeError("iBox'ga kirish rad etildi (401) — login/parol yoki kalitni tekshiring")
         j = await r.json(content_type=None)
     found = [p for p in (j.get("data") or []) if _match(p, tag, kind, code)]
     if not found:
@@ -146,14 +200,13 @@ async def upload_one(s, d, it, only_missing=False) -> str:
     data = await bot.download(it["photo"])
     form = FormData()
     form.add_field("photo", data, filename=f"{item_code(d, it) or 'rasm'}.jpg", content_type="image/jpeg")
-    async with s.post(BASE + "/api/core/photo", data=form, headers=_h()) as r:
+    async with await _req(s, "POST", "/api/core/photo", data=form) as r:
         if r.status >= 400:
             return f"⚠️ {it['name']}: rasm yuklanmadi ({r.status})"
         ph = await r.json(content_type=None)
-    async with s.get(f"{BASE}/api/product/product/{p['id']}", headers=_h()) as r:
+    async with await _req(s, "GET", f"/api/product/product/{p['id']}") as r:
         j = await r.json(content_type=None)
-    async with s.put(f"{BASE}/api/product/product/{p['id']}", data=json.dumps(_body(j, ph["id"])),
-                     headers=_h(True)) as r:
+    async with await _req(s, "PUT", f"/api/product/product/{p['id']}", data=json.dumps(_body(j, ph["id"]))) as r:
         if r.status >= 400:
             return f"⚠️ {it['name']}: saqlanmadi ({r.status} {(await r.text())[:120]})"
     return f"✅ {j['name'].split('  ')[0].strip()}"
@@ -201,8 +254,9 @@ async def _worker():
 
 async def push_design(uid, query: str, only_missing=True):
     """/iboxga 07-DL — dizayndagi barcha rasmli mahsulotlarni iBox'ga yuklash."""
-    if not TOKEN:
-        await bot.send(uid, "iBox kaliti yo'q. Render → Environment ga <code>IBOX_TOKEN</code> qo'shing.")
+    if not enabled():
+        await bot.send(uid, "iBox ulanmagan. Render → Environment ga <code>IBOX_LOGIN</code> va "
+                            "<code>IBOX_PASSWORD</code> (yoki <code>IBOX_TOKEN</code>) qo'shing.")
         return
     q = _n(query)
     ds = [d for d in store.designs.values() if not d.get("deleted") and q and q in _n(d["title"])]
