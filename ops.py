@@ -192,6 +192,8 @@ def set_item_photo(design_id, item_id, file_id, raw=None):
     store.save()
     import rasmlarga
     rasmlarga.add(file_id, " · ".join(x for x in (it["name"], it.get("code", ""), d["title"]) if x))
+    import iboxrasm
+    iboxrasm.add(design_id, item_id)
 
 
 def add_items(design_id, items: list) -> tuple[int, list]:

@@ -515,6 +515,14 @@ async def on_menu(uid, text):
     elif cmd == "/sayt":
         import sayt
         await sayt.report(uid, text.partition(" ")[2].strip())
+    elif cmd == "/iboxga":
+        import iboxrasm
+        arg = text.partition(" ")[2].strip()
+        if not arg:
+            await bot.send(uid, "Qaysi dizayn? Masalan: <code>/iboxga 07-DL</code>\n"
+                                "Faqat iBox'da rasmi YO'Q mahsulotlarga yuklanadi.")
+        else:
+            asyncio.get_event_loop().create_task(iboxrasm.push_design(uid, arg))
     elif cmd == "/qolmaganlar":
         import qolmagan
         await qolmagan.show(uid)
@@ -1735,6 +1743,7 @@ async def sync_menu_buttons():
                   {"command": "qolmadi", "description": "Qolmadi / Keldi belgilash"},
                  {"command": "sayt", "description": "Sayt: kim kirdi, nima ko'rdi, parol"},
                  {"command": "qolmaganlar", "description": "Hozir qolmagan mahsulotlar ro'yxati"},
+                 {"command": "iboxga", "description": "Dizayn rasmlarini iBox'ga yuklash (masalan /iboxga 07-DL)"},
                   {"command": "pdf", "description": "Dizayn katalogini PDF qilish (/pdf 01-AL)"},
                   {"command": "rasm", "description": "Dizayn rasmlarini yuborish (/rasm 01-AL)"},
                   {"command": "arxiv", "description": "Rasmlarni kod bilan ZIP arxivda olish (/arxiv 01-AL)"}]
