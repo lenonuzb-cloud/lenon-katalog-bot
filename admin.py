@@ -522,14 +522,20 @@ async def on_menu(uid, text):
     elif cmd in ("/ai_yoq", "/ai_ochir"):
         import yordamchi
         await yordamchi.toggle(uid, cmd == "/ai_yoq")
+    elif cmd == "/tarkib":
+        import tarkib
+        await tarkib.start(uid)
     elif cmd == "/iboxga":
         import iboxrasm
         arg = text.partition(" ")[2].strip()
         if not arg:
-            await bot.send(uid, "Qaysi dizayn? Masalan: <code>/iboxga 07-DL</code>\n"
-                                "Faqat iBox'da rasmi YO'Q mahsulotlarga yuklanadi.")
+            await bot.send(uid, "Qaysi dizayn? Masalan: <code>/iboxga 07-DL</code> — faqat iBox'da rasmi YO'Qlarga.\n"
+                                "Borlarini ham yangilash: <code>/iboxga 07-DL yangila</code>")
         else:
-            asyncio.get_event_loop().create_task(iboxrasm.push_design(uid, arg))
+            words = arg.split()
+            renew = any(w.lower() in ("yangila", "hammasi", "barchasi") for w in words)
+            q = " ".join(w for w in words if w.lower() not in ("yangila", "hammasi", "barchasi"))
+            asyncio.get_event_loop().create_task(iboxrasm.push_design(uid, q, only_missing=not renew))
     elif cmd == "/qolmaganlar":
         import qolmagan
         await qolmagan.show(uid)
@@ -1099,6 +1105,10 @@ async def on_awaited_text(uid, sess, text):
         return
     if w == "reorder":
         await botextra.reorder_text(uid, sess, text, sessions)
+        return
+    if w == "tarkib":
+        import tarkib
+        await tarkib.save(uid, sess, text, sessions)
         return
     if w == "prod_remove":
         import registry
@@ -1751,6 +1761,7 @@ async def sync_menu_buttons():
                  {"command": "sayt", "description": "Sayt: kim kirdi, nima ko'rdi, parol"},
                  {"command": "qolmaganlar", "description": "Hozir qolmagan mahsulotlar ro'yxati"},
                  {"command": "iboxga", "description": "Dizayn rasmlarini iBox'ga yuklash (masalan /iboxga 07-DL)"},
+                 {"command": "tarkib", "description": "Nabor tarkibini yozish (33, 39, 44, 46)"},
                  {"command": "ai_ochir", "description": "Sun'iy intellekt yordamchisini o'chirish"},
                  {"command": "ai_yoq", "description": "Sun'iy intellekt yordamchisini yoqish"},
                   {"command": "pdf", "description": "Dizayn katalogini PDF qilish (/pdf 01-AL)"},
@@ -1919,6 +1930,11 @@ async def on_callback(cb):
     if pre == "ai":
         import yordamchi
         await yordamchi.callback(uid, data, cb)
+        return
+    if pre == "tk":
+        import tarkib
+        await bot.answer_cb(cb["id"])
+        await tarkib.pick(uid, data[3:], sessions)
         return
     if pre == "qm":
         import qolmagan
