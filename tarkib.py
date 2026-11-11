@@ -60,7 +60,7 @@ def parse(text):
             continue
         m = re.match(r"^(.+?)\s*(?:[-–—:=x×]|\s)\s*(\d+)\s*(?:ta|dona|шт)?$", line, re.I)
         if m:
-            items.append([m.group(1).strip(" -–—:"), m.group(2)])
+            items.append([m.group(1).strip(" -–—:"), m.group(2) + "ta"])
         else:
             items.append([line, ""])
     return items, price, pieces
@@ -77,7 +77,7 @@ async def save(uid, sess, text, sessions):
         t["items"] = items
         if not pieces:
             try:
-                pieces = str(sum(int(q) for _, q in items if q))
+                pieces = str(sum(int(re.sub(r"\D", "", q) or 0) for _, q in items))
             except ValueError:
                 pass
     if price:
