@@ -33,6 +33,7 @@ FILIAL = os.getenv("IBOX_FILIAL", "1").strip() or "1"
 _queue: list = []        # (design_id, item_id)
 _task = None
 _report: list = []
+_mismatch: list = []      # kodi farq qilgan mahsulotlar (egasiga aytiladi)
 
 
 def enabled() -> bool:
@@ -153,6 +154,23 @@ async def find_product(s, d, it):
         j = await r.json(content_type=None)
     found = [p for p in (j.get("data") or []) if _match(p, tag, kind, code)]
     if not found:
+        # kod harflari farq qilishi mumkin (botda YA1057, iBox'da CK1057) — raqam qismi bo'yicha qidiramiz
+        digits = re.sub(r"\D", "", code)
+        if len(digits) >= 4:
+            params[0] = ("search", digits)
+            async with await _req(s, "GET", "/api/product/product", params=params) as r:
+                j2 = await r.json(content_type=None)
+            alt = []
+            for p in (j2.get("data") or []):
+                m = re.search(r"([A-Za-z]{2,3})-?(\d{3,6})\s*$", (p.get("name") or "").strip())
+                if m and m.group(2) == digits and _match(p, tag, kind, m.group(1) + m.group(2)):
+                    alt.append(p)
+            if len(alt) == 1:
+                found = alt
+                it_code = re.search(r"([A-Za-z]{2,3})-?(\d{3,6})\s*$", alt[0]["name"].strip())
+                _mismatch.append(f"{(it or {}).get('name') or d['title']} ({d['title']}): botda {code}, "
+                                 f"iBox'da {it_code.group(1).upper()}{it_code.group(2)}")
+    if not found:
         return None, f"iBox'da topilmadi: {code} ({d['title']})"
     if len(found) > 1:
         found.sort(key=lambda p: -float(p.get("stock") or 0))     # takror bo'lsa — qoldig'i ko'pi
@@ -251,6 +269,9 @@ async def _worker():
             await asyncio.sleep(1)
             if not _queue:
                 await asyncio.sleep(6)       # ketma-ket rasm qo'yilsa — bitta hisobot
+    if _mismatch:
+        lines.append("ℹ️ Kodi farq qiladi: " + "; ".join(_mismatch[:10]))
+        _mismatch.clear()
     owner = store.settings.get("owner_id")
     if owner and lines:
         await bot.send(owner, "🖼 <b>iBox'ga rasm</b>\n" + "\n".join(html.escape(x) for x in lines[:60]),
@@ -284,6 +305,9 @@ async def push_design(uid, query: str, only_missing=True):
                 elif res:
                     lines.append(res)
                 await asyncio.sleep(0.7)
+        if _mismatch:
+            lines.append("ℹ️ Kodi farq qiladi (rasm baribir qo'yildi):\n• " + "\n• ".join(_mismatch[:20]))
+            _mismatch.clear()
         no = [it["name"] for c in d["categories"] for it in c["items"] if not it.get("photo")]
         msg = f"✅ <b>{html.escape(d['title'])}</b>: {ok} ta rasm iBox'ga yuklandi."
         if lines:
