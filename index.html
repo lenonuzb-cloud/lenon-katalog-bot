@@ -1012,7 +1012,7 @@ function editSheet(d, it){
     <label>Nomi</label><input id="f_name" value="${esc(it?it.name:"")}" placeholder="masalan: Aval kv 15">
     <label>Kodi</label><input id="f_code" value="${esc(it?it.code:"")}" placeholder="masalan: YA5999" ${CAT.rotation?'autocapitalize="off"':'style="text-transform:uppercase"'}>
     <label>Narxi</label><input id="f_price" value="${esc(it?it.price:"")}" placeholder="masalan: 17$" inputmode="decimal">
-    ${CAT.rotation?`<div style="display:flex;gap:8px"><div style="flex:1"><label>Karobka soni</label><input id="f_qty" value="${esc(it&&it.qty?it.qty:"")}" placeholder="masalan: 120 (шт o'zi qo'shiladi)"></div>
+    ${CAT.rotation?`<div style="display:flex;gap:8px"><div style="flex:1"><label>Karobka soni</label><input id="f_qty" value="${esc(it&&it.qty?it.qty:"")}" placeholder="masalan: 24 (📦 va шт o‘zi qo‘shiladi)" onblur="let v=this.value.replace(/📦/g,'').trim();if(/^\d+([.,]\d+)?$/.test(v))v+='шт';this.value=v?'📦'+v:''"></div>
       <div style="flex:1"><label>Pochka soni</label><input id="f_pack" value="${esc(it&&it.pack?it.pack:"")}" placeholder="masalan: 6"></div></div>`:""}
     <label>O'lchami <small style="font-weight:400;color:#999">(rasm tagiga yoziladi, ixtiyoriy)</small></label><input id="f_size" value="${esc(it&&it.size?it.size:"")}" placeholder="masalan: 23sm">
     ${isNew&&CAT.rotation?`<label>🆕 NEW belgisi qo'yilsinmi?</label><div class="seg" id="f_new" style="margin-top:4px"><button data-n="1">Ha, NEW qo'yilsin</button><button data-n="0" class="on">Yo'q</button></div>`:""}

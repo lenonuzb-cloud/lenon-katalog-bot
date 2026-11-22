@@ -324,6 +324,11 @@ async def on_startup(app):
                                + (f"\nQolmadi deb belgilangan naborlar: {', '.join(r[2])}" if r[2] else ""))
         except Exception as e:  # noqa
             log.warning("naborlarni bo'lish: %s", e)
+        try:
+            import ops as _ops
+            _ops.box_migrate()
+        except Exception as e:  # noqa
+            log.warning("karobka belgisi: %s", e)
         import restore
         try:
             res = restore.apply_fix_file()

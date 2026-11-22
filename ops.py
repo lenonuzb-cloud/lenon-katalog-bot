@@ -21,6 +21,18 @@ def _sht(v) -> str:
     return v
 
 
+def box(v) -> str:
+    """LENON_UZ karobka soni: «24» / «24шт» / «📦24» -> «📦24шт»."""
+    v = _sht(str(v or "").replace("📦", ""))
+    return ("📦" + v) if (v and config.LENONUZ) else v
+
+
+def _qty(d, v) -> str:
+    """Nabor ichidagi son («6ta») — o'zgarmaydi; oddiy tovar — karobka soni (📦…шт)."""
+    import naborlar
+    return _sht(v) if naborlar.is_whole(d) else box(v)
+
+
 def _design(design_id) -> dict:
     d = store.designs.get(design_id)
     if not d or d.get("deleted"):
@@ -63,7 +75,7 @@ def add_item(design_id, category, name, code, price, qty="", pack="", new=True) 
     if not new:
         it["new_until"] = 0
     if qty:
-        it["qty"] = _sht(qty)
+        it["qty"] = _qty(d, qty)
     if pack:
         it["pack"] = _sht(pack)
     if is_new:
@@ -98,9 +110,10 @@ def edit_item(design_id, item_id, name=None, code=None, price=None, category=Non
         raise OpError(f"«{new_name}» bu dizaynda allaqachon bor — takrorlanmaydi")
     it.update(name=new_name, code=new_code, price=new_price)
     for key, val, label in (("qty", qty, "karobka soni"), ("pack", pack, "pochka soni")):
-        if val is not None and _sht(val) != it.get(key, ""):
-            changes.append(f"{label}: {it.get(key) or '—'} → {_sht(val) or '—'}")
-            it[key] = _sht(val)
+        nv = None if val is None else (_qty(d, val) if key == "qty" else _sht(val))
+        if nv is not None and nv != it.get(key, ""):
+            changes.append(f"{label}: {it.get(key) or '—'} → {nv or '—'}")
+            it[key] = nv
     if size is not None:
         size = re.sub(r"\s+", "", str(size)).lower()
         if size and size.replace(".", "").replace(",", "").isdigit():
@@ -409,3 +422,22 @@ def move_design(design_id: str, key: str):
         raise OpError("Topilmadi")
     d["section"] = key
     store.save()
+
+
+def box_migrate() -> int:
+    """Bir marta: oddiy (nabor emas) tovarlarning karobka sonini «📦24шт» ko'rinishiga keltiradi."""
+    if not config.LENONUZ or store.settings.get("box_mig"):
+        return 0
+    import naborlar
+    n = 0
+    for d in store.designs.values():
+        if d.get("deleted") or naborlar.is_whole(d):
+            continue
+        for c in d.get("categories") or []:
+            for it in c["items"]:
+                if it.get("qty") and box(it["qty"]) != it["qty"]:
+                    it["qty"] = box(it["qty"])
+                    n += 1
+    store.settings["box_mig"] = 1
+    store.save()
+    return n

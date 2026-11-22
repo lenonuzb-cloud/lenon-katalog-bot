@@ -172,7 +172,11 @@ def design_html(d) -> tuple[str, list]:
         for it in c["items"]:
             no += 1
             code = f"<td>{esc(it['code'])}</td>" if has_code else ""
-            qty = f"<td>{esc(it.get('qty', ''))}</td>" if has_qty else ""
+            qv = it.get('qty', '')
+            if config.LENONUZ and qv:
+                import ops as _ops
+                qv = _ops.box(qv)
+            qty = f"<td>{esc(qv)}</td>" if has_qty else ""
             qty += f"<td>{esc(it.get('pack', ''))}</td>" if has_pack else ""
             price = f"<td>{esc(it['price'])}</td>" if has_price else ""
             total = f"<td>{esc(it.get('total', ''))}</td>" if has_total else ""

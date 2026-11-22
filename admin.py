@@ -1062,7 +1062,7 @@ async def design_create(uid, sess):
                     i["qty"], i["price"] = i.get("price", ""), ""
         if config.LENONUZ:
             for i in c["items"]:
-                i["qty"] = ops._sht(i.get("qty", ""))
+                i["qty"] = ops._sht(i.get("qty", "")) if whole_ else ops.box(i.get("qty", ""))
         d["categories"].append({"name": c["name"], "items": [
             store._mk_item(i["name"], i.get("code", ""), i["price"], new=True,
                            qty=i.get("qty", ""), total=i.get("total", "")) for i in c["items"]]})
