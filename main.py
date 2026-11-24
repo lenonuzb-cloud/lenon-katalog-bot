@@ -410,6 +410,7 @@ def make_app() -> web.Application:
     app.router.add_get("/zaxira.enc", gitzaxira.handler)
     import eksport
     app.router.add_get("/eksport/rasmlar", eksport.handler)
+    app.router.add_get("/eksport/narxlar", eksport.narxlar)
     import guruhdan
     app.router.add_get("/diag/fwd", guruhdan.diag)
     app.router.add_post("/tg/{secret}", webhook)

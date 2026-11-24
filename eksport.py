@@ -46,3 +46,19 @@ async def handler(request):
             out.append({"name": it["name"], "code": it.get("code", ""), "cat": c["name"],
                         "b64": base64.b64encode(data).decode()})
     return web.json_response({"design": d["title"], "items": out, "missing": miss}, headers=cors)
+
+
+async def narxlar(request):
+    """Barcha dizaynlarning mahsulot narxlari (iBox bilan solishtirish uchun)."""
+    cors = {"Access-Control-Allow-Origin": "*"}
+    if not _ok(request.query.get("k", "")):
+        return web.json_response({"error": "forbidden"}, status=403, headers=cors)
+    out = []
+    for d in store.designs.values():
+        if d.get("deleted"):
+            continue
+        for c in d["categories"]:
+            for it in c["items"]:
+                out.append({"design": d["title"], "section": d.get("section"), "cat": c["name"],
+                            "name": it["name"], "code": it.get("code", ""), "price": it.get("price", "")})
+    return web.json_response({"items": out}, headers=cors)
