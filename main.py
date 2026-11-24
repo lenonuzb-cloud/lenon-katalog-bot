@@ -411,6 +411,7 @@ def make_app() -> web.Application:
     import eksport
     app.router.add_get("/eksport/rasmlar", eksport.handler)
     app.router.add_get("/eksport/narxlar", eksport.narxlar)
+    app.router.add_route("*", "/eksport/narx_yangila", eksport.narx_yangila)
     import guruhdan
     app.router.add_get("/diag/fwd", guruhdan.diag)
     app.router.add_post("/tg/{secret}", webhook)
